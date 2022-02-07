@@ -13,11 +13,13 @@ module.exports = {
           900: '#281647',
           400: '#5F35B8',
           500: '#7660A8',
-
         },
         'grey' : {
           'main': '#22242C',
           'text': '#80818A',
+        },
+        'base': {
+          'main': '#131824'
         },
       },
       borderRadius:{
@@ -27,6 +29,10 @@ module.exports = {
         'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
         'lit': 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      fontSize: {
+        'h1': '1.25rem',
+        '2xs': '0.5rem',
       }
     },
 

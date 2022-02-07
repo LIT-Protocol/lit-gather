@@ -16,3 +16,139 @@ body {
   background-size: cover;
   /* clip-path: polygon(100% 0, 100% 62%, 34% 90%, 0 85%, 0 0); */
 }
+/* --- Custom Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #1C273B;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #405873;
+  border-radius: 100vh;
+  border: 1px solid #1C273B;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+/* --- Modal --- */
+.ReactModal__Overlay {
+  background: rgba(0,0,0,0.5) !important;
+  display: flex;
+  justify-content: center;
+}
+.Modal-Connect-Wallet{
+  max-width: 654px;
+  width: 100%;
+  max-height: calc(100% - 128px);
+  height: 100%;
+  margin: auto;
+  padding: 20px 24px;
+}
+
+/* network */
+.bg-color-ethereum{
+  background-color: #637EEB;
+}
+.bg-color-polygon{
+  background-color: #8147E6;
+}
+.bg-color-fantom{
+  background-color: #196AFF;
+}
+.bg-color-xdai{
+  background-color: #07785E;
+}
+.bg-color-bsc{
+  background-color: #F2BA2C;
+}
+.bg-color-arbitrum{
+  background-color: #29334A;
+}
+.bg-color-harmony{
+  background-color: #1C1C1C;
+}
+.bg-color-kovan{
+  background-color: #6434C9;
+}
+.bg-color-mumbai{
+  background-color: #DDD4FA;
+}
+.bg-color-goerli{
+  background-color: #22241E;
+}
+.bg-color-ropsten{
+  background-color: white;
+}
+.bg-color-rinkeby{
+  background-color: #2B3F54;
+}
+.bg-image-ethereum{
+  background-image: url('../assets/network/ethereum.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-polygon{
+  background-image: url('../assets/network/polygon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-fantom{
+  background-image: url('../assets/network/fantom.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-xdai{
+  background-image: url('../assets/network/xdai.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-bsc{
+  background-image: url('../assets/network/bsc.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-arbitrum{
+  background-image: url('../assets/network/arbitrum.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-harmony{
+  background-image: url('../assets/network/harmony.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-kovan{
+  background-image: url('../assets/network/kovan.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-mumbai{
+  background-image: url('../assets/network/mumbai.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-goerli{
+  background-image: url('../assets/network/goerli.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-ropsten{
+  background-image: url('../assets/network/ropsten.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-rinkeby{
+  background-image: url('../assets/network/rinkeby.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
