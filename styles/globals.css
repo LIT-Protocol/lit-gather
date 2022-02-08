@@ -92,6 +92,12 @@ body {
 .bg-color-rinkeby{
   background-color: #2B3F54;
 }
+.bg-color-MetaMask{
+  background-color: #FFD3A2;
+}
+.bg-color-WalletConnect{
+  background-color: #DAECFF;
+}
 .bg-image-ethereum{
   background-image: url('../assets/network/ethereum.png');
   background-repeat: no-repeat;
@@ -151,4 +157,24 @@ body {
   background-image: url('../assets/network/rinkeby.png');
   background-repeat: no-repeat;
   background-position: center;
+}
+.bg-image-MetaMask{
+  background-image: url('../assets/network/MetaMask.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bg-image-WalletConnect{
+  background-image: url('../assets/network/WalletConnect.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#WEB3_CONNECT_MODAL_ID{
+  /* visibility: hidden; */
+  /* opacity: 0; */
+  /* pointer-events: none; */
+}
+
+#WEB3_CONNECT_MODAL_ID *{
+  /* pointer-events: none; */
 }
