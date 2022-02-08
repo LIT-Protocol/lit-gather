@@ -59,44 +59,86 @@ body {
 .bg-color-ethereum{
   background-color: #637EEB;
 }
+.bg-color-ethereum-gradient{
+  background: linear-gradient(90deg, #637EEBb0 0%, #637EEB6e 100%);
+}
 .bg-color-polygon{
   background-color: #8147E6;
+}
+.bg-color-polygon-gradient{
+  background: linear-gradient(90deg, #8147e6b0 0%, #8147e66e 100%);
 }
 .bg-color-fantom{
   background-color: #196AFF;
 }
+.bg-color-fantom-gradient{
+  background: linear-gradient(90deg, #196AFFb0 0%, #196AFF6e 100%);
+}
 .bg-color-xdai{
   background-color: #07785E;
+}
+.bg-color-xdai-gradient{
+  background: linear-gradient(90deg, #07785Eb0 0%, #07785E6e 100%);
 }
 .bg-color-bsc{
   background-color: #F2BA2C;
 }
+.bg-color-bsc-gradient{
+  background: linear-gradient(90deg, #F2BA2Cb0 0%, #F2BA2C6e 100%);
+}
 .bg-color-arbitrum{
   background-color: #29334A;
+}
+.bg-color-arbitrum-gradient{
+  background: linear-gradient(90deg, #29334Ab0 0%, #29334A6e 100%);
 }
 .bg-color-harmony{
   background-color: #1C1C1C;
 }
+.bg-color-harmony-gradient{
+  background: linear-gradient(90deg, #1C1C1Cb0 0%, #1C1C1C6e 100%);
+}
 .bg-color-kovan{
   background-color: #6434C9;
+}
+.bg-color-kovan-gradient{
+  background: linear-gradient(90deg, #6434C9b0 0%, #6434C96e 100%);
 }
 .bg-color-mumbai{
   background-color: #DDD4FA;
 }
+.bg-color-mumbai-gradient{
+  background: linear-gradient(90deg, #DDD4FAb0 0%, #DDD4FA6e 100%);
+}
 .bg-color-goerli{
   background-color: #22241E;
+}
+.bg-color-goerli-gradient{
+  background: linear-gradient(90deg, #22241Eb0 0%, #22241E6e 100%);
 }
 .bg-color-ropsten{
   background-color: white;
 }
+.bg-color-ropsten-gradient{
+  background: linear-gradient(90deg, #FFFFFFb0 0%, #FFFFFF6e 100%);
+}
 .bg-color-rinkeby{
   background-color: #2B3F54;
+}
+.bg-color-rinkeby-gradient{
+  background: linear-gradient(90deg, #2B3F54b0 0%, #2B3F546e 100%);
 }
 .bg-color-MetaMask{
   background-color: #FFD3A2;
 }
+.bg-color-MetaMask-gradient{
+  background: linear-gradient(90deg, #FFD3A2b0 0%, #FFD3A26e 100%);
+}
 .bg-color-WalletConnect{
   background-color: #DAECFF;
+}
+.bg-color-WalletConnect-gradient{
+  background: linear-gradient(90deg, #DAECFFb0 0%, #DAECFF6e 100%);
 }
 .bg-image-ethereum{
   background-image: url('../assets/network/ethereum.png');
@@ -167,14 +209,4 @@ body {
   background-image: url('../assets/network/WalletConnect.png');
   background-repeat: no-repeat;
   background-position: center;
-}
-
-#WEB3_CONNECT_MODAL_ID{
-  /* visibility: hidden; */
-  /* opacity: 0; */
-  /* pointer-events: none; */
-}
-
-#WEB3_CONNECT_MODAL_ID *{
-  /* pointer-events: none; */
 }

@@ -1,25 +1,32 @@
 import BtnConnectWallet from "../BtnConnectWallet";
 import LitLogo from "../LitLogo";
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter, withRouter } from 'next/router'
+import { InfoBox } from "../InfoBox";
 
 export default function LayoutHeader({subtitle}){
 
-    const title = `Lit-Gather Space${subtitle == null ? '' : `::${subtitle}`}`;
-    const description = 'Token-gate your gather space!';
+    const router = useRouter()
+    let network;
+
+    // -- mounted
+    useEffect(() => {
+        console.log("--- LayoutHeader Mounted ---");
+    }, []);
 
     return (
         <>
-            {/* Header */}
-            <header className="relative h-screen w-11/12 m-auto h-10 mt-8 flex justify-between items-center">
+            <header className="sticky top-0 relative w-11/12 mx-auto h-10 mt-8 flex justify-between items-center">
                 <div className="relative">
-                <LitLogo></LitLogo>
+                    <LitLogo></LitLogo>
                 </div>
 
                 {/* Nav: Links */}
                 <div className="flex items-center">
-                <BtnConnectWallet></BtnConnectWallet>
+                    <InfoBox/>
+                    <BtnConnectWallet/>
                 </div>
-            </header>{/* ...Header */}
+            </header>
         </>
     );
 }

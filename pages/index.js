@@ -11,8 +11,6 @@ import SEOHeader from '../components/SEO/SEOHeader'
 Modal.setAppElement('#__next')
 
 export default function Home() {
-
-  const router = useRouter();
   
   return (
     <>

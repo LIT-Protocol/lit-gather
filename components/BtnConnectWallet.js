@@ -1,8 +1,56 @@
-import LitJsSdk from 'lit-js-sdk'
+import LitJsSdk, { LIT_CHAINS } from 'lit-js-sdk'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import React, { useEffect, useState } from 'react';
+
 
 function BtnConnectWallet() {
+
+  // state
+  const [auth, setAuth] = useState({});
+  const [walletAddress, setWalletAddress] = useState('');
+
+  // -- mounted
+  useEffect(() => {
+      console.log("--- Mounted BtnConnectWallet ---");
+
+      // -- listen to metamask account changed
+      window.ethereum.on('accountsChanged', function (accounts) {
+          // Time to reload your interface with accounts[0]!
+          console.log('accountsChanged')
+          localStorage.removeItem('lit-auth-signature');
+          localStorage.removeItem('lit-network');
+          document.getElementById('connect-wallet').click()
+      })
+
+      // -- listen to metamask network changed
+      window.ethereum.on('networkChanged', async function (networkId) {
+        // Time to reload your interface with the new networkId
+        console.log(`networkChanged: ${networkId}`);
+        localStorage.removeItem('lit-auth-signature');
+        localStorage.removeItem('lit-network');
+        document.getElementById('connect-wallet').click()
+      })
+
+
+      // -- prepare
+      const authSig = localStorage['lit-auth-signature'];
+
+      // -- validate
+      if(authSig == null){
+        console.error("BtnConnectWallet() > Please connect your wallet.");
+        setWalletAddress('Connect Lit-Gather')
+        return
+      }
+
+      // -- execute
+      setAuth(JSON.parse(authSig));
+      console.log("lit-auth-signature:", authSig);
+      
+      setWalletAddress(shortenWalletAddress(JSON.parse(authSig).address))
+      
+  }, [])
+
 
   // -- prepare
   const router = useRouter()
@@ -12,7 +60,7 @@ function BtnConnectWallet() {
   // @return { Boolean } true/false
   //
   const litAuthed = () => {
-    return localStorage['lit-auth-signature'] != null && localStorage['WEB3_CONNECT_CACHED_PROVIDER'] != null;
+    return localStorage['lit-auth-signature'] != null;
   }
 
   // Check if gather account is authed
@@ -36,7 +84,7 @@ function BtnConnectWallet() {
   // @return { String } wallet address
   //
   const shortenWalletAddress = (addr) => {
-    return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4, addr.length);
+    return addr.substring(0, 5) + '...' + addr.substring(addr.length - 4, addr.length);
   } 
 
   //
@@ -92,7 +140,7 @@ function BtnConnectWallet() {
 
       <Link href="/connect-wallet" as={`/connect-wallet`}>
         <a id="connect-wallet" className="flex pl-4 pr-4 p-2">
-          <p className="text-base">Connect Wallet</p>
+          <p className="text-base">{ walletAddress }</p>
         </a>
       </Link>
 

@@ -1,6 +1,6 @@
 import { LIT_CHAINS } from 'lit-js-sdk'
 import { useRouter, withRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import LayoutHeader from '../../components/Layout/Header'
 import SEOHeader from '../../components/SEO/SEOHeader'
@@ -12,15 +12,20 @@ import { H2Step } from '../../components/Ui/H2Step'
 Modal.setAppElement('#__next')
 
 const Connect = () => {
-    const router = useRouter()
 
+    // -- prepare
+    const router = useRouter()
     const chains = Object.keys(LIT_CHAINS);
     const wallets = ['MetaMask', 'WalletConnect'];
     
+    // -- state
+    const [network, setNetwork] = useState('')
+
     //
     // Mounted
     //
     useEffect(() => {
+        console.log("--- Mounted Connect ---")
         router.prefetch('/')
 
         const network = localStorage['lit-network'];
@@ -40,9 +45,11 @@ const Connect = () => {
     // @return { void } 
     //
     const onClickNetwork = (chain) => {
+        console.log("onClickNetwork:", chain)
         const href = `/connect-wallet#${chain}`;
         router.push(href);
-        localStorage['lit-network'] = chain;
+        setNetwork(chain)
+        // localStorage['lit-network'] = chain;
     }
 
 
@@ -53,9 +60,10 @@ const Connect = () => {
     //
     const onClickWallet = async (wallet) => {
         console.log(`onClickWallet: ${wallet}`);
+        console.log(`Network: ${network}`);
 
         // -- validate
-        if(localStorage['lit-network'] == null){
+        if(network == null){
             alert("Please select a network to connect");
             return;
         }
@@ -63,9 +71,24 @@ const Connect = () => {
         // -- reset
         localStorage.removeItem('lit-auth-signature');
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
+        [...document.querySelectorAll('#WEB3_CONNECT_MODAL_ID')].forEach((e) => {
+            e.remove(); // remove duplicate modal doms
+        });
 
         // -- prepare
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: localStorage['lit-network']});        
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: network});   
+        
+        // -- execute
+        console.log("SIGNED!", authSig);
+        localStorage['lit-network'] = network;
+        router.push('/');
+    }
+
+    //
+    // Event:: When modal is closed
+    // 
+    const onModalClosed = () => {
+        router.push('/')
     }
 
 
@@ -75,7 +98,7 @@ const Connect = () => {
             <LayoutHeader/>
             <Modal
                 isOpen={true} // The modal should always be shown on page load, it is the 'page'
-                onRequestClose={() => router.push('/')}
+                onRequestClose={() => onModalClosed()}
                 contentLabel="Connect Wallet"
                 className="Modal-Connect-Wallet bg-base-main rounded-3xl"
             >
@@ -92,7 +115,7 @@ const Connect = () => {
                             const hash = router.asPath.split('#')[1];
                             const selectedNetwork = hash == chain ? 'bg-lit-400/.75' : '';
                             
-                            return <IconButton key={i} name={chain} onClick={() => onClickNetwork(chain)} selected={selectedNetwork}/>
+                            return <IconButton key={i} name={chain} callback={() => onClickNetwork(chain)} selected={selectedNetwork}/>
                         }) }
                     </div>
 
@@ -102,7 +125,7 @@ const Connect = () => {
                     <div className="mt-4 grid grid-cols-5">
                         {  wallets.map((wallet, i) => {
 
-                            return <IconButton key={i} name={wallet} onClick={() => onClickWallet(wallet)}/>
+                            return <IconButton key={i} name={wallet} callback={() => onClickWallet(wallet)}/>
                         })}
                     </div>
 
