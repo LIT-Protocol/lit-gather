@@ -6,6 +6,8 @@ import LayoutHeader from '../../components/Layout/Header'
 import SEOHeader from '../../components/SEO/SEOHeader'
 import Link from 'next/link'
 import LitJsSdk from 'lit-js-sdk'
+import IconButton from '../../components/IconButton'
+import { H2Step } from '../../components/Ui/H2Step'
 
 Modal.setAppElement('#__next')
 
@@ -34,7 +36,7 @@ const Connect = () => {
 
     // 
     // Event:: When a network is chosen
-    // @param { String } string
+    // @param { String } chain name eg. ethereum, polygon, etc.
     // @return { void } 
     //
     const onClickNetwork = (chain) => {
@@ -44,6 +46,11 @@ const Connect = () => {
     }
 
 
+    //
+    // Event:: When a wallet is chosen
+    // @param { String } wallet address
+    // @return { void } 
+    //
     const onClickWallet = async (wallet) => {
         console.log(`onClickWallet: ${wallet}`);
 
@@ -73,70 +80,31 @@ const Connect = () => {
                 className="Modal-Connect-Wallet bg-base-main rounded-3xl"
             >
                 <h1 className="text-white text-h1">Connect Lit-Gather</h1>
-                
+
                 <div className="overflow-auto h-5/6">
-                    <h2 className="text-white text-base mt-4 flex justify-start">
-                        <div className="rounded-full w-6 h-6 text-xs bg-orange bg-lit-400 text-center flex justify-center">
-                            <span className="m-auto">1</span>
-                        </div>
-                        <div className="ml-2 m-t-auto my-auto">Choose Network</div>
-                    </h2>
                     
+                    {/* === Step 1 === */}
+                    <H2Step step="1" text="Choose Network" />
+
                     <div className="mt-4 grid grid-cols-5">
                         { chains.map((chain, i) => {
-
+                            
                             const hash = router.asPath.split('#')[1];
-                            const bgColor = `bg-color-${chain}`;
-                            const bgImage = `bg-image-${chain}`;
                             const selectedNetwork = hash == chain ? 'bg-lit-400/.75' : '';
                             
-                            return (
-                                <button key={i} onClick={() => onClickNetwork(chain)}>
-                                    <div className={`block cursor-pointer hover:bg-lit-400/.75 rounded-2xl py-2 m-1 border-box ${selectedNetwork}`}>
-                                            <div className={`rounded-full w-12 h-12 flex m-auto ${bgColor}`}>
-                                                <div className="m-auto w-full h-full p-3 box-border">
-                                                    <div className={`w-full h-full bg-contain ${bgImage}`}></div>
-                                                </div>
-                                            </div>
-                                        <div className="text-xs text-white m-auto flex justify-center">
-                                            <span className="mt-1 capitalize">{chain} </span>
-                                        </div>
-                                    </div>
-                                </button>
-                            )
+                            return <IconButton key={i} name={chain} onClick={() => onClickNetwork(chain)} selected={selectedNetwork}/>
                         }) }
                     </div>
 
-                    <h2 className="text-white text-base mt-4 flex justify-start">
-                        <div className="rounded-full w-6 h-6 text-xs bg-orange bg-lit-400 text-center flex justify-center">
-                            <span className="m-auto">2</span>
-                        </div>
-                        <div className="ml-2 m-t-auto my-auto">Choose Wallet</div>
-                    </h2>
+                    {/* === Step 2 === */}
+                    <H2Step step="2" text="Choose Wallet" />
 
                     <div className="mt-4 grid grid-cols-5">
                         {  wallets.map((wallet, i) => {
 
-                            const bgColor = `bg-color-${wallet}`;
-                            const bgImage = `bg-image-${wallet}`;
-
-                            return (
-                                <button key={i}  onClick={() => onClickWallet(wallet)}>
-                                    <div className={`block cursor-pointer hover:bg-lit-400/.75 rounded-2xl py-2 m-1 border-box`}>
-                                            <div className={`rounded-full w-12 h-12 flex m-auto ${bgColor}`}>
-                                                <div className="m-auto w-full h-full p-3 box-border">
-                                                    <div className={`w-full h-full bg-contain ${bgImage}`}></div>
-                                                </div>
-                                            </div>
-                                        <div className="text-xs text-white m-auto flex justify-center">
-                                            <span className="mt-1 capitalize">{wallet} </span>
-                                        </div>
-                                    </div>
-                                </button>
-                            )
+                            return <IconButton key={i} name={wallet} onClick={() => onClickWallet(wallet)}/>
                         })}
                     </div>
-
 
                 </div>
             </Modal>
