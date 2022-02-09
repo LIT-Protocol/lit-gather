@@ -9,7 +9,10 @@ import LitJsSdk from 'lit-js-sdk'
 import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
 import { LogoutIcon } from '@heroicons/react/solid'
-
+import resourceIds from '../../utils/resources-ids'
+import accessControlConditionTemplate from '../../utils/access-control-condition-template'
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 Modal.setAppElement('#__next')
 
@@ -32,16 +35,21 @@ const Connect = () => {
         console.log("--- Mounted Connect ---")
         router.prefetch('/')
 
+        // -- prepare
         setNetwork(localStorage['lit-network'])
-       
-
+        
+        // -- validate if wallet connected
         if(localStorage['lit-auth-signature'] != null){
+
+            // -- set wallet states
             setWalletConnected(true)
             setWalletAddress(JSON.parse(localStorage['lit-auth-signature']).address)
         }
-        
 
+        // -- validate is network is chosen
         if(network != null){
+
+            // -- push hash to url
             console.log(`Has Chosen Network: ${network}`);
             const href = `/connect-wallet#${network}`;
             router.push(href);
@@ -49,10 +57,6 @@ const Connect = () => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    const getWalletAddress = () => {
-        return localStorage.getItem('lit-auth-signature')
-    }
 
     // 
     // Event:: When a network is chosen
@@ -102,10 +106,12 @@ const Connect = () => {
         // router.push('/');
         // document.getElementById('connect-wallet').click()
         setWalletConnected(true)
+        setWalletAddress(JSON.parse(localStorage['lit-auth-signature']).address)
     }
 
     //
     // Event:: When disconnect wallet button is clicked
+    // @return { void } 
     //
     const onClickDisconnect = async () => {
         console.log("onClickDisconnect()")
@@ -115,7 +121,67 @@ const Connect = () => {
     }
 
     //
+    // Event:: When Connect Gather.town button is clicked
+    // @return { void } 
+    //
+    const onClickConnectGather = async() => {
+        console.log(accessControlConditionTemplate)
+        console.log(resourceIds)
+        const authSig = JSON.parse(localStorage['lit-auth-signature']);
+        
+        const queryAuthSig = { authSig: JSON.stringify(authSig) }
+        const queryGatherUrl = { gatherUrl: window.location.origin + window.location.pathname + '#connect-gather' }
+        
+        const redirectUrl =
+          publicRuntimeConfig.BACKEND_API +
+          '/oauth/gather/callback?' +
+          new URLSearchParams(queryAuthSig).toString() +
+          '&' + new URLSearchParams(queryGatherUrl).toString() + '&'
+        
+        console.log('redirectUrl', redirectUrl)
+        window.location = `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
+        redirectUrl,
+        )}`
+        // console.log("Location:", `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
+        //     redirectUrl,
+        //     )}`)
+
+
+        // const jwts = await Promise.all(
+        // resourceIds.map(async (rid) => {
+        //     const resourceId = rid.resourceId
+        //     const chain = rid.chain
+
+        //     let accessControlConditions
+        //     if (rid.accessControlConditions) {
+        //     accessControlConditions = rid.accessControlConditions
+        //     } else {
+        //     accessControlConditions = [...accessControlConditionTemplate]
+        //     accessControlConditions[0].contractAddress = rid.addr
+        //     accessControlConditions[0].chain = chain
+        //     }
+
+        //     try {
+        //     const jwt = await litNodeClient.getSignedToken({
+        //         accessControlConditions,
+        //         chain,
+        //         authSig,
+        //         resourceId,
+        //     })
+        //     return { rid, jwt }
+        //     } catch (e) {
+        //     return { rid, error: e }
+        //     }
+        // }),
+        // )
+        // console.log('jwts:', jwts)
+        // const validJwts = jwts.filter((j) => j.jwt)
+        // console.log('validJwts: ', validJwts)
+    }
+
+    //
     // Event:: When modal is closed
+    // @return { void } 
     // 
     const onModalClosed = () => {
         router.push('/')
@@ -183,7 +249,7 @@ const Connect = () => {
                     {/* === Gather.town - Step 3 === */}
                     <H2Step step="3" text="Connect Gather.town" />
 
-                    <div>
+                    <div onClick={() => onClickConnectGather()} className="text-white bg-lit-400 mt-2 ml-1">
                         Connect Gather.town
                     </div>
 
