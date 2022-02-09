@@ -23,6 +23,7 @@ module.exports = {
         'base': {
           'main': '#131824'
         },
+        'red': 'red',
       },
       borderRadius:{
         '4xl': '32px'
