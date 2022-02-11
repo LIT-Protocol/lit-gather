@@ -1,10 +1,9 @@
 import { LIT_CHAINS } from 'lit-js-sdk'
-import { useRouter, withRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import LayoutHeader from '../../components/Layout/Header'
 import SEOHeader from '../../components/SEO/SEOHeader'
-import Link from 'next/link'
 import LitJsSdk from 'lit-js-sdk'
 import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
@@ -12,6 +11,10 @@ import { LogoutIcon } from '@heroicons/react/solid'
 import resourceIds from '../../utils/resources-ids'
 import accessControlConditionTemplate from '../../utils/access-control-condition-template'
 import getConfig from "next/config";
+import { storedAuth, setStoredNetwork, removeStoredAuth, removeWeb3Modal } from '../../utils/storage'
+import { getGatherRedirectUrl } from '../../utils/gather'
+
+// -- get env vars
 const { publicRuntimeConfig } = getConfig();
 
 Modal.setAppElement('#__next')
@@ -24,9 +27,12 @@ const Connect = () => {
     const wallets = ['MetaMask', 'WalletConnect'];
     
     // -- state
-    const [network, setNetwork] = useState(null)
-    const [walletConnected, setWalletConnected] = useState(false)
+    const [connectedNetwork, setConnectedNetwork] = useState(null)
+    const [walletIsConnected, setWalletIsConnected] = useState(false)
     const [walletAddress, setWalletAddress] = useState(null)
+
+    // -- (non-reactive) storage getter
+    let storedNetwork;
 
     //
     // Mounted
@@ -36,22 +42,23 @@ const Connect = () => {
         router.prefetch('/')
 
         // -- prepare
-        setNetwork(localStorage['lit-network'])
+        storedNetwork = localStorage.getItem('lit-network');
+        setConnectedNetwork(storedNetwork);
         
         // -- validate if wallet connected
-        if(localStorage['lit-auth-signature'] != null){
+        if(storedAuth() != null){
 
             // -- set wallet states
-            setWalletConnected(true)
-            setWalletAddress(JSON.parse(localStorage['lit-auth-signature']).address)
+            setWalletIsConnected(true)
+            setWalletAddress(JSON.parse(storedAuth()).address)
         }
 
         // -- validate is network is chosen
-        if(network != null){
+        if(connectedNetwork != null){
 
             // -- push hash to url
-            console.log(`Has Chosen Network: ${network}`);
-            const href = `/connect-wallet#${network}`;
+            console.log(`Has Chosen Network: ${connectedNetwork}`);
+            const href = `/connect-wallet#${connectedNetwork}`;
             router.push(href);
         }
 
@@ -65,10 +72,16 @@ const Connect = () => {
     //
     const onClickNetwork = (chain) => {
         console.log("onClickNetwork:", chain)
+
+        // -- prepare
         const href = `/connect-wallet#${chain}`;
+
+        // -- setter
+        setConnectedNetwork(chain)
+        setStoredNetwork(chain);
+
+        // -- execute
         router.push(href);
-        setNetwork(chain)
-        // localStorage['lit-network'] = chain;
     }
 
 
@@ -79,34 +92,34 @@ const Connect = () => {
     //
     const onClickConnectWallet = async (wallet) => {
         console.log(`onClickConnectWallet: ${wallet}`);
-        console.log(`Network: ${network}`);
+        console.log(`Network: ${connectedNetwork}`);
 
+        // == before validation ==
         // -- prepare
         const hash = router.asPath.split('#')[1];
 
         // -- validate
-        if(network == null){
+        if(connectedNetwork == null){
             alert("Please select a network to connect");
             return;
         }
 
+        // == after validation ==
         // -- reset
-        localStorage.removeItem('lit-auth-signature');
-        localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
-        [...document.querySelectorAll('#WEB3_CONNECT_MODAL_ID')].forEach((e) => {
-            e.remove(); // remove duplicate modal doms
-        });
+        removeStoredAuth();
+        removeWeb3Modal();
 
         // -- prepare
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: network});   
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: connectedNetwork});   
         
-        // -- execute
-        console.log("SIGNED!", authSig);
-        localStorage['lit-network'] = network;
+        // -- setter
+        setStoredNetwork(connectedNetwork);
+        setWalletIsConnected(true)
+        setWalletAddress(authSig.address)
+        console.log("Authed:", authSig);
+
         // router.push('/');
         // document.getElementById('connect-wallet').click()
-        setWalletConnected(true)
-        setWalletAddress(JSON.parse(localStorage['lit-auth-signature']).address)
     }
 
     //
@@ -115,33 +128,45 @@ const Connect = () => {
     //
     const onClickDisconnect = async () => {
         console.log("onClickDisconnect()")
-        setWalletConnected(false)
-        console.log(walletConnected)
-        localStorage.removeItem('lit-auth-signature');
+
+        // -- execute
+        setWalletIsConnected(false)
+        removeStoredAuth();
     }
 
     //
     // Event:: When Connect Gather.town button is clicked
+    // Redirect user to gather auth page which will then calls the 
+    // backend API to store user credential (wallet address, and gather id)
     // @return { void } 
     //
     const onClickConnectGather = async() => {
         console.log(accessControlConditionTemplate)
         console.log(resourceIds)
-        const authSig = JSON.parse(localStorage['lit-auth-signature']);
-        
+
+        // -- prepare
+        const authSig = JSON.parse(storedAuth());
+
+        // -- prepare queries
         const queryAuthSig = { authSig: JSON.stringify(authSig) }
         const queryGatherUrl = { gatherUrl: window.location.origin + window.location.pathname + '#connect-gather' }
         
-        const redirectUrl =
-          publicRuntimeConfig.BACKEND_API +
-          '/oauth/gather/callback?' +
-          new URLSearchParams(queryAuthSig).toString() +
-          '&' + new URLSearchParams(queryGatherUrl).toString() + '&'
+        // -- prepare redirect url
+        const redirectUrl = getGatherRedirectUrl({
+            host: publicRuntimeConfig.BACKEND_API, // eg. http://localhost:3000 (backend app)
+            endpoint: '/oauth/gather/callback?',
+            queries: [
+                queryAuthSig,
+                queryGatherUrl
+            ],
+        });
+
+        // -- redirect user to gather auth page
+        window.location.href = redirectUrl;
         
-        console.log('redirectUrl', redirectUrl)
-        window.location = `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
-        redirectUrl,
-        )}`
+        // window.location = `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
+        // redirectUrl,
+        // )}`
         // console.log("Location:", `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
         //     redirectUrl,
         //     )}`)
@@ -204,7 +229,7 @@ const Connect = () => {
 
                     
                     {
-                        ! walletConnected ? (
+                        ! walletIsConnected ? (
                         <>
                             {/* === Connect Wallet - Step 1 === */}
                             <H2Step step="1" text="Choose Network" />
@@ -234,7 +259,7 @@ const Connect = () => {
                             <div>
                                 <h1 className="mt-4 text-white">Connected Wallet:</h1>
                                 <div className="mt-2 bg-main rounded-2xl p-2 flex justify-between text-white flex justify-center">
-                                    <span className="m-auto capitalize">{network} : { walletAddress }</span>
+                                    <span className="m-auto capitalize">{connectedNetwork} : { walletAddress }</span>
                                 </div>
                                 <div onClick={() => onClickDisconnect()} className="flex justify-end cursor-pointer ml-auto w-24">
                                     <LogoutIcon className="h-5 w-5 my-auto pt-1 text-lit-400"/>
