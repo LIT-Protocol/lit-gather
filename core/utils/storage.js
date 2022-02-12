@@ -17,12 +17,6 @@ export const storedNetwork = () => localStorage.getItem('lit-network');
 //
 export const setStoredNetwork = (chain) => localStorage.setItem('lit-network', chain);
 
-//
-// (DELETE) Remove stored network
-// @return { void }
-//
-export const removeStoredNetwork = () => localStorage.removeItem('lit-network');
-
 
 // ------------------------- Lit Auth -------------------------
 // 
@@ -70,9 +64,3 @@ export const storedGatherPlayerId = () => localStorage.getItem('lit-gather-playe
 // @return { void }
 //
 export const setStoredGatherPlayerId = (value) => localStorage.setItem('lit-gather-player-id', value);
-
-//
-// (DELETE) Remove stored Gather
-// @return { void }
-//
-export const removeStoredGatherPlayerId = () => localStorage.removeItem('lit-gather-player-id');

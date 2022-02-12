@@ -140,6 +140,17 @@ body {
 .bg-color-WalletConnect-gradient{
   background: linear-gradient(90deg, #DAECFFb0 0%, #DAECFF6e 100%);
 }
+.bg-color-gather{
+  background-color: #4358D8;
+}
+.bg-color-gather-gradient{
+  background: linear-gradient(90deg, #4358D8b0 0%, #4358D86e 100%);
+}
+.bg-image-gather{
+  background-image: url('../assets/network/gather.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .bg-image-ethereum{
   background-image: url('../assets/network/ethereum.png');
   background-repeat: no-repeat;

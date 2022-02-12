@@ -13,7 +13,7 @@ const bgImage = `bg-image-${name}`;
 const iconSize = size == 'sm' ? 'w-6 h-6' : 'w-12 h-12';
 const iconPadding = size == 'sm' ? 'p-1' : 'p-3';
 const roundedIcon = size == 'sm' ? 'rounded-full' : ''; 
-const structure = size == 'sm' ? 'mr-4 flex px-1' : 'px-7 py-2 hover:bg-lit-400/.75';
+const structure = size == 'sm' ? 'mr-4 flex px-1' : 'py-2 hover:bg-lit-400/.75';
 const textPadding = size == 'sm' ? 'pl-2' : 'mt-1 ';
 const textSize = size == 'sm' ? 'text-base' : 'text-xs';
 const buttonStyle = size == 'sm' ? `${bgColor} mr-4 rounded-full h-10` : '';

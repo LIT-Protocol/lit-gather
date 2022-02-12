@@ -1,11 +1,9 @@
 import Head from 'next/head'
 
-export default function SEOHeader({
-    subtitle, 
-    description='Token-gate your gather space!'
-}){
+export default function SEOHeader({subtitle}){
 
     const title = `Lit-Gather Space${subtitle == null ? '' : `::  ${subtitle}`}`;
+    const description = 'Token-gate your gather space!';
 
     return (
         <>

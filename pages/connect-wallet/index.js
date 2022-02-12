@@ -2,20 +2,23 @@ import { LIT_CHAINS } from 'lit-js-sdk'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
+import LitJsSdk from 'lit-js-sdk'
+import { LogoutIcon } from '@heroicons/react/solid'
+import accessControlConditionTemplate from '../../utils/access-control-condition-template'
+import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId } from '../../utils/storage'
+import { getGatherRedirectUrl } from '../../utils/gather'
+import fetchIsWalletRegistered from '../../utils/fetch'
+import resourceIds from '../../utils/resources-ids'
 import LayoutHeader from '../../components/Layout/Header'
 import SEOHeader from '../../components/SEO/SEOHeader'
-import LitJsSdk from 'lit-js-sdk'
 import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
-import { LogoutIcon } from '@heroicons/react/solid'
-import resourceIds from '../../utils/resources-ids'
-import accessControlConditionTemplate from '../../utils/access-control-condition-template'
-import getConfig from "next/config";
-import { storedAuth, setStoredNetwork, removeStoredAuth, removeWeb3Modal } from '../../utils/storage'
-import { getGatherRedirectUrl } from '../../utils/gather'
+import LoadingIcon from '../../components/Icon/LoadingIcon'
+import InfoRow from '../../components/InfoRow'
+import Btn from '../../components/Ui/Btn'
 
 // -- get env vars
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
 
 Modal.setAppElement('#__next')
 
@@ -30,40 +33,76 @@ const Connect = () => {
     const [connectedNetwork, setConnectedNetwork] = useState(null)
     const [walletIsConnected, setWalletIsConnected] = useState(false)
     const [walletAddress, setWalletAddress] = useState(null)
+    const [connectingGather, setConnectingGather] = useState(false)
+    const [connectedGatherId, setConnectedGatherId] = useState(null)
 
-    // -- (non-reactive) storage getter
-    let storedNetwork;
-
-    //
-    // Mounted
-    //
-    useEffect(() => {
+    useEffect(async () => {
         console.log("--- Mounted Connect ---")
         router.prefetch('/')
-
-        // -- prepare
-        storedNetwork = localStorage.getItem('lit-network');
-        setConnectedNetwork(storedNetwork);
         
-        // -- validate if wallet connected
-        if(storedAuth() != null){
+        // -- static states
+        var _isConnectingGather = location.hash == '#connect-gather';
+
+        var _hasStoredAuth = storedAuth() != null;
+        var _storedWalletAddress = JSON.parse(storedAuth())?.address;
+
+        var _hasStoredNetwork = storedNetwork() != null;
+        var _storedNetwork = storedNetwork();
+
+        var _hasStoredGatherId = storedGatherPlayerId() != null;
+        var _storedGatherId = storedGatherPlayerId();
+
+        // -- set connected network
+        setConnectedNetwork(_storedNetwork);
+        
+        // -- reset is connecting to gather.town to false
+        setConnectingGather(false)
+        
+        // -- check if wallet connected
+        if( _hasStoredAuth ){
 
             // -- set wallet states
             setWalletIsConnected(true)
-            setWalletAddress(JSON.parse(storedAuth()).address)
+            setWalletAddress(_storedWalletAddress)
         }
 
-        // -- validate is network is chosen
-        if(connectedNetwork != null){
+        // -- check if network is selected and is NOT connecting to the network
+        if( _hasStoredNetwork && ! _isConnectingGather ){
 
             // -- push hash to url
-            console.log(`Has Chosen Network: ${connectedNetwork}`);
-            const href = `/connect-wallet#${connectedNetwork}`;
+            console.log(`Has Chosen Network: ${_storedNetwork}`);
+            const href = `/connect-wallet#${_storedNetwork}`;
             router.push(href);
         }
 
+        // -- check if gather id is registered
+        if( _hasStoredGatherId ){
+            setConnectedGatherId(_storedGatherId);
+        }
+        
+        // -- connect gather account
+        // -- get hash is connect-gather
+        console.log("## Location Hash:", location.hash)
+
+        // -- check if hash is `#connect-gather`
+        if( _isConnectingGather ){
+            console.log("Connecting Gather Account");
+            setConnectingGather(true)
+            setTimeout( async () => {
+                const { isRegistered, gatherPlayerId } = await fetchIsWalletRegistered(_storedWalletAddress);
+                console.log("isRegistered:", isRegistered)
+                console.log("gatherPlayerId:", gatherPlayerId)
+
+                if(isRegistered){
+                    setStoredGatherPlayerId(gatherPlayerId);
+                    setConnectedGatherId(gatherPlayerId);
+                }
+                setConnectingGather(false)
+            }, 1000);
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, []);
 
     // 
     // Event:: When a network is chosen
@@ -131,7 +170,9 @@ const Connect = () => {
 
         // -- execute
         setWalletIsConnected(false)
+        setConnectedGatherId(null)
         removeStoredAuth();
+        removeStoredGatherPlayerId()
     }
 
     //
@@ -153,7 +194,7 @@ const Connect = () => {
         
         // -- prepare redirect url
         const redirectUrl = getGatherRedirectUrl({
-            host: publicRuntimeConfig.BACKEND_API, // eg. http://localhost:3000 (backend app)
+            host: process.env.NEXT_PUBLIC_BACKEND, // eg. http://localhost:3000 (backend app)
             endpoint: '/oauth/gather/callback?',
             queries: [
                 queryAuthSig,
@@ -258,25 +299,60 @@ const Connect = () => {
                             {/* === Connected Wallet Info === */}
                             <div>
                                 <h1 className="mt-4 text-white">Connected Wallet:</h1>
-                                <div className="mt-2 bg-main rounded-2xl p-2 flex justify-between text-white flex justify-center">
-                                    <span className="m-auto capitalize">{connectedNetwork} : { walletAddress }</span>
-                                </div>
-                                <div onClick={() => onClickDisconnect()} className="flex justify-end cursor-pointer ml-auto w-24">
-                                    <LogoutIcon className="h-5 w-5 my-auto pt-1 text-lit-400"/>
-                                    <div className="my-auto text-sm text-lit-400 mt-1">Disconnect</div>
-                                </div>
+                                <InfoRow 
+                                    text={`${connectedNetwork} : ${ walletAddress }`}
+                                    action={{
+                                        callback: onClickDisconnect,
+                                        icon: <LogoutIcon/>,
+                                        text: 'Disconnect',
+                                    }}
+                                />
                             </div>
 
                         </>)
                     }
 
+                    
+                    {
+                        // -- GatherId NOT stored/connected
+                        (connectedGatherId == null && ! connectingGather)
+                        ?
+                        <>
+                             {/* === Gather.town - Step 3 === */}
+                            <H2Step step="3" text="Connect Gather.town" />
+                            <div className="mt-2 ml-1 ">
+                                <IconButton name="gather"
+                                    callback={onClickConnectGather}
+                                />
+                            </div>
+                        </>
+                        :
+                        ''
+                    }
 
-                    {/* === Gather.town - Step 3 === */}
-                    <H2Step step="3" text="Connect Gather.town" />
+                    {
+                        // -- Connecting to Gather.town
+                        connectingGather
+                        ?
+                        <div className="text-white flex ml-2 mt-2">
+                            <LoadingIcon/>
+                            Connecting Gather.town...
+                        </div>
+                        :
+                        ''
+                    }
 
-                    <div onClick={() => onClickConnectGather()} className="text-white bg-lit-400 mt-2 ml-1">
-                        Connect Gather.town
-                    </div>
+                    {
+                        (connectedGatherId != null && ! connectingGather)
+                        ?
+                        <>
+                            <h1 className="mt-4 text-white">Linked Gather Player ID:</h1>
+                            <InfoRow text={connectedGatherId} />
+                        </>
+                        :
+                        ''
+                    }
+
 
 
                 </div>
