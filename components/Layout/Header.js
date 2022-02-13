@@ -1,21 +1,12 @@
 import BtnConnectWallet from "../BtnConnectWallet";
-import LitLogo from "../LitLogo";
-import React, { useEffect } from 'react'
-import { useRouter, withRouter } from 'next/router'
+import LitLogo from "../Ui/LitLogo";
+import React from 'react'
 import { InfoBox } from "../InfoBox";
 
 export default function LayoutHeader({subtitle}){
 
-    const router = useRouter()
-    let network;
-
-    // -- mounted
-    useEffect(() => {
-        console.log("--- LayoutHeader Mounted ---");
-    }, []);
-
     return (
-        <header className="sticky top-0 relative w-11/12 mx-auto h-10 mt-8 flex justify-between items-center">
+        <header className="bg-lit-dark relative w-full px-6 mx-auto flex justify-between items-center h-16 py-9">
             <div className="relative">
                 <LitLogo></LitLogo>
             </div>

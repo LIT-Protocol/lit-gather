@@ -10,11 +10,16 @@ module.exports = {
       },
       colors: {
         'lit': {
+          100: '#e7ddff',
           900: '#281647',
           400: '#5F35B8',
           '400/.75': 'rgba(95, 53, 184, .75)', 
           '400/.5': 'rgba(95, 53, 184, .5)', 
           500: '#7660A8',
+          'dark': '#0B021F',
+        },
+        'purple':{
+          'text': '#8159d9',
         },
         'grey' : {
           'main': '#22242C',
@@ -24,6 +29,9 @@ module.exports = {
           'main': '#131824'
         },
         'red': 'red',
+      },
+      height: {
+        '108': '32rem',
       },
       borderRadius:{
         '4xl': '32px'

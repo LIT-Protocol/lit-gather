@@ -76,3 +76,23 @@ export const setStoredGatherPlayerId = (value) => localStorage.setItem('lit-gath
 // @return { void }
 //
 export const removeStoredGatherPlayerId = () => localStorage.removeItem('lit-gather-player-id');
+
+// ------------------------- ResourceId -------------------------
+// 
+// (GET) Get resourceId from storage
+// @retunr { String } resourceId
+//
+export const storedResourceId = () => localStorage.getItem('lit-resource-id');
+
+//
+// (SETTER) Set resourceId 
+// @param { String } JSON.stringify(resourceId)
+// @return { void }
+//
+export const setStoredResourceId = (value) => localStorage.setItem('lit-resource-id', value);
+
+//
+// (DELETE) Remove stored resourceId
+// @return { void }
+//
+export const removeStoredResourceId = () => localStorage.removeItem('lit-resource-id');

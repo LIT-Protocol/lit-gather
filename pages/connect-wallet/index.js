@@ -5,9 +5,9 @@ import Modal from 'react-modal'
 import LitJsSdk from 'lit-js-sdk'
 import { LogoutIcon } from '@heroicons/react/solid'
 import accessControlConditionTemplate from '../../utils/access-control-condition-template'
-import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId } from '../../utils/storage'
+import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId, removeStoredNetwork, storedResourceId, setStoredResourceId, removeStoredResourceId } from '../../utils/storage'
 import { getGatherRedirectUrl } from '../../utils/gather'
-import fetchIsWalletRegistered from '../../utils/fetch'
+import fetchWalletInfo from '../../utils/fetch'
 import resourceIds from '../../utils/resources-ids'
 import LayoutHeader from '../../components/Layout/Header'
 import SEOHeader from '../../components/SEO/SEOHeader'
@@ -15,14 +15,14 @@ import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
 import LoadingIcon from '../../components/Icon/LoadingIcon'
 import InfoRow from '../../components/InfoRow'
-import Btn from '../../components/Ui/Btn'
-
-// -- get env vars
-// const { publicRuntimeConfig } = getConfig();
+import { getWalletAccessControls, getWalletResourceId } from '../../utils/lit'
 
 Modal.setAppElement('#__next')
 
 const Connect = () => {
+
+    const litNodeClient = new LitJsSdk.LitNodeClient()
+    litNodeClient.connect();
 
     // -- prepare
     const router = useRouter()
@@ -35,18 +35,25 @@ const Connect = () => {
     const [walletAddress, setWalletAddress] = useState(null)
     const [connectingGather, setConnectingGather] = useState(false)
     const [connectedGatherId, setConnectedGatherId] = useState(null)
+    const [action, setAction] = useState(null)
 
     useEffect(async () => {
         console.log("--- Mounted Connect ---")
         router.prefetch('/')
+
+        // -- prepare params
+        const params = (new URL(document.location)).searchParams;
+        const action = params.get('action');
+        const next = params.get('next')
+        setAction(action)
         
-        // -- static states
-        var _isConnectingGather = location.hash == '#connect-gather';
+        // -- states
+        var _isConnectingGather = action == 'connect-gather';
 
         var _hasStoredAuth = storedAuth() != null;
         var _storedWalletAddress = JSON.parse(storedAuth())?.address;
 
-        var _hasStoredNetwork = storedNetwork() != null;
+        // var _hasStoredNetwork = storedNetwork() != null;
         var _storedNetwork = storedNetwork();
 
         var _hasStoredGatherId = storedGatherPlayerId() != null;
@@ -66,15 +73,6 @@ const Connect = () => {
             setWalletAddress(_storedWalletAddress)
         }
 
-        // -- check if network is selected and is NOT connecting to the network
-        if( _hasStoredNetwork && ! _isConnectingGather ){
-
-            // -- push hash to url
-            console.log(`Has Chosen Network: ${_storedNetwork}`);
-            const href = `/connect-wallet#${_storedNetwork}`;
-            router.push(href);
-        }
-
         // -- check if gather id is registered
         if( _hasStoredGatherId ){
             setConnectedGatherId(_storedGatherId);
@@ -84,21 +82,69 @@ const Connect = () => {
         // -- get hash is connect-gather
         console.log("## Location Hash:", location.hash)
 
-        // -- check if hash is `#connect-gather`
+        // -- check if param is `connect-gather`
         if( _isConnectingGather ){
             console.log("Connecting Gather Account");
             setConnectingGather(true)
+
             setTimeout( async () => {
-                const { isRegistered, gatherPlayerId } = await fetchIsWalletRegistered(_storedWalletAddress);
+
+                // -- prepare
+                // access a resource via a JWT
+                const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: _storedNetwork});
+
+                const walletAccessControl = getWalletAccessControls(authSig.address, _storedNetwork);
+                
+                const walletResourceId = JSON.parse(storedResourceId())
+
+                const jwt = await litNodeClient.getSignedToken({ 
+                    accessControlConditions: walletAccessControl, 
+                    chain: _storedNetwork, 
+                    authSig, 
+                    resourceId: walletResourceId
+                })
+
+                // -- validate
+                if( ! walletAccessControl ) {
+                    console.error("useEffect() -> walletAccessControl cannot be empty.");
+                    return;
+                }
+
+                if( ! walletResourceId ) {
+                    console.error("useEffect() -> walletResourceId cannot be empty.");
+                    return;
+                }
+                
+                if( ! jwt ) {
+                    console.error("useEffect() -> jwt cannot be empty.");
+                    return;
+                }
+
+                console.log("walletAccessControl: ", walletAccessControl);
+                console.log("walletResourceId: ", walletResourceId);
+                console.log("jwt: ", walletResourceId);
+                console.log("JWT:", jwt);
+
+                // -- good down there
+                const { isRegistered, gatherPlayerId } = await fetchWalletInfo(_storedWalletAddress, jwt);
                 console.log("isRegistered:", isRegistered)
                 console.log("gatherPlayerId:", gatherPlayerId)
 
-                if(isRegistered){
-                    setStoredGatherPlayerId(gatherPlayerId);
-                    setConnectedGatherId(gatherPlayerId);
+                if( ! isRegistered){
+                    console.warn("Failed to fetchWalletInfo()");
+                    setConnectingGather(false);
+                    return;
                 }
-                setConnectingGather(false)
-            }, 1000);
+
+                setStoredGatherPlayerId(gatherPlayerId);
+                setConnectedGatherId(gatherPlayerId);
+                setConnectingGather(false);
+
+                // -- push to page based on action
+                if(next == 'create'){
+                    router.push('/create')
+                }
+            }, 2000);
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,52 +156,75 @@ const Connect = () => {
     // @return { void } 
     //
     const onClickNetwork = (chain) => {
-        console.log("onClickNetwork:", chain)
+        console.warn("↓↓↓↓↓ onClickNetwork ↓↓↓↓↓");
 
+        // -- validate
+        if( ! chain ){
+            console.error("onClickNetwork() -> chain cannot be empty");
+            return;
+        }
+        
         // -- prepare
-        const href = `/connect-wallet#${chain}`;
+        // const href = `/connect-wallet#${chain}`;
 
         // -- setter
         setConnectedNetwork(chain)
-        setStoredNetwork(chain);
+        // setStoredNetwork(chain);
 
         // -- execute
-        router.push(href);
+        // router.push(href);
     }
 
 
     //
     // Event:: When a wallet is chosen
-    // @param { String } wallet address
+    // @param { String } walletProvider (eg. MetaMask, TrustWallet) etc.
     // @return { void } 
     //
-    const onClickConnectWallet = async (wallet) => {
-        console.log(`onClickConnectWallet: ${wallet}`);
-        console.log(`Network: ${connectedNetwork}`);
-
+    const onClickConnectWallet = async (walletProvider) => {
+        console.warn("↓↓↓↓↓ onClickConnectWallet ↓↓↓↓↓");
+    
         // == before validation ==
-        // -- prepare
-        const hash = router.asPath.split('#')[1];
-
         // -- validate
         if(connectedNetwork == null){
             alert("Please select a network to connect");
             return;
+        }
+        if( ! walletProvider){
+            console.error("onClickConnectWallet() -> walletProvider cannot be empty.")
         }
 
         // == after validation ==
         // -- reset
         removeStoredAuth();
         removeWeb3Modal();
-
-        // -- prepare
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: connectedNetwork});   
         
+        // -- auth
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: connectedNetwork});
+        
+        // -- Provisoning access to a resource
+        const walletAccessControls = getWalletAccessControls(authSig.address, connectedNetwork);
+        const walletResourceId = getWalletResourceId(authSig.address);
+
+        const signed = await litNodeClient.saveSigningCondition({ 
+            accessControlConditions: walletAccessControls, 
+            chain: connectedNetwork, 
+            authSig, 
+            resourceId: walletResourceId,
+        });
+
+        if( ! signed ){
+            console.error("onClickConnectWallet() -> not signed");
+            return;
+        }
+
+        console.log("Signed:", signed);
+
         // -- setter
         setStoredNetwork(connectedNetwork);
         setWalletIsConnected(true)
         setWalletAddress(authSig.address)
-        console.log("Authed:", authSig);
+        setStoredResourceId(JSON.stringify(walletResourceId));
 
         // router.push('/');
         // document.getElementById('connect-wallet').click()
@@ -166,13 +235,19 @@ const Connect = () => {
     // @return { void } 
     //
     const onClickDisconnect = async () => {
-        console.log("onClickDisconnect()")
+        console.warn("↓↓↓↓↓ onClickDisconnect ↓↓↓↓↓");
 
-        // -- execute
+        // -- reset states
         setWalletIsConnected(false)
         setConnectedGatherId(null)
+        setConnectedNetwork(null)
+
+        // -- reset storage
         removeStoredAuth();
         removeStoredGatherPlayerId()
+        removeStoredNetwork()
+        removeWeb3Modal()
+        removeStoredResourceId()
     }
 
     //
@@ -182,15 +257,14 @@ const Connect = () => {
     // @return { void } 
     //
     const onClickConnectGather = async() => {
-        console.log(accessControlConditionTemplate)
-        console.log(resourceIds)
+        console.warn("↓↓↓↓↓ onClickConnectGather ↓↓↓↓↓");
 
         // -- prepare
         const authSig = JSON.parse(storedAuth());
 
         // -- prepare queries
         const queryAuthSig = { authSig: JSON.stringify(authSig) }
-        const queryGatherUrl = { gatherUrl: window.location.origin + window.location.pathname + '#connect-gather' }
+        const queryGatherUrl = { gatherUrl: `${window.location.origin}${window.location.pathname}?action=connect-gather${action != null ? `&next=create` : ''}` }
         
         // -- prepare redirect url
         const redirectUrl = getGatherRedirectUrl({
@@ -205,14 +279,6 @@ const Connect = () => {
         // -- redirect user to gather auth page
         window.location.href = redirectUrl;
         
-        // window.location = `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
-        // redirectUrl,
-        // )}`
-        // console.log("Location:", `https://gather.town/getPublicId?redirectTo=${encodeURIComponent(
-        //     redirectUrl,
-        //     )}`)
-
-
         // const jwts = await Promise.all(
         // resourceIds.map(async (rid) => {
         //     const resourceId = rid.resourceId
@@ -278,10 +344,9 @@ const Connect = () => {
                             <div className="mt-4 grid grid-cols-5">
                                 { chains.map((chain, i) => {
                                     
-                                    const hash = router.asPath.split('#')[1];
-                                    const selectedNetwork = hash == chain ? 'bg-lit-400/.75' : '';
+                                    const isSelected = connectedNetwork == chain ? 'bg-lit-400/.75' : '';
                                     
-                                    return <IconButton key={i} name={chain} callback={() => onClickNetwork(chain)} selected={selectedNetwork}/>
+                                    return <IconButton key={i} name={chain} callback={() => onClickNetwork(chain)} selected={isSelected}/>
                                 }) }
                             </div>
 
@@ -314,7 +379,7 @@ const Connect = () => {
 
                     
                     {
-                        // -- GatherId NOT stored/connected
+                        // -- GatherId NOT stored/connecteds
                         (connectedGatherId == null && ! connectingGather)
                         ?
                         <>
