@@ -5,7 +5,9 @@ function MyApp({ Component, pageProps }) {
   // get layout from component or use default
   const getLayout = Component.getLayout || ((page) => page)
   
-  return getLayout(<Component {...pageProps} />)
+  return getLayout(
+      <Component {...pageProps} />
+  )
 
 }
 

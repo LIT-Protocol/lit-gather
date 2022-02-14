@@ -9,12 +9,14 @@ const Intro = () => {
 
     const router = useRouter();
 
+    //
+    // Go to /create page
+    // @return { void }
+    //
     const onCreateClick = () => {
         console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
-
         router.push(storedAuth() ? '/create' : '/connect-wallet?action=create')
     }
-
 
     return (
         <MaxWidth>

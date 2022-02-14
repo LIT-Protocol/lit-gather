@@ -4,6 +4,12 @@
 // @return { String } wallet address
 //
 export const shortenWalletAddress = (addr) => {
+
+    if( ! addr ){
+        console.error("shortenWalletAddress() -> addr cannot be empty.");
+        return null;
+    }
+
     return addr.substring(0, 5) + '...' + addr.substring(addr.length - 4, addr.length);
 }
 

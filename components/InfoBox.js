@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import IconButton from '../components/IconButton'
-import { storedAuth } from '../utils/storage';
+import { useAppContext } from '../state/AppProvider';
 
 export const InfoBox = () => {
 
-    const [network, setNetwork] = useState('');
+    const appContext = useAppContext()
+    const { connectedNetwork } = appContext.state;
 
-    useEffect(() => {
-        if(storedAuth() != null){
-            setNetwork(localStorage['lit-network']);
-            console.log("Network:", network);
-        }
-    }, [])
-
-    return <div className="">
-        {network != null ? (
-            <IconButton name={network} size={'sm'}/>
+    return <div className="text-white">
+        {connectedNetwork != null ? (
+            <IconButton name={connectedNetwork} size={'sm'}/>
         ): ''}
     </div>;
 };

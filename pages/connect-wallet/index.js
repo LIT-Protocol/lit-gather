@@ -2,7 +2,6 @@ import { LIT_CHAINS } from 'lit-js-sdk'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
-import LitJsSdk from 'lit-js-sdk'
 import { LogoutIcon } from '@heroicons/react/solid'
 import accessControlConditionTemplate from '../../utils/access-control-condition-template'
 import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId, removeStoredNetwork, storedResourceId, setStoredResourceId, removeStoredResourceId } from '../../utils/storage'
@@ -16,29 +15,48 @@ import { H2Step } from '../../components/Ui/H2Step'
 import LoadingIcon from '../../components/Icon/LoadingIcon'
 import InfoRow from '../../components/InfoRow'
 import { getWalletAccessControls, getWalletResourceId } from '../../utils/lit'
+import MainLayout from '../../components/Layout/MainLayout'
+import { useAppContext } from '../../state/AppProvider'
+
 
 Modal.setAppElement('#__next')
 
-const Connect = () => {
+const ConnectModal = () => {
 
-    const litNodeClient = new LitJsSdk.LitNodeClient()
-    litNodeClient.connect();
+    // -- prepare state from context
+    const appContext = useAppContext();
+
+    const { 
+        connectedWalletAddress,
+        connectedNetwork,
+        connectedGatherId,
+        walletIsConnected,
+        connectingGather,
+        action
+    } = appContext.state;
+
+    const { 
+        setConnectedWalletAddress, 
+        setConnectedNetwork, 
+        setConnectedGatherId, 
+        setWalletIsConnected, 
+        setConnectingGather, 
+        setAction, 
+    } = appContext.methods;
+    
+    const { litNodeClient, LitJsSdk } = appContext.lit;
 
     // -- prepare
     const router = useRouter()
     const chains = Object.keys(LIT_CHAINS);
     const wallets = ['MetaMask', 'WalletConnect'];
+
+    // -- local state
+    const [selectedNetwork, setSelectedNetwork] = useState(null)
     
     // -- state
-    const [connectedNetwork, setConnectedNetwork] = useState(null)
-    const [walletIsConnected, setWalletIsConnected] = useState(false)
-    const [walletAddress, setWalletAddress] = useState(null)
-    const [connectingGather, setConnectingGather] = useState(false)
-    const [connectedGatherId, setConnectedGatherId] = useState(null)
-    const [action, setAction] = useState(null)
-
     useEffect(async () => {
-        console.log("--- Mounted Connect ---")
+        console.log("--- useEffect ConnectModal ---")
         router.prefetch('/')
 
         // -- prepare params
@@ -70,7 +88,7 @@ const Connect = () => {
 
             // -- set wallet states
             setWalletIsConnected(true)
-            setWalletAddress(_storedWalletAddress)
+            setConnectedWalletAddress(_storedWalletAddress)
         }
 
         // -- check if gather id is registered
@@ -84,6 +102,8 @@ const Connect = () => {
 
         // -- check if param is `connect-gather`
         if( _isConnectingGather ){
+
+            // -- THIS PART MAKE IT NULL
             console.log("Connecting Gather Account");
             setConnectingGather(true)
 
@@ -164,15 +184,9 @@ const Connect = () => {
             return;
         }
         
-        // -- prepare
-        // const href = `/connect-wallet#${chain}`;
-
         // -- setter
-        setConnectedNetwork(chain)
-        // setStoredNetwork(chain);
-
-        // -- execute
-        // router.push(href);
+        // setConnectedNetwork(chain)
+        setSelectedNetwork(chain)
     }
 
 
@@ -181,17 +195,17 @@ const Connect = () => {
     // @param { String } walletProvider (eg. MetaMask, TrustWallet) etc.
     // @return { void } 
     //
-    const onClickConnectWallet = async (walletProvider) => {
-        console.warn("↓↓↓↓↓ onClickConnectWallet ↓↓↓↓↓");
+    const onClickWallet = async (walletProvider) => {
+        console.warn("↓↓↓↓↓ onClickWallet ↓↓↓↓↓");
     
         // == before validation ==
         // -- validate
-        if(connectedNetwork == null){
+        if(selectedNetwork == null){
             alert("Please select a network to connect");
             return;
         }
         if( ! walletProvider){
-            console.error("onClickConnectWallet() -> walletProvider cannot be empty.")
+            console.error("onClickWallet() -> walletProvider cannot be empty.")
         }
 
         // == after validation ==
@@ -200,31 +214,32 @@ const Connect = () => {
         removeWeb3Modal();
         
         // -- auth
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: connectedNetwork});
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: selectedNetwork});
         
         // -- Provisoning access to a resource
-        const walletAccessControls = getWalletAccessControls(authSig.address, connectedNetwork);
+        const walletAccessControls = getWalletAccessControls(authSig.address, selectedNetwork);
         const walletResourceId = getWalletResourceId(authSig.address);
 
         const signed = await litNodeClient.saveSigningCondition({ 
             accessControlConditions: walletAccessControls, 
-            chain: connectedNetwork, 
+            chain: selectedNetwork, 
             authSig, 
             resourceId: walletResourceId,
         });
 
         if( ! signed ){
-            console.error("onClickConnectWallet() -> not signed");
+            console.error("onClickWallet() -> not signed");
             return;
         }
 
         console.log("Signed:", signed);
 
         // -- setter
-        setStoredNetwork(connectedNetwork);
         setWalletIsConnected(true)
-        setWalletAddress(authSig.address)
+        setConnectedWalletAddress(authSig.address)
         setStoredResourceId(JSON.stringify(walletResourceId));
+        setConnectedNetwork(selectedNetwork)
+        setStoredNetwork(selectedNetwork);
 
         // router.push('/');
         // document.getElementById('connect-wallet').click()
@@ -238,9 +253,13 @@ const Connect = () => {
         console.warn("↓↓↓↓↓ onClickDisconnect ↓↓↓↓↓");
 
         // -- reset states
-        setWalletIsConnected(false)
         setConnectedGatherId(null)
         setConnectedNetwork(null)
+        setConnectedWalletAddress(null)
+        setWalletIsConnected(false)
+
+        // -- reset local state
+        setSelectedNetwork(null)
 
         // -- reset storage
         removeStoredAuth();
@@ -256,8 +275,8 @@ const Connect = () => {
     // backend API to store user credential (wallet address, and gather id)
     // @return { void } 
     //
-    const onClickConnectGather = async() => {
-        console.warn("↓↓↓↓↓ onClickConnectGather ↓↓↓↓↓");
+    const onClickGather = async() => {
+        console.warn("↓↓↓↓↓ onClickGather ↓↓↓↓↓");
 
         // -- prepare
         const authSig = JSON.parse(storedAuth());
@@ -323,7 +342,7 @@ const Connect = () => {
     return (
         <>
             <SEOHeader subtitle="Connect Wallet" />
-            <LayoutHeader/>
+            {/* <LayoutHeader/> */}
             <Modal
                 isOpen={true} // The modal should always be shown on page load, it is the 'page'
                 onRequestClose={() => onModalClosed()}
@@ -334,7 +353,6 @@ const Connect = () => {
 
                 <div className="overflow-auto h-5/6">
 
-                    
                     {
                         ! walletIsConnected ? (
                         <>
@@ -344,7 +362,7 @@ const Connect = () => {
                             <div className="mt-4 grid grid-cols-5">
                                 { chains.map((chain, i) => {
                                     
-                                    const isSelected = connectedNetwork == chain ? 'bg-lit-400/.75' : '';
+                                    const isSelected = selectedNetwork == chain ? 'bg-lit-400/.75' : '';
                                     
                                     return <IconButton key={i} name={chain} callback={() => onClickNetwork(chain)} selected={isSelected}/>
                                 }) }
@@ -355,7 +373,7 @@ const Connect = () => {
 
                             <div className="mt-4 grid grid-cols-5">
                                 {  wallets.map((wallet, i) => {
-                                    return <IconButton key={i} name={wallet} callback={() => onClickConnectWallet(wallet)}/>
+                                    return <IconButton key={i} name={wallet} callback={() => onClickWallet(wallet)}/>
                                 })}
                             </div>
 
@@ -365,7 +383,7 @@ const Connect = () => {
                             <div>
                                 <h1 className="mt-4 text-white">Connected Wallet:</h1>
                                 <InfoRow 
-                                    text={`${connectedNetwork} : ${ walletAddress }`}
+                                    text={`${connectedNetwork} : ${ connectedWalletAddress }`}
                                     action={{
                                         callback: onClickDisconnect,
                                         icon: <LogoutIcon/>,
@@ -387,7 +405,7 @@ const Connect = () => {
                             <H2Step step="3" text="Connect Gather.town" />
                             <div className="mt-2 ml-1 ">
                                 <IconButton name="gather"
-                                    callback={onClickConnectGather}
+                                    callback={onClickGather}
                                 />
                             </div>
                         </>
@@ -426,4 +444,13 @@ const Connect = () => {
     )
 }
 
-export default Connect
+export default ConnectModal
+
+
+ConnectModal.getLayout = function getLayout(page) {
+    return (
+        <MainLayout>
+            {page }
+        </MainLayout>
+    )
+  }

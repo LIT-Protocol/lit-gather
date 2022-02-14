@@ -1,7 +1,7 @@
-import MainLayout from '../components/Layout/MainLayout'
+import MainLayout from '../../../components/Layout/MainLayout'
 import { useEffect } from 'react';
 import LitJsSdk from 'lit-js-sdk'
-import MaxWidth from '../components/Layout/MaxWidth';
+import MaxWidth from '../../../components/Layout/MaxWidth';
 
 const create = () => {
 
