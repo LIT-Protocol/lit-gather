@@ -1,10 +1,23 @@
 import MainLayout from "../../components/Layout/MainLayout";
+import SideMenu from "../../components/SideMenu";
 
 const Dashboard = () => {
     return (
-        <div className="text-white text-5xl">
-            Dashboard
+
+        <div className="bg-lit-dark w-64">
+            {/* ===== Left ===== */}
+            <div className="h-screen pt-4">
+
+                <SideMenu/>
+
+            </div>
+
+            {/* ===== Right ===== */}
+            <div>
+
+            </div>
         </div>
+
     );
 }
 

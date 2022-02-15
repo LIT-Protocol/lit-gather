@@ -15,7 +15,7 @@ const Intro = () => {
     //
     const onCreateClick = () => {
         console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
-        router.push(storedAuth() ? '/create' : '/connect-wallet?action=create')
+        router.push('/dashboard?action=create')
     }
 
     return (
