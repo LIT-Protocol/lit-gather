@@ -1,23 +1,12 @@
 import MainLayout from "../../components/Layout/MainLayout";
 import SideMenu from "../../components/SideMenu";
+import DashboardLayout from "../../components/Layout/Dashboard";
 
 const Dashboard = () => {
     return (
-
-        <div className="bg-lit-dark w-64">
-            {/* ===== Left ===== */}
-            <div className="h-screen pt-4">
-
-                <SideMenu/>
-
-            </div>
-
-            {/* ===== Right ===== */}
-            <div>
-
-            </div>
-        </div>
-
+        <DashboardLayout>
+            Opps.. cannot find any spaces
+        </DashboardLayout>
     );
 }
 

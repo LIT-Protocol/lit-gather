@@ -15,7 +15,7 @@ const Intro = () => {
     //
     const onCreateClick = () => {
         console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
-        router.push('/dashboard?action=create')
+        router.push('/create')
     }
 
     return (

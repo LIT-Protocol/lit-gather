@@ -26,7 +26,7 @@ const Instruction = () => {
             <MaxWidth>
                 <div className="grid md:grid-cols-2 md:gap-28 grid-cols-1">
                     {/* === Left Side */}
-                    <div id="instruction-1" className="w-full mt-12 pt-2">
+                    <div id="how-to-create-a-space-within-gather" className="w-full mt-12 pt-2">
                         <h1 className="leading-tight text-3xl text-white">
                         How to create a space within Gather.town
                         </h1>
@@ -58,7 +58,7 @@ const Instruction = () => {
             <MaxWidth>
                 <div className="grid md:grid-cols-2 md:gap-28 grid-cols-1">
                     {/* === Left Side */}
-                    <div  id="instruction-2" className="w-full mt-12 pt-2">
+                    <div  id="how-to-grant-admin-access" className="w-full mt-12 pt-2">
                         <h1 className="leading-tight text-3xl text-white">
                         How to grant gather@litprotocol.com admin access to your gather space
                         </h1>
@@ -90,7 +90,7 @@ const Instruction = () => {
             <MaxWidth>
                 <div className="grid md:grid-cols-2 md:gap-28 grid-cols-1">
                     {/* === Left Side */}
-                    <div  id="instruction-3" className="w-full mt-12 pt-2">
+                    <div  id="how-to-collect-coordinates" className="w-full mt-12 pt-2">
                         <h1 className="leading-tight text-3xl text-white">
                         How to collect the x,y coordinates and wall thickness for the bounding box of her private space
 

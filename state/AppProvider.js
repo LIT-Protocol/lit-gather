@@ -10,6 +10,52 @@ const AppContext = createContext();
 // Export Provider
 export function AppProvider({ children }){
 
+    // -- Access Control Conditions Modal 
+    
+    // 
+    // Close Access Control Conditions Modal
+    // @return { void } 
+    //
+    function closeModal() {
+        console.log("close share modal");
+        ACCM.ReactContentRenderer.unmount(document.getElementById("shareModal"));
+    }
+
+    //
+    // Open the Access Control Conditions Modal
+    // @param { HTMLElement } 
+    // @return { void }
+    //
+    function openShareModal(e) {
+        console.log("open share modal");
+        ACCM.ReactContentRenderer.render(
+            ACCM.ShareModal,
+            // props to be passed to the ShareModal component.  These are documented here: https://github.com/LIT-Protocol/lit-access-control-conditions-modal#props
+            {
+            sharingItems: [],
+            onAccessControlConditionsSelected: function (accessControlConditions) {
+                console.log(
+                    "accessControlConditions from ShareModal: ",
+                    accessControlConditions
+                );
+                e.value = JSON.stringify(accessControlConditions);
+                closeModal();
+                // now, use the accessControlConditions to provision access using one of the methods below:
+                // https://github.com/LIT-Protocol/lit-js-sdk#dynamic-content---provisoning-access-to-a-resource
+                // or https://github.com/LIT-Protocol/lit-js-sdk#static-content---storing-any-static-content-and-manually-storing-the-metadata
+            },
+            onClose: closeModal,
+            getSharingLink: function (sharingItem) {
+                console.log("getSharingLink", sharingItem);
+                return "";
+            },
+            showStep: "ableToAccess",
+            },
+            // target DOM node
+            document.getElementById("shareModal")
+        );
+    }
+    
     // -- prepare router
     const router = useRouter()
 
@@ -90,7 +136,11 @@ export function AppProvider({ children }){
             setConnectingGather,
             
             // -- page action based on param
-            setAction
+            setAction,
+
+            // -- libraries
+            openShareModal,
+
         },
         lit:{
             litNodeClient,
@@ -100,7 +150,13 @@ export function AppProvider({ children }){
 
     return (
         <AppContext.Provider value={sharedState}>
+            <div id="shareModal"></div>
             { children }
+
+            {/* ----- Required JS libraries ----- */}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/>
+            <script src="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/index.js"></script>
+
         </AppContext.Provider>
     )
 }

@@ -2,7 +2,7 @@
   "name": "lit-gather-website",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "HTTPS=true SSL_CRT_FILE=/Users/anson/Projects/localhost.pem SSL_KEY_FILE=/Users/anson/Projects-key.pem next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
