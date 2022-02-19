@@ -151,7 +151,10 @@ export function AppProvider({ children }){
     return (
         <AppContext.Provider value={sharedState}>
             <div id="shareModal"></div>
+
+            {/* ----- CONTENT AREA ----- */}
             { children }
+            {/* ----- ...CONTENT AREA ----- */}
 
             {/* ----- Required JS libraries ----- */}
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/>

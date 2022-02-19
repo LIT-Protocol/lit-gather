@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import Btn from '../../components/Ui/Btn';
 import { useAppContext } from '../../state/AppProvider';
 import { CogIcon, PlusIcon } from '@heroicons/react/solid';
+import { storedAuth, storedNetwork } from '../../utils/storage';
+import { storeLockedSpaces } from '../../utils/fetch';
 
 const create = () => {
 
@@ -22,10 +24,19 @@ const create = () => {
     
     // -- state
     const [value, setValue] = useState(0); // integer state
-    const [spaceId, setSpaceId] = useState(null)
-    const [granted, setGranted] = useState(false)
+    const [spaceId, setSpaceId] = useState('tXVe5OYt6nHS9Ey5\\lit-protocol')
+    const [granted, setGranted] = useState(true)
     const [initialCoordinates, setInitialCoordinates] = useState("31, 32");
-    const [restrictedSpaces, setRestrictedSpaces] = useState([])
+    const [restrictedSpaces, setRestrictedSpaces] = useState([
+        {
+            name: 'testing3',
+            topLeft: '44,34',
+            bottomRight: '51,36',
+            wallThickness: 0,
+            accessControls: '[{"contractAddress":"","standardContractType":"","chain":"ethereum","method":"","parameters":[":userAddress"],"returnValueTest":{"comparator":"=","value":"0xDDaA68B3604a4550582f5E05Aab16C852eF3e3bC"}}]',
+            humanised: 'Controls wallet with address  0xDDaA68B3604a4550582f5E05Aab16C852eF3e3bC'
+        }
+    ])
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
@@ -50,6 +61,7 @@ const create = () => {
     //
     const onClickAddRestrictedSpace = async () => {
 
+        // -- prepare
         const accs = document.getElementById('form-accs').value;
         const humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: JSON.parse(accs)})
         var _restrictedSpaces = restrictedSpaces;
@@ -79,10 +91,15 @@ const create = () => {
 
     //
     // Get compiled form data
+    // @return { Object } 
     //
-    const getCompiledData = () => {
+    const getCompiledData = async () => {
+
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()})
+        console.log("authSig: ", authSig)
+
         return {
-            connectedWalletAddress,
+            authSig,
             spaceId,
             initialCoordinates,
             restrictedSpaces
@@ -90,7 +107,11 @@ const create = () => {
     }
 
 
-    const onClickSubmit = () => {
+    //
+    // Submit form
+    // @return { void }
+    //
+    const onClickSubmit = async () => {
         console.log("onClick submit");
 
         // -- validate
@@ -103,8 +124,43 @@ const create = () => {
             return
         }
 
-        const compiledData = getCompiledData();
+        // -- prepare
+        const compiledData = await getCompiledData();
         console.log("compiledData: ", compiledData)
+
+        // -- sign all spaces
+        compiledData.restrictedSpaces.forEach(async (space) => {
+
+            // -- prepare
+            const accessControlConditions = JSON.parse(space.accessControls);
+            const chain = accessControlConditions[0].chain;
+            const resourceId = {
+                baseUrl: 'gather.town',
+                path: '/app/' + spaceId.split('\\')[0] + '/' + spaceId.split('\\')[1],
+                orgId: "",
+                role: "",
+                extraData: JSON.stringify({
+                    name: space.name,
+                    topLeft: space.topLeft,
+                    bottomRight: space.bottomRight,
+                    wallThickness: space.wallThickness,
+                }),
+            }
+
+            // -- sign
+            await litNodeClient.saveSigningCondition({
+                accessControlConditions, 
+                chain, 
+                authSig: compiledData.authSig, 
+                resourceId, 
+                permanant: false,
+            })
+        })
+
+        // -- store
+        const store = await storeLockedSpaces(compiledData);
+
+        console.log("Store: ", store)
     }
 
     return (
@@ -127,7 +183,7 @@ const create = () => {
                         <a target="_blank" href="./instruction#how-to-create-a-space-within-gather" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                     </div>
                     <div className='mt-2'>
-                        <input onChange={(e) => setSpaceId(e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5\\lit-protocol" />
+                        <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5\\lit-protocol" />
                     </div>
 
                     {/* Step 2 */}
@@ -214,14 +270,14 @@ const create = () => {
                                         <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Wall Thickness</span></div>
                                     </div>    
                                 </div>
-                                <div className='text-transparent text-xs w-24'>Action</div>
+                                <div className='text-white text-center text-xs w-24 bg-black'>Action</div>
                             </div>
 
                             {/* Table Rows */}
                             {
                                 restrictedSpaces.map((space, i) => {
                                     return (
-                                        <div className='flex border border-lit-400 mt-2'>
+                                        <div key={i} className='flex border border-lit-400 mt-2'>
                                             <div className='w-full '>
                                                 <div className='grid grid-cols-4 text-sm text-center border-b border-lit-400'>
                                                     <div className=''>{ space.name }</div>

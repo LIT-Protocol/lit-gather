@@ -1,5 +1,4 @@
-//
-// Check if wallet address is registered from the backend
+// (POST) Check if wallet address is registered from the backend
 // @param { String } wallet address
 // @param { String } jwt token
 // @return { Object } data
@@ -7,7 +6,7 @@
 // @prop { String } gatherId
 // @prop { String } walletAddress
 //
-const fetchWalletInfo = async (walletAddress, jwt) => {
+export const fetchWalletInfo = async (walletAddress, jwt) => {
 
     console.warn("↓↓↓↓↓ fetch.js/fetchWalletInfo ↓↓↓↓↓");
 
@@ -44,4 +43,52 @@ const fetchWalletInfo = async (walletAddress, jwt) => {
     return data
 }
 
-export default fetchWalletInfo
+
+//
+// (POST) Store locked spaces to the database
+// @param { Object } compiledData
+// @return { Object } result
+//
+export const storeLockedSpaces = async (compiledData) => {
+    
+    console.warn("↓↓↓↓↓ fetch.js/storeLockedSpaces ↓↓↓↓↓");
+    
+    // -- validate
+    if( ! compiledData ){
+        console.error('storeLockedSpaces() -> compiledData cannot be empty.')
+        return;
+    }
+
+    // -- prepare
+    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/store-locked-spaces';
+
+    // -- fetch
+    const res = await fetch(API,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(compiledData)
+    });
+
+    const data = await res.json();
+
+    return data;
+
+}
+
+//
+// (GET) Get all locked spaces
+//
+export const fetchLockedSpaces = async () => {
+    console.warn("↓↓↓↓↓ fetch.js/fetchLockedSpaces ↓↓↓↓↓");
+
+    // -- prepare
+    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/locked-spaces';
+
+    const res = await fetch(API);
+
+    const data = await res.json();
+
+    return data;
+}
