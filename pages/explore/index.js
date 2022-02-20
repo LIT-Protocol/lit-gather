@@ -148,7 +148,7 @@ const Explore = ({data}) => {
                 </div>
                 
                 {/* --- Nav --- */}
-                <div className="mt-24 text-white">
+                <div className="mt-24 text-white ">
                     <ul className="flex justify-between border-b border-lit-400/.5">
                         <li className="border-b border-lit-400 border-b-2 px-4 pb-1">Trending</li>
                         <li className="opacity-5">Lit Genesis</li>
@@ -168,13 +168,12 @@ const Explore = ({data}) => {
                     </div>
                     :
                     // -- (success) render List
-                    <div className="mt-10 grid grid-cols-3 gap-2">
+                    <div className="mt-10 grid grid-cols-3 gap-10">
                         { data.spaces.map((space) => {
                             return (
                                 <SpaceCard
                                     space={space}
                                     restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                    buttonText="Join"
                                     buttonAction={() => auth(() => onClickJoin(space))}
                                 />
                             )
