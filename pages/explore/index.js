@@ -160,7 +160,7 @@ const Explore = ({data}) => {
 
                 {/* --- List of Spaces --- */}
                 { 
-                    data.length <= 0
+                    data?.error
                     ?
                     // -- (error) not spaces found
                     <div className="text-center text-white w-full mt-10">

@@ -14,7 +14,7 @@ const SpaceCard = ({space, restrictedAreas, buttonAction}) => {
         <div onClick={() => buttonAction(space) } className="cursor-pointer border-4 border-lit-100 hover:border-lit-400 transition hover:drop-shadow-2xl text-lit-100 bg-white overflow-hidden text-xs rounded-xl">
 
             <div className="h-48 flex justify-center items-center overflow-hidden">
-                <img className="object-cover w-full h-full" src="https://picsum.photos/seed/picsum/1000/1000"/>
+                <img className="object-cover w-full h-full" src={space.thumbnailUrl }/>
             </div>
 
             <div className="p-4 text-center">
