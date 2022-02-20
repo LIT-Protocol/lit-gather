@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import LitJsSdk from 'lit-js-sdk'
 import MaxWidth from '../../components/Layout/MaxWidth';
 import Image from 'next/image'
+import SEOHeader from '../../components/SEO/SEOHeader';
 
 const Instruction = () => {
 
@@ -16,6 +17,7 @@ const Instruction = () => {
 
     return (
         <>
+            <SEOHeader subtitle="Instruction"/>
             <h1 className="leading-tight text-5xl text-white text-center mt-16">
             Instruction
             </h1>

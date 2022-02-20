@@ -3,12 +3,40 @@ import { useContext, useState, useEffect } from "react"
 import LitJsSdk from 'lit-js-sdk'
 import { removeStoredAuth, removeStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
 import { useRouter } from "next/router";
+import Modal from "react-modal/lib/components/Modal";
+import SEOHeader from "../components/SEO/SEOHeader";
+import ConnectModal from "../pages/connect-wallet";
 
 // Create Context Object
 const AppContext = createContext();
 
 // Export Provider
 export function AppProvider({ children }){
+
+    //
+    // Check is authed
+    // @return { Boolean } 
+    //
+    const isAuthed = () => {
+        return storedAuth && storedNetwork(); 
+    }
+
+    // 
+    // Middleware function that makes sure user is metamask logged
+    // @param { Function } callback
+    // @return { void } 
+    //
+    const auth = (callback) => {
+
+        // -- validate
+        if( ! storedAuth() || !storedNetwork()){
+            setConnectModalOpened(true);
+            return;
+        }
+
+        // -- execute
+        callback();
+    }
 
     // -- Access Control Conditions Modal 
     
@@ -75,6 +103,9 @@ export function AppProvider({ children }){
     // -- (String) page action based on param
     const [action, setAction] = useState(null)
 
+    // -- Modal
+    const [connectModalOpened, setConnectModalOpened] = useState(false);
+
     // -- Listeners
     const handleMetamaskChanges = () => {
 
@@ -123,7 +154,10 @@ export function AppProvider({ children }){
             connectingGather,
             
             // -- page action based on param
-            action
+            action,
+
+            // -- modals
+            connectModalOpened,
         },
         methods: {
             // -- connection state
@@ -141,7 +175,12 @@ export function AppProvider({ children }){
             // -- libraries
             openShareModal,
 
-            // -- alerts
+            // -- authentication
+            auth,
+            isAuthed,
+
+            // -- modals
+            setConnectModalOpened,
 
 
         },
@@ -153,6 +192,10 @@ export function AppProvider({ children }){
 
     return (
         <AppContext.Provider value={sharedState}>
+
+            {/* ----- Modals ----- */}
+            <ConnectModal/>
+                
             <div id="shareModal"></div>
             
             {/* ----- CONTENT AREA ----- */}

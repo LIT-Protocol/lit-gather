@@ -2,27 +2,32 @@ import MainLayout from '../../components/Layout/MainLayout'
 import { useEffect, useState } from 'react';
 import LitJsSdk, { humanizeAccessControlConditions } from 'lit-js-sdk'
 import DashboardLayout from '../../components/Layout/Dashboard';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import Btn from '../../components/Ui/Btn';
 import { useAppContext } from '../../state/AppProvider';
 import { CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedAuth, storedNetwork } from '../../utils/storage';
 import { storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
+import { coordinatesStringToArray } from '../../utils/helper';
+import SEOHeader from '../../components/SEO/SEOHeader';
+import Loading from '../../components/Ui/Loading';
 
 const create = () => {
 
     // -- prepare app context methods
     const appContext = useAppContext()
-    const { openShareModal } = appContext.methods;
+    const { openShareModal, isAuthed } = appContext.methods;
 
     // -- prepare
     const litNodeClient = new LitJsSdk.LitNodeClient()
     litNodeClient.connect()
+
+    const router = useRouter();
     
     // -- state
     const [value, setValue] = useState(0); // integer state
-    const [spaceId, setSpaceId] = useState('tXVe5OYt6nHS9Ey5/lit-protocol')
+    const [spaceId, setSpaceId] = useState(null)
     const [granted, setGranted] = useState(false)
     const [initialCoordinates, setInitialCoordinates] = useState("31,32");
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
@@ -31,16 +36,26 @@ const create = () => {
     const [name, setName] = useState(null)
     const [topLeft, setTopLeft] = useState(null)
     const [bottomRight, setBottomRight] = useState(null)
-    const [wallThickness, setWallThickness] = useState(null)
+    const [wallThickness, setWallThickness] = useState(0)
     const [accessControls, setAccessControls] = useState(null)
 
-    // // -- use effect
-    // useEffect(() => {
-    //     console.log("LitNodeClient: ", litNodeClient);
-    // }, []);
+    // -- page state
+    const [loaded, setLoaded] = useState(false)
+
+    // -- use effect
+    useEffect(() => {
+
+        if( ! isAuthed() ){
+            router.push('/')
+            return;
+        }
+
+        setLoaded(true);
+
+    }, []);
 
     // -- force update specifically for adding new row
-    function forceUpdate(){
+    function forceRender(){
         setValue(value => value + 1); // update the state to force render
     }
 
@@ -48,15 +63,61 @@ const create = () => {
     // Add new restricted space
     // @return { void }
     //
-    const onClickAddRestrictedSpace = async () => {
+    const onClickAddRestrictedArea = async () => {
 
         // -- prepare
         const accs = document.getElementById('form-accs').value;
-        const humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: JSON.parse(accs)})
-        var _restrictedSpaces = restrictedSpaces;
-        _restrictedSpaces.push({name, topLeft, bottomRight, wallThickness, accessControls: accs, humanised})
+
+        // -- validate
+        if( ! name ){
+            alert("❗ Name cannot be empty");
+            return;
+        }
+        if( ! topLeft ){
+            alert("❗ Top-Left cannot be empty");
+            return;
+        }
+        if( ! bottomRight ){
+            alert("❗ Bottom-Right cannot be empty");
+            return;
+        }
+        if ( ! topLeft.includes(',') ){
+            alert("❗ Invalid format for Top-Left");
+            return;
+        }
+        if ( ! bottomRight.includes(',') ){
+            alert("❗ Invalid format for Bottom-Right");
+            return;
+        }
+        if( ! accs ){
+            alert("❗ Access Control Conditions cannot be empty");
+            return;
+        }
+
+        // -- validate and prepare humanised version of access control conditions
+        let humanised;
+        try{
+            humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: JSON.parse(accs)})
+        }catch(e){
+            alert("❗ Invalid access control conditions");
+            return;
+        }
+
+        // -- execute
+        const _restrictedSpaces = restrictedSpaces;
+
+        _restrictedSpaces.push({
+            name, 
+            topLeft: topLeft.replaceAll(' ', ''),
+            bottomRight: bottomRight.replaceAll(' ', ''),
+            wallThickness: parseInt(wallThickness) || 0, 
+            accessControls: accs,
+            humanised
+        })
+
         setRestrictedSpaces(_restrictedSpaces)
-        forceUpdate()
+
+        forceRender()
     }
 
     //
@@ -68,11 +129,12 @@ const create = () => {
         var _restrictedSpaces = restrictedSpaces;
         _restrictedSpaces = _restrictedSpaces.slice(0, i).concat(_restrictedSpaces.slice(i + 1, _restrictedSpaces.length))
         setRestrictedSpaces(_restrictedSpaces)
-        forceUpdate()
+        forceRender()
     }
 
     // 
     // When access control conditions button is clicked
+    // @return { void }
     // 
     const onOpenShareModal = async () => {
         openShareModal(document.getElementById('form-accs'))
@@ -105,11 +167,12 @@ const create = () => {
 
         // -- validate
         if( ! spaceId ){
-            alert("Gather Space ID cannot be empty")
+            alert("❗ Gather Space ID cannot be empty")
             return
         }
+
         if( ! granted ){
-            alert("You must grant gather@litprotocol.com admin access")
+            alert("❗ You must grant gather@litprotocol.com admin access")
             return
         }
 
@@ -140,19 +203,22 @@ const create = () => {
         const stored = await storeLockedSpaces(compiledData);
         
         if(stored?.error){
-            console.error("❌ Error:", stored.error)
-            alert(`Oops.. something went wrong. ${stored.error}`);
+            console.error("❗ Error:", stored.error)
+            alert(stored.error);
             return;
         }
 
         if(stored?.success){
             console.log("✅ Store: ", stored)
+            router.push('/dashboard');
         }
 
     }
 
     return (
-        <DashboardLayout>
+        loaded ? <>
+            <SEOHeader subtitle="Create New Space"/>
+            <DashboardLayout>
             {/* === Left Side */}
             <div className="w-full mt-24">
                 <h1 className="leading-tight text-5xl text-white">
@@ -224,7 +290,7 @@ const create = () => {
                             <div className='grid grid-cols-2 mt-2'>
                                 <div className='flex justify-start'><span className='my-auto pr-2'>Wall Thickness:</span></div>
                                 <div className=''>
-                                    <input onChange={(e) => setWallThickness(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='0'/>    
+                                    <input onChange={(e) => setWallThickness(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='2'/>    
                                 </div>
                             </div>
                             <div className='grid grid-cols-2 mt-2'>
@@ -237,10 +303,10 @@ const create = () => {
                                 </div>
                             </div>
                             <div className='flex justify-end'>
-                                <button onClick={() => onClickAddRestrictedSpace()} className={`text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75`}>
+                                <button onClick={() => onClickAddRestrictedArea()} className={`text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75`}>
                                     <div className='m-auto flex'>
                                         <PlusIcon className="w-6 ml-2"/>
-                                        <span className="m-auto ml-2 text-sm mr-4">Add Restricted Space</span>
+                                        <span className="m-auto ml-2 text-sm mr-4">Add Restricted Area</span>
                                     </div>
                                 </button>
                             </div>
@@ -301,11 +367,17 @@ const create = () => {
                 </div>
             </div>
         </DashboardLayout>
+        </> : <Loading/>
     );
 }
 
 export default create;
 
+// ========== Next.js Hooks ==========
+
+//
+// Use Layout
+//
 create.getLayout = function getLayout(page) {
     return (
       <MainLayout>

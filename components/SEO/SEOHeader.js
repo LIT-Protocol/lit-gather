@@ -5,7 +5,7 @@ export default function SEOHeader({
     description='Token-gate your gather space!'
 }){
 
-    const title = `Lit-Gather Space${subtitle == null ? '' : `::  ${subtitle}`}`;
+    const title = `Lit-Gather Space${subtitle == null ? '' : ` |  ${subtitle}`}`;
 
     return (
         <>

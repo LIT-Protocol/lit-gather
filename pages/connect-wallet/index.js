@@ -32,7 +32,8 @@ const ConnectModal = () => {
         connectedGatherId,
         walletIsConnected,
         connectingGather,
-        action
+        action,
+        connectModalOpened,
     } = appContext.state;
 
     const { 
@@ -42,6 +43,7 @@ const ConnectModal = () => {
         setWalletIsConnected, 
         setConnectingGather, 
         setAction, 
+        setConnectModalOpened,
     } = appContext.methods;
     
     const { litNodeClient, LitJsSdk } = appContext.lit;
@@ -297,38 +299,7 @@ const ConnectModal = () => {
 
         // -- redirect user to gather auth page
         window.location.href = redirectUrl;
-        
-        // const jwts = await Promise.all(
-        // resourceIds.map(async (rid) => {
-        //     const resourceId = rid.resourceId
-        //     const chain = rid.chain
-
-        //     let accessControlConditions
-        //     if (rid.accessControlConditions) {
-        //     accessControlConditions = rid.accessControlConditions
-        //     } else {
-        //     accessControlConditions = [...accessControlConditionTemplate]
-        //     accessControlConditions[0].contractAddress = rid.addr
-        //     accessControlConditions[0].chain = chain
-        //     }
-
-        //     try {
-        //     const jwt = await litNodeClient.getSignedToken({
-        //         accessControlConditions,
-        //         chain,
-        //         authSig,
-        //         resourceId,
-        //     })
-        //     return { rid, jwt }
-        //     } catch (e) {
-        //     return { rid, error: e }
-        //     }
-        // }),
-        // )
-        // console.log('jwts:', jwts)
-        // const validJwts = jwts.filter((j) => j.jwt)
-        // console.log('validJwts: ', validJwts)
-    }
+            }
 
     //
     // Event:: When modal is closed
@@ -344,8 +315,8 @@ const ConnectModal = () => {
             <SEOHeader subtitle="Connect Wallet" />
             {/* <LayoutHeader/> */}
             <Modal
-                isOpen={true} // The modal should always be shown on page load, it is the 'page'
-                onRequestClose={() => onModalClosed()}
+                isOpen={connectModalOpened} // The modal should always be shown on page load, it is the 'page'
+                onRequestClose={() => setConnectModalOpened(false)}
                 contentLabel="Connect Wallet"
                 className="Modal-Connect-Wallet bg-base-main rounded-3xl"
             >
@@ -396,12 +367,12 @@ const ConnectModal = () => {
                     }
 
                     
-                    {
+                    {/* {
                         // -- GatherId NOT stored/connecteds
+                        // === Gather.town - Step 3 ===
                         (connectedGatherId == null && ! connectingGather)
                         ?
                         <>
-                             {/* === Gather.town - Step 3 === */}
                             <H2Step step="3" text="Connect Gather.town" />
                             <div className="mt-2 ml-1 ">
                                 <IconButton name="gather"
@@ -434,7 +405,7 @@ const ConnectModal = () => {
                         </>
                         :
                         ''
-                    }
+                    } */}
 
 
 

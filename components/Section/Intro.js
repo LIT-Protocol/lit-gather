@@ -1,11 +1,14 @@
 import { useRouter } from "next/router";
+import { useAppContext } from "../../state/AppProvider";
 import { storedAuth } from "../../utils/storage";
 import MaxWidth from "../Layout/MaxWidth";
 import Btn from "../Ui/Btn";
 
-
-
 const Intro = () => {
+
+    const appContext = useAppContext();
+
+    const { auth } = appContext.methods; 
 
     const router = useRouter();
 
@@ -14,8 +17,11 @@ const Intro = () => {
     // @return { void }
     //
     const onCreateClick = () => {
-        console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
-        router.push('/create')
+
+        auth(() => {
+            console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
+            router.push('/create')
+        })
     }
 
     return (
@@ -55,7 +61,7 @@ const Intro = () => {
 
                 {/* === Right Side === */}
                 <div className="w-full mt-20 pt-1">
-                    <div className="">
+                    <div onClick={() => router.push('/explore')} className="">
                         <div className="h-[27.3rem] w-full overflow-hidden rounded-lg cursor-pointer hover:opacity-75 transition ease-in">
                             <img className="object-cover" src="https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3"/>    
                         </div>

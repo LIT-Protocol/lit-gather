@@ -1,6 +1,8 @@
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import MainLayout from "../../components/Layout/MainLayout";
 import MaxWidth from "../../components/Layout/MaxWidth";
+import SEOHeader from "../../components/SEO/SEOHeader";
 import SpaceCard from "../../components/SpaceCard";
 import { useAppContext } from "../../state/AppProvider";
 import { fetchLockedSpaces, storeUserPermittedResources } from "../../utils/fetch";
@@ -13,6 +15,8 @@ const Explore = ({data}) => {
 
     const appContext = useAppContext();
     const { litNodeClient, LitJsSdk } = appContext.lit;
+    const { auth } = appContext.methods;
+    // const router = useRouter();
     
     // 
     // Get a list of arguments to be passed to the 
@@ -134,49 +138,52 @@ const Explore = ({data}) => {
     }
 
     return (
-        <MaxWidth>
+        <>
+            <SEOHeader subtitle="Explore Spaces" />
+            <MaxWidth>
 
-            {/* --- Title --- */}
-            <div className="text-white text-4xl mt-12 text-center">
-                Explore Spaces
-            </div>
-            
-            {/* --- Nav --- */}
-            <div className="mt-24 text-white">
-                <ul className="flex justify-between border-b border-lit-400/.5">
-                    <li className="border-b border-lit-400 border-b-2 px-4 pb-1">Trending</li>
-                    <li className="opacity-5">Lit Genesis</li>
-                    <li className="opacity-5">Coming soon..</li>
-                    <li className="opacity-5">Coming soon..</li>
-                    <li className="opacity-5">Coming soon..</li>
-                </ul>
-            </div>
+                {/* --- Title --- */}
+                <div className="text-white text-4xl mt-12 text-center">
+                    Explore Spaces
+                </div>
+                
+                {/* --- Nav --- */}
+                <div className="mt-24 text-white">
+                    <ul className="flex justify-between border-b border-lit-400/.5">
+                        <li className="border-b border-lit-400 border-b-2 px-4 pb-1">Trending</li>
+                        <li className="opacity-5">Lit Genesis</li>
+                        <li className="opacity-5">Coming soon..</li>
+                        <li className="opacity-5">Coming soon..</li>
+                        <li className="opacity-5">Coming soon..</li>
+                    </ul>
+                </div>
 
-            {/* --- List of Spaces --- */}
-            { 
-                data.length <= 0
-                ?
-                // -- (error) not spaces found
-                <div className="text-center text-white w-full mt-10">
-                    <span className="">Oops... cannot find any spaces at the moment.</span>
-                </div>
-                :
-                // -- (success) render List
-                <div className="mt-10 grid grid-cols-3 gap-2">
-                    { data.spaces.map((space) => {
-                        return (
-                            <SpaceCard
-                                space={space}
-                                restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                buttonText="Join"
-                                buttonAction={() => onClickJoin(space)}
-                            />
-                        )
-                    })}
-                </div>
-            }
-            
-        </MaxWidth>
+                {/* --- List of Spaces --- */}
+                { 
+                    data.length <= 0
+                    ?
+                    // -- (error) not spaces found
+                    <div className="text-center text-white w-full mt-10">
+                        <span className="">Oops... cannot find any spaces at the moment.</span>
+                    </div>
+                    :
+                    // -- (success) render List
+                    <div className="mt-10 grid grid-cols-3 gap-2">
+                        { data.spaces.map((space) => {
+                            return (
+                                <SpaceCard
+                                    space={space}
+                                    restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                    buttonText="Join"
+                                    buttonAction={() => auth(() => onClickJoin(space))}
+                                />
+                            )
+                        })}
+                    </div>
+                }
+                
+            </MaxWidth>
+        </>
     );
 }
 
@@ -187,6 +194,7 @@ export default Explore;
 // Prefetch data for this component
 //
 export async function getServerSideProps() {
+
     const data = await fetchLockedSpaces();
 
     // Pass data to the page via props

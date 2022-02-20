@@ -8,11 +8,12 @@ function BtnConnectWallet() {
   // context
   const appContext = useAppContext()
   const { connectedWalletAddress } = appContext.state;
+  const { setConnectModalOpened } = appContext.methods;
 
   return <Btn
     id="connect-wallet"
     text={ shortenWalletAddress(connectedWalletAddress) || 'Connect Lit-Gather' }
-    href="/connect-wallet"
+    onClick={() => setConnectModalOpened(true)}
   />
 
 
