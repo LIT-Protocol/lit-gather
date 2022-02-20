@@ -24,12 +24,12 @@ const create = () => {
     
     // -- state
     const [value, setValue] = useState(0); // integer state
-    const [spaceId, setSpaceId] = useState('tXVe5OYt6nHS9Ey5\\lit-protocol')
+    const [spaceId, setSpaceId] = useState('tXVe5OYt6nHS9Ey5/lit-protocol')
     const [granted, setGranted] = useState(true)
     const [initialCoordinates, setInitialCoordinates] = useState("31, 32");
     const [restrictedSpaces, setRestrictedSpaces] = useState([
         {
-            name: 'testing3',
+            name: 'test-space',
             topLeft: '44,34',
             bottomRight: '51,36',
             wallThickness: 0,
@@ -136,7 +136,7 @@ const create = () => {
             const chain = accessControlConditions[0].chain;
             const resourceId = {
                 baseUrl: 'gather.town',
-                path: '/app/' + spaceId.split('\\')[0] + '/' + spaceId.split('\\')[1],
+                path: '/app/' + spaceId.split('/')[0] + '/' + spaceId.split('/')[1],
                 orgId: "",
                 role: "",
                 extraData: JSON.stringify({
@@ -146,6 +146,8 @@ const create = () => {
                     wallThickness: space.wallThickness,
                 }),
             }
+
+            // console.log("resourceId:", resourceId);
 
             // -- sign
             await litNodeClient.saveSigningCondition({
@@ -183,7 +185,7 @@ const create = () => {
                         <a target="_blank" href="./instruction#how-to-create-a-space-within-gather" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                     </div>
                     <div className='mt-2'>
-                        <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5\\lit-protocol" />
+                        <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
                     </div>
 
                     {/* Step 2 */}

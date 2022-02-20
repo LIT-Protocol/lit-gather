@@ -64,3 +64,45 @@ export const getWalletResourceId = (walletAddress) => {
     
     return resourceId; 
 }
+
+
+//
+// Compile Resource ID base on locked space data
+// @param { String } space ID
+// @param { Object } restricted area (space)
+// @return { Object } resourceId
+//
+export const compileResourceId = (spaceId, area) => {
+    
+    console.warn("↓↓↓↓↓ compileResourceId ↓↓↓↓↓ ");
+    
+    // -- validate
+    if( !area.name ){
+        console.log(`❌ area name cannot be empty.`)
+        return;
+    }
+    if( !area.topLeft ){
+        console.log(`❌ area topLeft cannot be empty.`)
+        return;
+    }
+    if( !area.bottomRight ){
+        console.log(`❌ area bottomRight cannot be empty.`)
+        return;
+    }
+
+    // -- pass    
+    const resourceId = {
+        baseUrl: 'gather.town',
+        path: '/app/' + spaceId,
+        orgId: "",
+        role: "",
+        extraData: JSON.stringify({
+            name: area.name,
+            topLeft: area.topLeft,
+            bottomRight: area.bottomRight,
+            wallThickness: area.wallThickness || 0,
+        }),
+    }
+
+    return resourceId;
+}

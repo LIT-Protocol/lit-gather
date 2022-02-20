@@ -79,16 +79,45 @@ export const storeLockedSpaces = async (compiledData) => {
 
 //
 // (GET) Get all locked spaces
+// @return { Object } 
+// @prop { Object.space } 
 //
 export const fetchLockedSpaces = async () => {
     console.warn("↓↓↓↓↓ fetch.js/fetchLockedSpaces ↓↓↓↓↓");
-
+    
     // -- prepare
     const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/locked-spaces';
-
+    
     const res = await fetch(API);
+    
+    const data = await res.json();
+    
+    return data;
+}
+
+// 
+// (POST) Stored user's gather permitted resources
+// @param { Object } permittedResources
+// @prop { Object } authSig
+// @prop { Array } jwts
+// @return { Object } result
+//
+export const storeUserPermittedResources = async (permittedResources) => {
+    console.warn("↓↓↓↓↓ fetch.js/storeUserPermittedResources ↓↓↓↓↓");
+    
+    // -- prepare
+    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/user-permitted-resources';
+
+    const res = await fetch(API,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(permittedResources)
+    });
 
     const data = await res.json();
+    console.log("storeUserPermittedResources response:", data);
 
     return data;
 }

@@ -21,3 +21,32 @@ export const shortenWalletAddress = (addr) => {
 export const removeHttp = (url) => {
     return url.replace(/^https?:\/\//, '');
 }
+
+//
+// Custom async foreach function
+// @param { Array } array
+// @param { Function } callback
+// @return { void }
+//
+export const asyncForEach = async (array, callback) => {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array)
+    }
+}
+
+//
+// Disable native alert 
+// @return { void } 
+//
+export const disableNativeAlert = () => {
+    window.nativeAlert = window.alert;
+    window.alert = function() {}
+}
+
+//
+// Enable native alert 
+// @return { void } 
+//
+export const enableNativeAlert = () => {
+    window.alert = window.nativeAlert;
+}
