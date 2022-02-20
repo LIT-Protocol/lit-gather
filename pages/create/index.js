@@ -8,15 +8,13 @@ import { useAppContext } from '../../state/AppProvider';
 import { CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedAuth, storedNetwork } from '../../utils/storage';
 import { storeLockedSpaces } from '../../utils/fetch';
+import { compileResourceId } from '../../utils/lit';
 
 const create = () => {
-
-    const router = useRouter()
 
     // -- prepare app context methods
     const appContext = useAppContext()
     const { openShareModal } = appContext.methods;
-    const { connectedWalletAddress } = appContext.state;
 
     // -- prepare
     const litNodeClient = new LitJsSdk.LitNodeClient()
@@ -25,18 +23,9 @@ const create = () => {
     // -- state
     const [value, setValue] = useState(0); // integer state
     const [spaceId, setSpaceId] = useState('tXVe5OYt6nHS9Ey5/lit-protocol')
-    const [granted, setGranted] = useState(true)
-    const [initialCoordinates, setInitialCoordinates] = useState("31, 32");
-    const [restrictedSpaces, setRestrictedSpaces] = useState([
-        {
-            name: 'test-space',
-            topLeft: '44,34',
-            bottomRight: '51,36',
-            wallThickness: 0,
-            accessControls: '[{"contractAddress":"","standardContractType":"","chain":"ethereum","method":"","parameters":[":userAddress"],"returnValueTest":{"comparator":"=","value":"0xDDaA68B3604a4550582f5E05Aab16C852eF3e3bC"}}]',
-            humanised: 'Controls wallet with address  0xDDaA68B3604a4550582f5E05Aab16C852eF3e3bC'
-        }
-    ])
+    const [granted, setGranted] = useState(false)
+    const [initialCoordinates, setInitialCoordinates] = useState("31,32");
+    const [restrictedSpaces, setRestrictedSpaces] = useState([])
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
@@ -45,10 +34,10 @@ const create = () => {
     const [wallThickness, setWallThickness] = useState(null)
     const [accessControls, setAccessControls] = useState(null)
 
-    // -- use effect
-    useEffect(() => {
-        console.log("LitNodeClient: ", litNodeClient);
-    }, []);
+    // // -- use effect
+    // useEffect(() => {
+    //     console.log("LitNodeClient: ", litNodeClient);
+    // }, []);
 
     // -- force update specifically for adding new row
     function forceUpdate(){
@@ -120,7 +109,7 @@ const create = () => {
             return
         }
         if( ! granted ){
-            alert("You must grant Lit Protocol admin access")
+            alert("You must grant gather@litprotocol.com admin access")
             return
         }
 
@@ -134,20 +123,7 @@ const create = () => {
             // -- prepare
             const accessControlConditions = JSON.parse(space.accessControls);
             const chain = accessControlConditions[0].chain;
-            const resourceId = {
-                baseUrl: 'gather.town',
-                path: '/app/' + spaceId.split('/')[0] + '/' + spaceId.split('/')[1],
-                orgId: "",
-                role: "",
-                extraData: JSON.stringify({
-                    name: space.name,
-                    topLeft: space.topLeft,
-                    bottomRight: space.bottomRight,
-                    wallThickness: space.wallThickness,
-                }),
-            }
-
-            // console.log("resourceId:", resourceId);
+            const resourceId = compileResourceId(spaceId, space);
 
             // -- sign
             await litNodeClient.saveSigningCondition({
@@ -159,10 +135,20 @@ const create = () => {
             })
         })
 
-        // -- store
-        const store = await storeLockedSpaces(compiledData);
 
-        console.log("Store: ", store)
+        // -- store
+        const stored = await storeLockedSpaces(compiledData);
+        
+        if(stored?.error){
+            console.error("❌ Error:", stored.error)
+            alert(`Oops.. something went wrong. ${stored.error}`);
+            return;
+        }
+
+        if(stored?.success){
+            console.log("✅ Store: ", stored)
+        }
+
     }
 
     return (
@@ -182,7 +168,7 @@ const create = () => {
                     {/* Step 1 */}
                     <div className='text-base text-white mt-2'>
                         1. Gather Space ID <span className='text-red'>*</span>
-                        <a target="_blank" href="./instruction#how-to-create-a-space-within-gather" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                        <a target="_blank" href="./instruction#1" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                     </div>
                     <div className='mt-2'>
                         <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
@@ -191,8 +177,8 @@ const create = () => {
                     {/* Step 2 */}
                     <div className="form-check mt-8">
                         <label className="text-white form-check-label inline-block" for="flexCheckDefault">
-                            2. Grant Lit Protocol admin access <span className='text-red'>*</span>
-                            <a target="_blank" href="./instruction#how-to-grant-admin-access" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                            2. Grant <span className='text-purple-text'>gather@litprotocol.com</span> admin access <span className='text-red'>*</span>
+                            <a target="_blank" href="./instruction#2" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                         </label><br/>
                         <input onChange={(e) => setGranted(e.target.checked)} className="form-check-input  h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="checkbox" value="" id="flexCheckDefault" /> I've granted Lit Protocol admin access to my gather space
                     </div>
@@ -200,7 +186,7 @@ const create = () => {
                     {/* Step 3 */}
                     <div className='text-base text-white mt-8'>
                         3. Initial Coordinates 
-                        <a target="_blank" href="./instruction#how-to-create-a-space-within-gather" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                        <a target="_blank" href="./instruction#3" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                     </div>
                     <div className='mt-2'>
                         <input onChange={(e) => setInitialCoordinates(e.target.value)} value={initialCoordinates} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />

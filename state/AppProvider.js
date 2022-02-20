@@ -141,6 +141,9 @@ export function AppProvider({ children }){
             // -- libraries
             openShareModal,
 
+            // -- alerts
+
+
         },
         lit:{
             litNodeClient,
@@ -151,7 +154,7 @@ export function AppProvider({ children }){
     return (
         <AppContext.Provider value={sharedState}>
             <div id="shareModal"></div>
-
+            
             {/* ----- CONTENT AREA ----- */}
             { children }
             {/* ----- ...CONTENT AREA ----- */}

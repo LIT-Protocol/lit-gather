@@ -127,6 +127,8 @@ const Explore = ({data}) => {
 
         console.log("👉 redirectUrl:", redirectUrl)
 
+        window.location = redirectUrl;
+
         // -- enable native alert once its done
         enableNativeAlert();
     }
