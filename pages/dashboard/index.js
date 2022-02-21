@@ -1,18 +1,71 @@
 import MainLayout from "../../components/Layout/MainLayout";
-import SideMenu from "../../components/SideMenu";
 import DashboardLayout from "../../components/Layout/Dashboard";
-import { fetchLockedSpaces } from "../../utils/fetch";
-import { storedAuth } from "../../utils/storage";
+import { deleteMySpace, fetchMySpaces } from "../../utils/fetch";
+import { useEffect, useState } from "react";
+import { useAppContext } from "../../state/AppProvider";
+import { storedNetwork } from "../../utils/storage";
+import SpaceCard from "../../components/SpaceCard";
 
-const Dashboard = ({data}) => {
+const Dashboard = () => {
 
+    // -- app context
+    const appContext = useAppContext();
+    const { auth } = appContext.methods;
+    const { LitJsSdk } = appContext.lit;
+
+    // -- state
+    const [spaces, setSpaces] = useState(null);
     
+    // -- mounted
+    useEffect(() => {
+        auth(async () => {
+            const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()});
+            const res = await fetchMySpaces({authSig}); 
+            setSpaces(res.spaces);
+            console.log("res.spaces:", res.spaces)
+        });
+    }, []);
+    
+    // -- event:: onClick space card
+    const onClick = (space) => {
+        
+        // -- prompt user
+        const sure = confirm("Are you sure you want to delete this?") == true;
+        
+        // -- validate
+        if( ! sure ){
+            return;
+        }
+        
+        auth(async () => {
+            const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()});
+            await deleteMySpace({authSig, space});
+            const res = await fetchMySpaces({authSig}); 
+            setSpaces(res.spaces);
+        });
 
-    console.log("DAT!,", data);
+        
+    }
 
     return (
         <DashboardLayout>
-            Oops.. cannot find any spaces
+            {
+                ! spaces 
+                ? 'Oops.. cannot find any spaces'
+                : <div className="grid grid-cols-3 gap-8">
+                    {
+                        spaces.map((space, i) => {
+                            return (
+                                <SpaceCard key={i}
+                                    space={space}
+                                    restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                    buttonAction={() => onClick(space)}
+                                />
+                            )
+                        })
+                    }
+                </div>
+            }
             
         </DashboardLayout>
     );
@@ -24,12 +77,12 @@ export default Dashboard;
 //
 // Prefetch data for this component
 //
-export async function getServerSideProps() {
-    const data = await fetchLockedSpaces();
+// export async function getServerSideProps() {
+//     const data = await fetchMySpaces();
 
-    // Pass data to the page via props
-    return { props: { data } }
-}
+//     // Pass data to the page via props
+//     return { props: { data } }
+// }
 
 //
 // Use Layout

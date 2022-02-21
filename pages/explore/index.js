@@ -1,5 +1,3 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import MainLayout from "../../components/Layout/MainLayout";
 import MaxWidth from "../../components/Layout/MaxWidth";
 import SEOHeader from "../../components/SEO/SEOHeader";
@@ -16,7 +14,6 @@ const Explore = ({data}) => {
     const appContext = useAppContext();
     const { litNodeClient, LitJsSdk } = appContext.lit;
     const { auth } = appContext.methods;
-    // const router = useRouter();
     
     // 
     // Get a list of arguments to be passed to the 
@@ -109,7 +106,7 @@ const Explore = ({data}) => {
         console.log("👉 validJwts:", validJwts);
 
         // -- store user's gather permitted resources
-        const store = await storeUserPermittedResources({authSig, jwts: validJwts})
+        const store = await storeUserPermittedResources({authSig, jwts: validJwts, spaceId})
 
         console.log("👉 Permitted Resources Stored:", store)
 

@@ -95,6 +95,58 @@ export const fetchLockedSpaces = async () => {
     return data;
 }
 
+//
+// (POST) Get all of your spaces
+// @param { Object } data
+// @return { Object } 
+//
+export const fetchMySpaces = async (args = {}) => {
+    console.warn("↓↓↓↓↓ fetch.js/fetchMySpaces ↓↓↓↓↓");
+    
+    // -- prepare
+    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/my-spaces';
+
+    // -- fetch
+    const res = await fetch(API,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(args)
+    });
+
+    const data = await res.json();
+
+    return data;
+    
+}
+
+//
+// (POST) Delete my space
+// @param { Object } data
+// @return { Object } 
+//
+export const deleteMySpace = async (args = {}) => {
+    console.warn("↓↓↓↓↓ fetch.js/deleteMySpace ↓↓↓↓↓");
+    
+    // -- prepare
+    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/delete-space';
+
+    // -- fetch
+    const res = await fetch(API,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(args)
+    });
+
+    const data = await res.json();
+
+    return data;
+    
+}
+
 // 
 // (POST) Stored user's gather permitted resources
 // @param { Object } permittedResources
