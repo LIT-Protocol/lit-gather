@@ -76,9 +76,9 @@ const Instruction = () => {
                     
                     return (
                         <MaxWidth key={info.id}>
-                            <div className="grid grid-cols-1">
+                            <div id={info.id} className="grid grid-cols-1">
                                 {/* === Left Side */}
-                                <div id={info.id} className="w-full mt-12 pt-10">
+                                <div className="w-full mt-12 pt-10">
                                     <h1 className="leading-tight text-3xl text-white">
                                     {info.id}. { info.title }
                                     </h1>
