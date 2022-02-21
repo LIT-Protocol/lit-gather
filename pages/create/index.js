@@ -211,7 +211,7 @@ const CreateSpace = () => {
         if(stored?.success){
             console.log("✅ Store: ", stored);
             alert(`✅ ${stored?.success}`);
-            // router.push('/dashboard');
+            router.push('/dashboard');
         }
 
     }

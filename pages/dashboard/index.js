@@ -49,6 +49,19 @@ const Dashboard = () => {
 
     return (
         <DashboardLayout>
+
+            {/* ===== Title ===== */}
+            <h1 className="leading-tight text-5xl text-white">
+                Your Gated Spaces
+            </h1>
+            <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
+                <span>
+                ** Please not that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>.
+                </span>
+            </h5>
+
+            {/* ===== Content Area ===== */}
+            <div className="mt-4">
             {
                 ! spaces 
                 ? 'Oops.. cannot find any spaces'
@@ -66,6 +79,7 @@ const Dashboard = () => {
                     }
                 </div>
             }
+            </div>
             
         </DashboardLayout>
     );
