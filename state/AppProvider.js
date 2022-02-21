@@ -2,9 +2,6 @@ import { createContext } from "react"
 import { useContext, useState, useEffect } from "react"
 import LitJsSdk from 'lit-js-sdk'
 import { removeStoredAuth, removeStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
-import { useRouter } from "next/router";
-import Modal from "react-modal/lib/components/Modal";
-import SEOHeader from "../components/SEO/SEOHeader";
 import ConnectModal from "../pages/connect-wallet";
 
 // Create Context Object
@@ -85,7 +82,7 @@ export function AppProvider({ children }){
     }
     
     // -- prepare router
-    const router = useRouter()
+    // const router = useRouter()
 
     // -- prepare
     const litNodeClient = new LitJsSdk.LitNodeClient()
@@ -100,13 +97,18 @@ export function AppProvider({ children }){
     const [walletIsConnected, setWalletIsConnected] = useState(false)
     const [connectingGather, setConnectingGather] = useState(false)
 
-    // -- (String) page action based on param
+    // -- (Deprecated?) (String) page action based on param
     const [action, setAction] = useState(null)
 
     // -- Modal
     const [connectModalOpened, setConnectModalOpened] = useState(false);
-
-    // -- Listeners
+    
+    // -- web 3 wallet
+    const [hasWeb3Wallet, setHasWeb3Wallet] = useState(true);
+    
+    // 
+    // event: listen to metamask changes
+    //
     const handleMetamaskChanges = () => {
 
         const reset = () => {
@@ -115,6 +117,12 @@ export function AppProvider({ children }){
             setConnectedNetwork(null)
             setConnectedWalletAddress(null)
             setConnectedGatherId(null)
+        }
+
+        // -- validate
+        if( !window?.ethereum ){
+            setHasWeb3Wallet(false);
+            return;
         }
 
         window.ethereum.on('accountChanged', () => {
@@ -192,6 +200,9 @@ export function AppProvider({ children }){
 
     return (
         <AppContext.Provider value={sharedState}>
+
+            {/* ----- No Web3 Wallet Exception ----- */}
+            { ! hasWeb3Wallet ? <div className="w-full text-center text-red">No web3 wallet was found. Please connect to your wallet and refresh the page</div> : ''}
 
             {/* ----- Modals ----- */}
             <ConnectModal/>
