@@ -25,6 +25,7 @@ const Dashboard = () => {
             setSpaces(res.spaces);
             console.log("res.spaces:", res.spaces)
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
     

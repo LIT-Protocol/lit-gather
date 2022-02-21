@@ -5,7 +5,7 @@ import Modal from 'react-modal'
 import { LogoutIcon } from '@heroicons/react/solid'
 import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId, removeStoredNetwork, storedResourceId, setStoredResourceId, removeStoredResourceId } from '../../utils/storage'
 import { getGatherRedirectUrl } from '../../utils/gather'
-import fetchWalletInfo from '../../utils/fetch'
+import { fetchWalletInfo } from '../../utils/fetch'
 import SEOHeader from '../../components/SEO/SEOHeader'
 import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
@@ -53,7 +53,7 @@ const ConnectModal = () => {
     const [selectedNetwork, setSelectedNetwork] = useState(null)
     
     // -- state
-    useEffect(async () => {
+    useEffect(() => {
         console.log("--- useEffect ConnectModal ---")
         router.prefetch('/')
 

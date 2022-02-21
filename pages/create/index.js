@@ -51,7 +51,7 @@ const CreateSpace = () => {
         }
 
         setLoaded(true);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // -- force update specifically for adding new row
