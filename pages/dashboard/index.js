@@ -73,17 +73,6 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-// ========== Next.js Hooks ==========
-//
-// Prefetch data for this component
-//
-// export async function getServerSideProps() {
-//     const data = await fetchMySpaces();
-
-//     // Pass data to the page via props
-//     return { props: { data } }
-// }
-
 //
 // Use Layout
 //

@@ -1,143 +1,127 @@
+import { useState } from 'react';
 import MainLayout from '../../components/Layout/MainLayout'
-import { useEffect } from 'react';
-import LitJsSdk from 'lit-js-sdk'
 import MaxWidth from '../../components/Layout/MaxWidth';
-import Image from 'next/image'
 import SEOHeader from '../../components/SEO/SEOHeader';
 
 const Instruction = () => {
 
-    // -- prepare
-    const litNodeClient = new LitJsSdk.LitNodeClient()
-    litNodeClient.connect()
-
-    useEffect(() => {
-        console.log("LitNodeClient: ", litNodeClient);
-    }, []);
+    // -- mounted
+    const [instructions, setInstructions] = useState([
+        {
+            id: 1,
+            title: 'How to create a space within Gather.town',
+            steps: [
+                'Go to "My Spaces"',
+                'Enter to your space',
+                'Copy the Gather Space ID from your URL eg. kMY0MBgjUhkuNb9k/test2',
+            ],
+            images: [
+                '/instruction/1a.png',
+            ]
+        },
+        {
+            id: 2,
+            title: 'How to grant gather@litprotocol.com admin access to your gather space',
+            steps: [
+                'Go to "My Spaces"',
+                'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Manage Space"',
+                'On the side of the menu, click "User Roles"',
+                'Under the "Add Members" field, type "gather@litprotocol.com" and click "Add"',
+                'Once it\'s been added, under "Manage Members", click on the 3 vertically-aligned dots and click on "Edit roles", check "Admin" role and "Apply"',
+            ],
+            images: [
+                '/instruction/2a.png',
+                '/instruction/2b.png',
+            ]
+        },
+        {
+            id: 3,
+            title: 'How to collect the x,y coordinates and wall thickness for the bounding box of her private space',
+            steps: [
+                'Go to "My Spaces"',
+                'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"',
+                'Use your mouse cursor to hover to the top-left cornor of your private space, then record the coordinates shown on the bottom right',
+                'Repeat the same step above but for the bottom-right cornor of your private space',
+                'Get the wall thickness for the bounding box',
+            ],
+            images: [
+                '/instruction/3a.png',
+                '/instruction/3b.png',
+            ]
+        }
+    ]);
 
     return (
         <>
             <SEOHeader subtitle="Instruction"/>
-            <h1 className="leading-tight text-5xl text-white text-center mt-16">
-            Instruction
-            </h1>
+            <h1 className="leading-tight text-5xl text-white text-center mt-16">Instruction</h1>
 
-            <div className='bg-lit-500 h-[1px] w-full mt-16'>
+            {/* --- titles --- */}
+            <ul className='text-white max-w-[623px] m-auto mt-4 list-decimal list-outside'>
+                {
+                    instructions.map((info) => {
+                        return (
+                            <li className='pt-3 hover:text-lit-400 transition ease-in'>
+                                <a href={`#${info.id}`}>{info.title}</a>    
+                            </li>
+                        )
+                    })
+                }
+            </ul>
 
-            </div>
+            <div className='bg-lit-500 h-[1px] w-full mt-16'></div>
 
-            <MaxWidth>
-                <div className="grid grid-cols-1">
-                    {/* === Left Side */}
-                    <div id="1" className="w-full mt-12 pt-10">
-                        <h1 className="leading-tight text-3xl text-white">
-                        1. How to create a space within Gather.town
-                        </h1>
-
-                        {/* ===== Form Area ===== */}
-                        <div className='mt-4'>
-
-                            {/* Step 1 */}
-                            <div className='text-base text-white mt-2 text-purple-text pr-12'>
-                                <p>
-                                <ul className='list-decimal list-outside pl-5'>
-                                    <li>Go to "My Spaces"</li>
-                                    <li>Enter to your space</li>
-                                    <li>Copy the Gather Space ID from your URL eg. kMY0MBgjUhkuNb9k/test2</li>
-                                </ul>
-                                </p>
+            {
+                instructions.map((info) => {
+                    
+                    return (
+                        <MaxWidth key={info.id}>
+                            <div className="grid grid-cols-1">
+                                {/* === Left Side */}
+                                <div id={info.id} className="w-full mt-12 pt-10">
+                                    <h1 className="leading-tight text-3xl text-white">
+                                    {info.id}. { info.title }
+                                    </h1>
+            
+                                    {/* ===== Form Area ===== */}
+                                    <div className='mt-4'>
+            
+                                        {/* Step 1 */}
+                                        <div className='text-base text-white mt-2 text-purple-text pr-12'>
+                                            <p>
+                                            <ul className='list-decimal list-outside pl-5'>
+                                            {
+                                                info.steps.map((step) => {
+                                                    return (
+                                                        <li>{ step }</li>
+                                                    )
+                                                })
+                                            }
+                                            </ul>
+                                            </p>
+                                        </div>
+            
+                                    </div>
+                                    {/* ===== ...Form Area ===== */}
+                                </div>
+            
+                                {/* === Right Side === */}
+                                <div className="w-full mt-10 pt-2">
+                                    {
+                                        info.images.map((image) => {
+                                            return (
+                                                <div className="mt-4 rounded-lg overflow-hidden">
+                                                    <img src={image} />
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
                             </div>
-
-                        </div>
-                        {/* ===== ...Form Area ===== */}
-                    </div>
-
-                    {/* === Right Side === */}
-                    <div className="w-full mt-14 pt-2">
-                        <div className="rounded-lg overflow-hidden">
-                            <img src="/instruction/1a.png"/>
-                        </div>
-                    </div>
-                </div>
-            </MaxWidth>
-            <MaxWidth>
-                <div className="grid grid-cols-1">
-                    {/* === Left Side */}
-                    <div id="2" className="w-full mt-12 pt-10">
-                        <h1 className="leading-tight text-3xl text-white">
-                        2. How to grant gather@litprotocol.com admin access to your gather space
-                        </h1>
-
-                        {/* ===== Form Area ===== */}
-                        <div className='mt-4'>
-
-                            {/* Step 1 */}
-                            <div className='text-base text-white mt-2 text-purple-text pr-12'>
-                                <p>
-                                <ul className='list-decimal list-outside pl-5'>
-                                    <li>Go to "My Spaces"</li>
-                                    <li>Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Manage Space"</li>
-                                    <li>On the side of the menu, click "User Roles"</li>
-                                    <li>Under the "Add Members" field, type "gather@litprotocol.com" and click "Add"</li>
-                                    <li>Once it's been added, under "Manage Members", click on the 3 vertically-aligned dots and click on "Edit roles", check "Admin" role and "Apply"</li>
-                                </ul>
-                                </p>
-                            </div>
-
-                        </div>
-                        {/* ===== ...Form Area ===== */}
-                    </div>
-
-                    {/* === Right Side === */}
-                    <div className="w-full mt-14 pt-2">
-                        <div className="rounded-lg overflow-hidden">
-                            <img src="/instruction/2a.png"/>
-                        </div>
-                        <div className="mt-4 rounded-lg overflow-hidden">
-                            <img src="/instruction/2b.png"/>
-                        </div>
-                    </div>
-                </div>
-            </MaxWidth>
-            <MaxWidth>
-                <div className="grid grid-cols-1 mb-24">
-                    {/* === Left Side */}
-                    <div id="3" className="w-full mt-12 pt-10">
-                        <h1 className="leading-tight text-3xl text-white">
-                        3. How to collect the x,y coordinates and wall thickness for the bounding box of her private space
-                        </h1>
-
-                        {/* ===== Form Area ===== */}
-                        <div className='mt-4'>
-
-                            {/* Step 1 */}
-                            <div className='text-base text-white mt-2 text-purple-text pr-12'>
-                                <p>
-                                <ul className='list-decimal list-outside pl-5'>
-                                    <li>Go to "My Spaces"</li>
-                                    <li>Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"</li>
-                                    <li>Use your mouse cursor to hover to the top-left cornor of your private space, then record the coordinates shown on the bottom right</li>
-                                    <li>Repeat the same step above but for the bottom-right cornor of your private space</li>
-                                    <li>Get the wall thickness for the bounding box</li>
-                                </ul>
-                                </p>
-                            </div>
-
-                        </div>
-                        {/* ===== ...Form Area ===== */}
-                    </div>
-
-                    {/* === Right Side === */}
-                    <div className="w-full mt-14 pt-2">
-                        <div className="rounded-lg overflow-hidden">
-                            <img src="/instruction/3a.png"/>
-                        </div>
-                        <div className="mt-4 rounded-lg overflow-hidden">
-                            <img src="/instruction/3b.png"/>
-                        </div>
-                    </div>
-                </div>
-            </MaxWidth>
+                        </MaxWidth>
+                    ) 
+                })
+            }
         </>
     );
 }

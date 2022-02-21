@@ -11,7 +11,7 @@
 export const storedNetwork = () => localStorage.getItem('lit-network');
 
 //
-// (SETTER) Set stored network
+// (SET) Set stored network
 // @param { String } chain, network eg. ethereum, polygon, etc.
 // @return { void }
 //
@@ -24,6 +24,7 @@ export const setStoredNetwork = (chain) => localStorage.setItem('lit-network', c
 export const removeStoredNetwork = () => localStorage.removeItem('lit-network');
 
 
+
 // ------------------------- Lit Auth -------------------------
 // 
 // (GET) Get auth from storage
@@ -32,7 +33,7 @@ export const removeStoredNetwork = () => localStorage.removeItem('lit-network');
 export const storedAuth = () => localStorage.getItem('lit-auth-signature');
 
 //
-// (SETTER) Set stored auth
+// (SET) Set stored auth
 // @param { String } value {"sig":"0x3..1b","derivedVia":"web3.eth.personal.sign","signedMessage":"I am creating an
 // account to use Lit Protocol at 2022-02-11T01:59:07.106Z","address":"0xdd..bc"}
 // @return { void }
@@ -57,6 +58,7 @@ export const removeWeb3Modal = () => {
 }
 
 
+
 // ------------------------- Gather -------------------------
 // 
 // (GET) Get gather from storage
@@ -65,7 +67,7 @@ export const removeWeb3Modal = () => {
 export const storedGatherPlayerId = () => localStorage.getItem('lit-gather-player-id');
 
 //
-// (SETTER) Set gather account details
+// (SET) Set gather account details
 // @param { String } value
 // @return { void }
 //
@@ -77,6 +79,8 @@ export const setStoredGatherPlayerId = (value) => localStorage.setItem('lit-gath
 //
 export const removeStoredGatherPlayerId = () => localStorage.removeItem('lit-gather-player-id');
 
+
+
 // ------------------------- ResourceId -------------------------
 // 
 // (GET) Get resourceId from storage
@@ -85,7 +89,7 @@ export const removeStoredGatherPlayerId = () => localStorage.removeItem('lit-gat
 export const storedResourceId = () => localStorage.getItem('lit-resource-id');
 
 //
-// (SETTER) Set resourceId 
+// (SET) Set resourceId 
 // @param { String } JSON.stringify(resourceId)
 // @return { void }
 //

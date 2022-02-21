@@ -1,15 +1,13 @@
 import MainLayout from '../../components/Layout/MainLayout'
 import { useEffect, useState } from 'react';
-import LitJsSdk, { humanizeAccessControlConditions } from 'lit-js-sdk'
+import LitJsSdk from 'lit-js-sdk'
 import DashboardLayout from '../../components/Layout/Dashboard';
-import { Router, useRouter } from 'next/router';
-import Btn from '../../components/Ui/Btn';
+import { useRouter } from 'next/router';
 import { useAppContext } from '../../state/AppProvider';
 import { CogIcon, PlusIcon } from '@heroicons/react/solid';
-import { storedAuth, storedNetwork } from '../../utils/storage';
+import { storedNetwork } from '../../utils/storage';
 import { storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
-import { coordinatesStringToArray } from '../../utils/helper';
 import SEOHeader from '../../components/SEO/SEOHeader';
 import Loading from '../../components/Ui/Loading';
 import ImageUploader from '../../components/ImageUploader';

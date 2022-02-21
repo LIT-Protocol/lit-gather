@@ -50,12 +50,3 @@ export const disableNativeAlert = () => {
 export const enableNativeAlert = () => {
     window.alert = window.nativeAlert;
 }
-
-//
-// Turn (String) '18,24' into Array [18, 24]
-// @param { String } coordinates '18, 24'
-// @return { Array } [18, 24]
-//
-export const coordinatesStringToArray = (coordinates) => {
-    return (coordinates.replaceAll(' ', '')).split(',').map((coor) => parseInt(coor))
-};
