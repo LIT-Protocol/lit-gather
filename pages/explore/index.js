@@ -4,7 +4,6 @@ import SEOHeader from "../../components/SEO/SEOHeader";
 import SpaceCard from "../../components/SpaceCard";
 import { useAppContext } from "../../state/AppProvider";
 import { fetchLockedSpaces } from "../../utils/fetch";
-import { makeId } from "../../utils/helper";
 
 const Explore = ({data}) => {
 

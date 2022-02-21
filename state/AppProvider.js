@@ -8,6 +8,7 @@ import { compileResourceId } from "../utils/lit";
 import { storeUserPermittedResources } from "../utils/fetch";
 import { getGatherRedirectUrl } from "../utils/gather";
 import { info } from "autoprefixer";
+import Loading from "../components/Ui/Loading";
 
 // Create Context Object
 const AppContext = createContext();
@@ -80,6 +81,8 @@ export function AppProvider({ children }){
     //
     const joinSpace = async (space, redirect = true) => {
         console.warn("↓↓↓↓↓ onClickJoin ↓↓↓↓↓ ");
+        setLoaded(false);
+        setMsg(`Joining ${space.spaceId}...`)
 
         // -- disable native alert
         disableNativeAlert();
@@ -136,7 +139,8 @@ export function AppProvider({ children }){
         
         // -- enable native alert once its done
         enableNativeAlert();
-
+        setLoaded(true);
+        setMsg('')
         // -- if debug
         if( ! redirect ) return;
 
@@ -239,6 +243,8 @@ export function AppProvider({ children }){
     
     // -- web 3 wallet
     const [hasWeb3Wallet, setHasWeb3Wallet] = useState(true);
+    const [loaded, setLoaded] = useState(true);
+    const [msg, setMsg] = useState('Loading...');
     
     // 
     // event: listen to metamask changes
@@ -325,6 +331,10 @@ export function AppProvider({ children }){
             // -- modals
             setConnectModalOpened,
 
+            // -- visuals
+            setMsg,
+            setLoaded,
+
 
         },
         lit:{
@@ -335,6 +345,12 @@ export function AppProvider({ children }){
 
     return (
         <AppContext.Provider value={sharedState}>
+
+            {/* --- Global Loading --- */}
+            <div className={`fixed top-0 w-full bg-color-gather-gradient py-1 flex justify-center transition pointer-events-none`} style={{zIndex: 99, opacity: loaded ? 0 : 1}}>
+                <span className="text-white text-center m-auto">{msg}</span>
+            </div>
+    
 
             {/* ----- No Web3 Wallet Exception ----- */}
             { ! hasWeb3Wallet ? <div className="w-full text-center text-red">No web3 wallet was found. Please connect to your wallet and refresh the page</div> : ''}

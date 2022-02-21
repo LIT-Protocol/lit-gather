@@ -15,12 +15,12 @@ const Loading = () => {
                 dots = ['.'];
             }
 
-            loading.innerText = dots.join('') || '.';
-        }, 333)
+            loading.innerText = 'Loading' + dots.join('') || '.';
+        }, 500)
     }, [])
     
     return (
-        <div className="w-full h-screen flex justify-center text-white">
+        <div className="flex justify-center text-white">
             <span id="text-loading" className="m-auto"></span>
         </div>
     );
