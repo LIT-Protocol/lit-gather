@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../../state/AppProvider";
 import { storedNetwork } from "../../utils/storage";
 import SpaceCard from "../../components/SpaceCard";
+import { TrashIcon } from "@heroicons/react/solid";
 
 const Dashboard = () => {
 
     // -- app context
     const appContext = useAppContext();
-    const { auth } = appContext.methods;
+    const { auth, joinSpace } = appContext.methods;
     const { LitJsSdk } = appContext.lit;
 
     // -- state
@@ -26,8 +27,13 @@ const Dashboard = () => {
         });
     }, []);
     
-    // -- event:: onClick space card
-    const onClick = (space) => {
+    
+    // 
+    // event:: onDelete space card
+    // @param { Object } space
+    // @return { void } 
+    // 
+    const onDelete = (space) => {
         
         // -- prompt user
         const sure = confirm("Are you sure you want to delete this?") == true;
@@ -43,8 +49,6 @@ const Dashboard = () => {
             const res = await fetchMySpaces({authSig}); 
             setSpaces(res.spaces);
         });
-
-        
     }
 
     return (
@@ -52,11 +56,12 @@ const Dashboard = () => {
 
             {/* ===== Title ===== */}
             <h1 className="leading-tight text-5xl text-white">
-                Your Gated Spaces
+                Managed Spaces
             </h1>
+
             <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
                 <span>
-                ** Please not that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>.
+                ** Please not that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>
                 </span>
             </h5>
 
@@ -67,13 +72,21 @@ const Dashboard = () => {
                 ? 'Oops.. cannot find any spaces'
                 : <div className="grid grid-cols-3 gap-8">
                     {
-                        spaces.map((space, i) => {
+                        spaces.map((space) => {
+                            
                             return (
-                                <SpaceCard key={i}
-                                    space={space}
-                                    restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                    buttonAction={() => onClick(space)}
-                                />
+                                <div key={space.id} className="flex relative">
+                                    <SpaceCard
+                                        space={space}
+                                        restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                        buttonAction={() => joinSpace(space)}
+                                    />
+                                    <div className="absolute top-0 p-2 w-full flex justify-right">
+                                        <div onClick={() => onDelete()} className="cursor-pointer bg-lit-red ml-auto flex justify-center rounded-full text-sm hover:bg-red">
+                                            <span className="w-6 p-1"><TrashIcon/></span>
+                                        </div>
+                                    </div>
+                                </div>            
                             )
                         })
                     }

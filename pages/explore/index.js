@@ -3,138 +3,15 @@ import MaxWidth from "../../components/Layout/MaxWidth";
 import SEOHeader from "../../components/SEO/SEOHeader";
 import SpaceCard from "../../components/SpaceCard";
 import { useAppContext } from "../../state/AppProvider";
-import { fetchLockedSpaces, storeUserPermittedResources } from "../../utils/fetch";
-import { getGatherRedirectUrl } from "../../utils/gather";
-import { asyncForEach, disableNativeAlert, enableNativeAlert } from "../../utils/helper";
-import { compileResourceId } from "../../utils/lit";
-import { storedNetwork } from "../../utils/storage";
+import { fetchLockedSpaces } from "../../utils/fetch";
+import { makeId } from "../../utils/helper";
 
 const Explore = ({data}) => {
 
     // -- context
     const appContext = useAppContext();
-    const { litNodeClient, LitJsSdk } = appContext.lit;
-    const { auth } = appContext.methods;
+    const { auth, joinSpace } = appContext.methods;
     
-    // 
-    // Get a list of arguments to be passed to the 
-    // getSignedToken function to request JWT
-    // @param { String } spaceId eg.  tXVe5OYt6nHS9Ey5\lit-protocol
-    // @param { Array } locked spaces
-    // @return { Array } list
-    //
-    const getJwtArguments = (spaceId, lockedSpaces) => {
-
-        return lockedSpaces.map((area) => {
-
-            // -- prepare
-            var accessControlConditions = JSON.parse(area.accessControls);
-            var resourceId = compileResourceId(spaceId, area);
-            
-            // -- add to list
-            return {
-                accessControlConditions,
-                resourceId
-            };
-        });
-
-    }
-
-    //
-    // Get return jwts from list of arguments
-    // @param { String } chain/network
-    // @param { Object } authSig
-    // @param { Array } jwt argumnets
-    // @return { Array } list of jwts
-    //
-    const getJwts = async (chain, authSig, args) => {
-
-        const jwts = [];
-
-        await asyncForEach(args, async (arg) => {
-            let jwt;
-            try{
-                jwt = await litNodeClient.getSignedToken({ 
-                    chain,
-                    authSig, 
-                    accessControlConditions: arg.accessControlConditions, 
-                    resourceId: arg.resourceId,
-                })
-            }catch{
-                console.error("❌ Failed to request jwt for ", arg);
-            }
-            jwts.push(jwt);
-        })
-
-        return jwts;
-    }
-
-    //
-    // event:: onClick join space button
-    // @parma { Object } space
-    // @return { void } 
-    //
-    const onClickJoin = async (space) => {
-        console.warn("↓↓↓↓↓ onClickJoin ↓↓↓↓↓ ");
-
-        // -- disable native alert
-        disableNativeAlert();
-
-        // -- prepare
-        const lockedSpaces = JSON.parse(space.restrictedSpaces);
-        console.log("👉 lockedSpaces:", lockedSpaces)
-
-        // -- prepare spaceId eg. tXVe5OYt6nHS9Ey5\lit-protocol
-        const spaceId = space.spaceId;
-        console.log("👉 spaceId:", spaceId)
-
-        // -- prepare access to resource via jwt
-        
-        // -- chain & auth
-        const chain = storedNetwork();
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain});
-        
-        // -- get jwt arguments to be passed 
-        const jwtArguments = getJwtArguments(spaceId, lockedSpaces);
-        console.log("👉 jwtArguments:", jwtArguments);
-        
-        // -- get jwts
-        const jwts = await getJwts(chain, authSig, jwtArguments);
-
-        // -- valid jwts
-        const validJwts = jwts.filter((jwt) => jwt);
-
-        console.log("👉 validJwts:", validJwts);
-
-        // -- store user's gather permitted resources
-        const store = await storeUserPermittedResources({authSig, jwts: validJwts, spaceId})
-
-        console.log("👉 Permitted Resources Stored:", store)
-
-        // -- prepare queries
-        const queryAuthSig = { authSig: JSON.stringify(authSig) }
-        const queryGatherUrl = { gatherUrl: (window.location.origin + window.location.pathname) }
-        const querySpace = { spaceId }
-
-        // -- prepare redirect query
-        const redirectUrl = getGatherRedirectUrl({
-            host: process.env.NEXT_PUBLIC_BACKEND, 
-            endpoint: '/oauth/gather/callback2?',
-            queries: [
-                queryAuthSig,
-                queryGatherUrl,
-                querySpace,
-            ],
-        });
-
-        console.log("👉 redirectUrl:", redirectUrl)
-
-        window.location = redirectUrl;
-
-        // -- enable native alert once its done
-        enableNativeAlert();
-    }
-
     return (
         <>
             <SEOHeader subtitle="Explore Spaces" />
@@ -172,7 +49,7 @@ const Explore = ({data}) => {
                                 <SpaceCard
                                     space={space}
                                     restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                    buttonAction={() => auth(() => onClickJoin(space))}
+                                    buttonAction={() => auth(() => joinSpace(space))}
                                 />
                             )
                         })}
