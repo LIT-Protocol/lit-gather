@@ -111,7 +111,7 @@ const Instruction = () => {
                                         info.images.map((image) => {
                                             return (
                                                 <div key={image} className="mt-4 rounded-lg overflow-hidden">
-                                                    <img src={image} />
+                                                    <img src={image} alt="" />
                                                 </div>
                                             )
                                         })
