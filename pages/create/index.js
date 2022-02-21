@@ -172,7 +172,7 @@ const CreateSpace = () => {
         }
 
         if( ! granted ){
-            alert("❗ You must grant gather@litprotocol.com admin access")
+            alert("❗ You must grant gatheradmin@litprotocol.com admin access")
             return
         }
 
@@ -244,7 +244,7 @@ const CreateSpace = () => {
                         {/* Step 2 */}
                         <div className="form-check mt-8">
                             <label className="text-white form-check-label inline-block">
-                                2. Grant <span className='text-purple-text'>gather@litprotocol.com</span> admin access <span className='text-red'>*</span>
+                                2. Grant <span className='text-purple-text'>gatheradmin@litprotocol.com</span> admin access <span className='text-red'>*</span>
                                 <a target="_blank" href="./instruction#2" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                             </label><br/>
                             <input onChange={(e) => setGranted(e.target.checked)} className="form-check-input h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="checkbox" value="" /> I&apos;ve granted Lit Protocol admin access to my gather space

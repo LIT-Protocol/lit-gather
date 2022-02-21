@@ -21,12 +21,12 @@ const Instruction = () => {
         },
         {
             id: 2,
-            title: 'How to grant gather@litprotocol.com admin access to your gather space',
+            title: 'How to grant gatheradmin@litprotocol.com admin access to your gather space',
             steps: [
                 'Go to "My Spaces"',
                 'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Manage Space"',
                 'On the side of the menu, click "User Roles"',
-                'Under the "Add Members" field, type "gather@litprotocol.com" and click "Add"',
+                'Under the "Add Members" field, type "gatheradmin@litprotocol.com" and click "Add"',
                 'Once it\'s been added, under "Manage Members", click on the 3 vertically-aligned dots and click on "Edit roles", check "Admin" role and "Apply"',
             ],
             images: [
