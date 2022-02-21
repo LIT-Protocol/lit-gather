@@ -46,6 +46,7 @@ const Explore = ({data}) => {
                         { data.spaces.map((space) => {
                             return (
                                 <SpaceCard
+                                    key={space.spaceId}
                                     space={space}
                                     restrictedAreas={JSON.parse(space.restrictedSpaces)}
                                     buttonAction={() => auth(() => joinSpace(space))}

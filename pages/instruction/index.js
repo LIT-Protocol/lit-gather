@@ -61,7 +61,7 @@ const Instruction = () => {
                 {
                     instructions.map((info) => {
                         return (
-                            <li className='pt-3 hover:text-lit-400 transition ease-in'>
+                            <li key={info.id} className='pt-3 hover:text-lit-400 transition ease-in'>
                                 <a href={`#${info.id}`}>{info.title}</a>    
                             </li>
                         )
@@ -93,7 +93,7 @@ const Instruction = () => {
                                             {
                                                 info.steps.map((step) => {
                                                     return (
-                                                        <li>{ step }</li>
+                                                        <li key={step}>{ step }</li>
                                                     )
                                                 })
                                             }
@@ -110,7 +110,7 @@ const Instruction = () => {
                                     {
                                         info.images.map((image) => {
                                             return (
-                                                <div className="mt-4 rounded-lg overflow-hidden">
+                                                <div key={image} className="mt-4 rounded-lg overflow-hidden">
                                                     <img src={image} />
                                                 </div>
                                             )
