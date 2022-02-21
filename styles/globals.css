@@ -236,3 +236,7 @@ body {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+#nprogress .bar {
+  background: #FF3743 !important;
+}
