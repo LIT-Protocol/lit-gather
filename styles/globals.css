@@ -49,7 +49,7 @@ body {
 .Modal-Connect-Wallet{
   max-width: 654px;
   width: 100%;
-  max-height: calc(100% - 128px);
+  max-height: 50%;
   height: 100%;
   margin: auto;
   padding: 20px 24px;

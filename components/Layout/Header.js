@@ -6,7 +6,7 @@ import { InfoBox } from "../InfoBox";
 export default function LayoutHeader({subtitle}){
     
     return (
-        <header className="bg-lit-dark relative w-full px-6 mx-auto flex justify-between items-center h-16 py-9">
+        <header className="sticky top-0 w-full bg-lit-dark relative mx-auto flex justify-between items-center h-16 py-9 px-6 z-10">
             <div className="relative">
                 <LitLogo></LitLogo>
             </div>

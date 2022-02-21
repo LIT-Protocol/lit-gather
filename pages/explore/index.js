@@ -18,7 +18,7 @@ const Explore = ({data}) => {
             <MaxWidth>
 
                 {/* --- Title --- */}
-                <div className="text-white text-4xl mt-12 text-center">
+                <div className="text-white text-5xl mt-16 pt-1 text-center">
                     Explore Spaces
                 </div>
                 
