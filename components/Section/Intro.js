@@ -1,23 +1,31 @@
 import { useRouter } from "next/router";
+import { useState} from 'react';
 import { useAppContext } from "../../state/AppProvider";
-import { storedAuth } from "../../utils/storage";
+// import { storedAuth } from "../../utils/storage";
 import MaxWidth from "../Layout/MaxWidth";
 import Btn from "../Ui/Btn";
 
 const Intro = () => {
 
+    // -- app context
     const appContext = useAppContext();
-
     const { auth } = appContext.methods; 
 
+    // -- router
     const router = useRouter();
+
+    // -- state
+    const [featured, setFeatured] = useState({
+        thumbnail: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3',
+        title: 'Lit Protocol',
+        createdAt: '6 days ago',
+    });
 
     //
     // Go to /create page
     // @return { void }
     //
     const onCreateClick = () => {
-
         auth(() => {
             console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
             router.push('/create')
@@ -63,11 +71,11 @@ const Intro = () => {
                 <div className="w-full mt-20 pt-1">
                     <div onClick={() => router.push('/explore')} className="">
                         <div className="h-[27.3rem] w-full overflow-hidden rounded-lg cursor-pointer hover:opacity-75 transition ease-in">
-                            <img className="object-cover" src="https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3"/>    
+                            <img className="object-cover" src={featured.thumbnail}/>    
                         </div>
                         <div className="flex justify-between mt-2 text-white text-sm">
-                            <div className="text-lit-100">Lit Protocol</div>
-                            <div className="text-grey-text">6d ago</div>
+                            <div className="text-lit-100">{ featured.title }</div>
+                            <div className="text-grey-text">{ featured.createdAt }</div>
                         </div>
                     </div>
                 </div>

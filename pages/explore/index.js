@@ -11,6 +11,7 @@ import { storedNetwork } from "../../utils/storage";
 
 const Explore = ({data}) => {
 
+    // -- context
     const appContext = useAppContext();
     const { litNodeClient, LitJsSdk } = appContext.lit;
     const { auth } = appContext.methods;
