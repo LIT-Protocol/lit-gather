@@ -318,7 +318,7 @@ const ConnectModal = () => {
             >
                 <h1 className="text-white text-h1">Connect Lit-Gather</h1>
 
-                <div className="overflow-auto h-5/6">
+                <div className="overflow-auto h-[90%]">
 
                     {
                         ! walletIsConnected ? (

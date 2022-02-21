@@ -10,7 +10,7 @@ body {
   font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   background-color: #281647;
-  background-image: url('../public/background.png');
+  background-image: url('/background.png');
   background-repeat: no-repeat;
   background-blend-mode: multiply;
   background-size: cover;
@@ -46,13 +46,17 @@ body {
   display: flex;
   justify-content: center;
 }
+.z-header{
+  z-index: 1;
+}
 .Modal-Connect-Wallet{
   max-width: 654px;
   width: 100%;
-  max-height: 50%;
+  max-height: calc(100% - 150px);
   height: 100%;
   margin: auto;
   padding: 20px 24px;
+  z-index: 2;
 }
 
 /* network */
@@ -153,82 +157,82 @@ body {
   background: linear-gradient(90deg, #4358D8b0 0%, #4358D86e 100%);
 }
 .bg-image-gather{
-  background-image: url('../public/network/gather.png');
+  background-image: url('/network/gather.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-ethereum{
-  background-image: url('../public/network/ethereum.png');
+  background-image: url('/network/ethereum.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-polygon{
-  background-image: url('../public/network/polygon.png');
+  background-image: url('/network/polygon.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-fantom{
-  background-image: url('../public/network/fantom.png');
+  background-image: url('/network/fantom.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-xdai{
-  background-image: url('../public/network/xdai.png');
+  background-image: url('/network/xdai.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-bsc{
-  background-image: url('../public/network/bsc.png');
+  background-image: url('/network/bsc.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-arbitrum{
-  background-image: url('../public/network/arbitrum.png');
+  background-image: url('/network/arbitrum.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-avalanche{
-  background-image: url('../public/network/avalanche.png');
+  background-image: url('/network/avalanche.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-harmony{
-  background-image: url('../public/network/harmony.png');
+  background-image: url('/network/harmony.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-kovan{
-  background-image: url('../public/network/kovan.png');
+  background-image: url('/network/kovan.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-mumbai{
-  background-image: url('../public/network/mumbai.png');
+  background-image: url('/network/mumbai.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-goerli{
-  background-image: url('../public/network/goerli.png');
+  background-image: url('/network/goerli.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-ropsten{
-  background-image: url('../public/network/ropsten.png');
+  background-image: url('/network/ropsten.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-rinkeby{
-  background-image: url('../public/network/rinkeby.png');
+  background-image: url('/network/rinkeby.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-MetaMask{
-  background-image: url('../public/network/MetaMask.png');
+  background-image: url('/network/MetaMask.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 .bg-image-WalletConnect{
-  background-image: url('../public/network/WalletConnect.png');
+  background-image: url('/network/WalletConnect.png');
   background-repeat: no-repeat;
   background-position: center;
 }
