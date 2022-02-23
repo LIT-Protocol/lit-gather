@@ -9,6 +9,8 @@ import { storeUserPermittedResources } from "../utils/fetch";
 import { getGatherRedirectUrl } from "../utils/gather";
 import { info } from "autoprefixer";
 import Loading from "../components/Ui/Loading";
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 
 // Create Context Object
 const AppContext = createContext();
