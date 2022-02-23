@@ -13,7 +13,8 @@ import InfoRow from '../../components/InfoRow'
 import { getWalletAccessControls, getWalletResourceId } from '../../utils/lit'
 import MainLayout from '../../components/Layout/MainLayout'
 import { useAppContext } from '../../state/AppProvider'
-
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 
 Modal.setAppElement('#__next')
 
@@ -285,7 +286,7 @@ const ConnectModal = () => {
         
         // -- prepare redirect url
         const redirectUrl = getGatherRedirectUrl({
-            host: process.env.NEXT_PUBLIC_BACKEND, // eg. http://localhost:3000 (backend app)
+            host: publicRuntimeConfig.BACKEND_API, // eg. http://localhost:3000 (backend app)
             endpoint: '/oauth/gather/callback?',
             queries: [
                 queryAuthSig,

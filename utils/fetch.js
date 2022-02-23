@@ -1,3 +1,6 @@
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+
 //
 // (POST) Store locked spaces to the database
 // @param { Object } compiledData
@@ -14,7 +17,7 @@ export const storeLockedSpaces = async (compiledData) => {
     }
 
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/store-locked-spaces';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/store-locked-spaces';
 
     // -- fetch
     const res = await fetch(API,{
@@ -40,7 +43,7 @@ export const fetchLockedSpaces = async () => {
     console.warn("↓↓↓↓↓ fetch.js/fetchLockedSpaces ↓↓↓↓↓");
     
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/locked-spaces';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/locked-spaces';
     
     const res = await fetch(API);
     
@@ -58,7 +61,7 @@ export const fetchMySpaces = async (args = {}) => {
     console.warn("↓↓↓↓↓ fetch.js/fetchMySpaces ↓↓↓↓↓");
     
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/my-spaces';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/my-spaces';
 
     // -- fetch
     const res = await fetch(API,{
@@ -84,7 +87,7 @@ export const deleteMySpace = async (args = {}) => {
     console.warn("↓↓↓↓↓ fetch.js/deleteMySpace ↓↓↓↓↓");
     
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/delete-space';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/delete-space';
 
     // -- fetch
     const res = await fetch(API,{
@@ -112,7 +115,7 @@ export const storeUserPermittedResources = async (permittedResources) => {
     console.warn("↓↓↓↓↓ fetch.js/storeUserPermittedResources ↓↓↓↓↓");
     
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/user-permitted-resources';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/user-permitted-resources';
 
     const res = await fetch(API,{
         method: 'POST',
@@ -153,7 +156,7 @@ export const fetchWalletInfo = async (walletAddress, jwt) => {
     }
 
     // -- prepare
-    const API = process.env.NEXT_PUBLIC_BACKEND + '/oauth/gather/connected';
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/connected';
     const param_1 = '/' + walletAddress;
     const url = API + param_1;
     

@@ -124,7 +124,7 @@ export function AppProvider({ children }){
 
         // -- prepare redirect query
         const redirectUrl = getGatherRedirectUrl({
-            host: process.env.NEXT_PUBLIC_BACKEND, 
+            host: publicRuntimeConfig.BACKEND_API, 
             endpoint: '/oauth/gather/callback2?',
             queries: [
                 queryAuthSig,

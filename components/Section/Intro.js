@@ -4,6 +4,8 @@ import { useAppContext } from "../../state/AppProvider";
 // import { storedAuth } from "../../utils/storage";
 import MaxWidth from "../Layout/MaxWidth";
 import Btn from "../Ui/Btn";
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 
 const Intro = () => {
 
@@ -48,7 +50,7 @@ const Intro = () => {
                     </div>
 
                     <div className="text-2xs text-white">
-                        Testing: { JSON.stringify(process.env.NEXT_PUBLIC_BACKEND) }
+                        Testing: { JSON.stringify(publicRuntimeConfig.BACKEND_API) }
                     </div>
 
                     <div className="mt-10 flex">

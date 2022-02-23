@@ -4,6 +4,6 @@ module.exports = {
     domains: ['litprotocol.com', 'gather.town'],
   },
   publicRuntimeConfig: {
-    BACKEND_API: process.env.REACT_APP_LIT_GATEWAY_FRONTEND_API_URL
+    BACKEND_API: process.env.BACKEND_API
   }
 }

@@ -1,5 +1,6 @@
 import { removeHttp } from "./helper"
-
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 //
 // Get access control condition for the selected wallet address and chain
 // @param { String } wallet address
@@ -39,7 +40,7 @@ export const getWalletAccessControls = (walletAddress, chain) => {
 export const getWalletResourceId = (walletAddress) => {
 
 
-    const baseUrl = removeHttp(process.env.NEXT_PUBLIC_BACKEND);
+    const baseUrl = removeHttp(publicRuntimeConfig.BACKEND_API);
 
     // -- validate
     if( ! walletAddress ){
