@@ -49,10 +49,6 @@ const Intro = () => {
                         Creators, NFT, DAO representative use Lit Protocol to grant and restrict access to your gather spaces
                     </div>
 
-                    <div className="text-2xs text-white">
-                        Testing: { JSON.stringify(publicRuntimeConfig.BACKEND_API) }
-                    </div>
-
                     <div className="mt-10 flex">
                         <div className="w-32">
                             <Btn
