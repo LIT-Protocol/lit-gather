@@ -35,6 +35,12 @@ const Dashboard = () => {
     // @return { void } 
     // 
     const onDelete = (space) => {
+
+        // -- validate
+        if( ! space ){
+            console.error("❗ Space cannot be empty.");
+            return;
+        }
         
         // -- prompt user
         const sure = confirm("Are you sure you want to delete this?") == true;
@@ -83,7 +89,7 @@ const Dashboard = () => {
                                         buttonAction={() => joinSpace(space)}
                                     />
                                     <div className="absolute top-0 p-2 w-full flex justify-right">
-                                        <div onClick={() => onDelete()} className="cursor-pointer bg-lit-red ml-auto flex justify-center rounded-full text-sm hover:bg-red">
+                                        <div onClick={() => onDelete(space)} className="cursor-pointer bg-lit-red ml-auto flex justify-center rounded-full text-sm hover:bg-red">
                                             <span className="w-6 p-1"><TrashIcon/></span>
                                         </div>
                                     </div>
