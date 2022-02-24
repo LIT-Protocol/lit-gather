@@ -104,22 +104,21 @@ export function AppProvider({ children }){
         
         // -- get jwt arguments to be passed 
         const jwtArguments = getJwtArguments(spaceId, lockedSpaces);
+        console.log("👉 jwtArguments:", jwtArguments);
         
         // -- get jwts
         const jwts = await getJwts(chain, authSig, jwtArguments);
-        
+
         // -- valid jwts
         const validJwts = jwts.filter((jwt) => jwt);
-        
-        
+
+        console.log("👉 validJwts:", validJwts);
+
         // -- store user's gather permitted resources
         const store = await storeUserPermittedResources({authSig, jwts: validJwts, spaceId})
         
-        console.log("👉 jwtArguments:", jwtArguments);
-        console.log("👉 jwts:", jwts);
-        console.log("👉 validJwts:", validJwts);
         console.log("👉 Permitted Resources Stored:", store)
-        return;
+
         // -- prepare queries
         const queryAuthSig = { authSig: JSON.stringify(authSig) }
         const queryGatherUrl = { gatherUrl: (window.location.origin + window.location.pathname) }

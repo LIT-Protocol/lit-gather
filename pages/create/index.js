@@ -198,7 +198,6 @@ const CreateSpace = () => {
             })
         })
 
-
         // -- store
         const stored = await storeLockedSpaces(compiledData);
         

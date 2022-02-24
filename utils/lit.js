@@ -94,7 +94,7 @@ export const compileResourceId = (spaceId, area) => {
     // -- pass    
     const resourceId = {
         baseUrl: 'gather.town',
-        path: '/app/' + spaceId,
+        path: '/app/' + decodeURIComponent(spaceId),
         orgId: "",
         role: "",
         extraData: JSON.stringify({
