@@ -1,1 +1,0 @@
-wget https://raw.githubusercontent.com/LIT-Protocol/lit-js-sdk/main/src/lib/constants.js
