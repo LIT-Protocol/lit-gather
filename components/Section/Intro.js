@@ -59,7 +59,7 @@ const Intro = () => {
                         </div>
                         <div className="ml-4">
                             <Btn
-                                text="Create a new gather space"
+                                text="Add access control conditions"
                                 css="flex justify-center"
                                 template='inverted'
                                 onClick={() => onCreateClick()}

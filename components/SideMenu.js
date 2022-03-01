@@ -43,7 +43,7 @@ const SideMenu = () => {
 
             <div onClick={() => onClick(1)} className={`text-white text-sm h-12 w-48 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit hover:bg-lit-400 ${selected == 1 ? 'bg-lit-400' : ''}`}>
                 <PlusIcon className="w-6 ml-2"/>
-                <span className="m-auto ml-2 text-sm">Create Space</span>
+                <span className="m-auto ml-2 text-sm">Add Access Control Conditions</span>
             </div>
 
         </>

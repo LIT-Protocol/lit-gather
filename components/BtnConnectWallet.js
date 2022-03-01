@@ -12,7 +12,7 @@ function BtnConnectWallet() {
 
   return <Btn
     id="connect-wallet"
-    text={ shortenWalletAddress(connectedWalletAddress) || 'Connect Lit-Gather' }
+    text={ shortenWalletAddress(connectedWalletAddress) || 'Connect Wallet' }
     onClick={() => setConnectModalOpened(true)}
   />
 

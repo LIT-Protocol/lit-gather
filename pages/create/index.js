@@ -4,7 +4,7 @@ import LitJsSdk from 'lit-js-sdk'
 import DashboardLayout from '../../components/Layout/Dashboard';
 import { useRouter } from 'next/router';
 import { useAppContext } from '../../state/AppProvider';
-import { CogIcon, PlusIcon } from '@heroicons/react/solid';
+import { CheckIcon, CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedNetwork } from '../../utils/storage';
 import { storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
@@ -137,7 +137,7 @@ const CreateSpace = () => {
     // @return { void }
     // 
     const onOpenShareModal = async () => {
-        openShareModal(document.getElementById('form-accs'))
+        openShareModal(document.getElementById('form-accs'));
     }
 
     //
@@ -217,12 +217,12 @@ const CreateSpace = () => {
 
     return (
         loaded ? <>
-            <SEOHeader subtitle="Create New Space"/>
+            <SEOHeader subtitle="Add access control conditions"/>
             <DashboardLayout>
                 <div className="w-full">
                     
                     <h1 className="leading-tight text-5xl text-white">
-                    Create New Space
+                    Add Access Control Conditions
                     </h1>
 
                     {/* ===== Form Area ===== */}
@@ -251,7 +251,7 @@ const CreateSpace = () => {
 
                         {/* Step 3 */}
                         <div className='text-base text-white mt-8'>
-                            3. Initial Coordinates 
+                            3. Spawn Coordinates 
                             <a target="_blank" href="./instruction#3" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
                         </div>
                         <div className='mt-2'>
@@ -293,16 +293,21 @@ const CreateSpace = () => {
                                         <input onChange={(e) => setWallThickness(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='2'/>    
                                     </div>
                                 </div>
-                                <div className='grid grid-cols-2 mt-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Access Control Conditions:</span></div>
-                                    <div className='flex'>
-                                        <input id="form-accs" onChange={(e) => setAccessControls(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
-                                        <div className='cursor-pointer' onClick={() => onOpenShareModal()}>
-                                            <CogIcon className="w-6 ml-2 text-lit-100 hover:text-white transition ease-in"/>
-                                        </div>
+                                <div className='flex mt-2'>
+                                    <div className='flex justify-start w-full'><span className='my-auto pr-2'>Access Control Conditions:</span></div>
+
+                                    <div className='ml-auto flex'>
+                                        
+                                        <input id="form-accs" onChange={(e) => setAccessControls(e.target.value)} type="text" className='hidden shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+                                        <button onClick={() => onOpenShareModal()} className="text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75">
+                                            <div className='m-auto flex w-48'>
+                                                <CogIcon className="w-8 ml-3"/>
+                                                <span className="m-auto text-sm mr-4 text-left pl-2">{accessControls} Define Access Control Conditions</span>
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
-                                <div className='flex justify-end'>
+                                <div className='flex justify-end mt-2'>
                                     <button onClick={() => onClickAddRestrictedArea()} className="text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75">
                                         <div className='m-auto flex'>
                                             <PlusIcon className="w-6 ml-2"/>
