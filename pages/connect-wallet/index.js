@@ -317,7 +317,7 @@ const ConnectModal = () => {
                 contentLabel="Connect Wallet"
                 className="Modal-Connect-Wallet bg-base-main rounded-3xl"
             >
-                <h1 className="text-white text-h1">Connect Lit-Gather</h1>
+                <h1 className="text-white text-h1">Connect Wallet</h1>
 
                 <div className="overflow-auto h-[90%]">
 
