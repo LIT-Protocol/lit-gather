@@ -42,11 +42,11 @@ const Intro = () => {
                 <div className="w-full mt-12 md:mt-24 pt-2">
                     <h1 className="leading-tight text-5xl text-white">
                         Discover, create, and join
-                        token-gated Gather Spaces
+                        token-gated Gather spaces
                     </h1>
 
                     <div className="text-purple-text text-2xl mt-5">
-                        Creators, NFT, DAO representative use Lit Protocol to grant and restrict access to your gather spaces
+                        Creators, NFT, DAO representative use Lit Protocol to grant and restrict access to their Gather spaces.
                     </div>
 
                     <div className="mt-10 flex">
