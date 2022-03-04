@@ -1,14 +1,12 @@
 import { createContext } from "react"
 import { useContext, useState, useEffect } from "react"
 import LitJsSdk from 'lit-js-sdk'
-import { removeStoredAuth, removeStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
+import { removeStoredAuth, removeStoredNetwork, setStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
 import ConnectModal from "../pages/connect-wallet";
 import { asyncForEach, disableNativeAlert, enableNativeAlert } from "../utils/helper";
 import { compileResourceId } from "../utils/lit";
 import { storeUserPermittedResources } from "../utils/fetch";
 import { getGatherRedirectUrl } from "../utils/gather";
-import { info } from "autoprefixer";
-import Loading from "../components/Ui/Loading";
 import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 
@@ -148,6 +146,57 @@ export function AppProvider({ children }){
         }, 2000);
     }
 
+    //
+    // Handler:: when wallet is NOT connected
+    // @return { void }
+    //
+    const handleWhenWalletNotConnected = async () => {
+        console.warn("↓↓↓↓↓ handleWhenWalletNotConnected ↓↓↓↓↓");
+
+        // -- prepare
+        const chain = 'ethereum';
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain});
+        
+        // -- validate
+        if( ! authSig ){
+        console.error("❗ Failed to connect wallet");
+        return;
+        }
+
+        console.log("👉 authSig:", authSig);
+
+        setWalletIsConnected(true);
+        setConnectedWalletAddress(authSig.address);
+        setConnectedNetwork(chain);
+        setStoredNetwork(chain);
+    }
+
+    //
+    // Handler:: when wallet IS connected
+    // @return { void }
+    //
+    const handleWalletIsConnected = async () => {
+        setConnectModalOpened(true);
+    }
+
+    // 
+    // Event:: When `Connect Wallet` button is clicked
+    // @return { void }
+    //
+    const onClickConnectWallet = async () => {
+        console.warn("↓↓↓↓↓ onClickConnectWallet ↓↓↓↓↓");
+
+        // -- validate: if wallet is connected
+        console.log("👉 connectedWalletAddress:", connectedWalletAddress);
+        if( ! connectedWalletAddress ){
+        await handleWhenWalletNotConnected();
+        return;
+        }
+
+        handleWalletIsConnected();
+
+    }
+
 
     //
     // Check is authed
@@ -165,8 +214,8 @@ export function AppProvider({ children }){
     const auth = (callback) => {
 
         // -- validate
-        if( ! storedAuth() || !storedNetwork()){
-            setConnectModalOpened(true);
+        if( ! storedAuth() || ! storedNetwork() ){
+            onClickConnectWallet();
             return;
         }
 
@@ -318,9 +367,10 @@ export function AppProvider({ children }){
             setWalletIsConnected,
             setConnectingGather,
             
-            // -- page action based on param
+            // -- page action
             setAction,
             joinSpace,
+            onClickConnectWallet,
 
             // -- libraries
             openShareModal,
@@ -352,7 +402,6 @@ export function AppProvider({ children }){
                 <span className="text-white text-center m-auto">{msg}</span>
             </div>
     
-
             {/* ----- No Web3 Wallet Exception ----- */}
             { ! hasWeb3Wallet ? <div className="w-full text-center text-red">No web3 wallet was found. Please connect to your wallet and refresh the page</div> : ''}
 

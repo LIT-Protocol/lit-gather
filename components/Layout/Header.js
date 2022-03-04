@@ -13,7 +13,7 @@ export default function LayoutHeader({subtitle}){
 
             {/* Nav: Links */}
             <div className="flex items-center">
-                <InfoBox/>
+                {/* <InfoBox/> */}
                 <BtnConnectWallet/>
             </div>
         </header>

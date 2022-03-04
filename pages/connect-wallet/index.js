@@ -266,44 +266,9 @@ const ConnectModal = () => {
         removeStoredNetwork()
         removeWeb3Modal()
         removeStoredResourceId()
-    }
 
-    //
-    // Event:: When Connect Gather.town button is clicked
-    // Redirect user to gather auth page which will then calls the 
-    // backend API to store user credential (wallet address, and gather id)
-    // @return { void } 
-    //
-    const onClickGather = async() => {
-        console.warn("↓↓↓↓↓ onClickGather ↓↓↓↓↓");
-
-        // -- prepare
-        const authSig = JSON.parse(storedAuth());
-
-        // -- prepare queries
-        const queryAuthSig = { authSig: JSON.stringify(authSig) }
-        const queryGatherUrl = { gatherUrl: `${window.location.origin}${window.location.pathname}?action=connect-gather${action != null ? `&next=create` : ''}` }
-        
-        // -- prepare redirect url
-        const redirectUrl = getGatherRedirectUrl({
-            host: publicRuntimeConfig.BACKEND_API, // eg. http://localhost:3000 (backend app)
-            endpoint: '/oauth/gather/callback?',
-            queries: [
-                queryAuthSig,
-                queryGatherUrl
-            ],
-        });
-
-        // -- redirect user to gather auth page
-        window.location.href = redirectUrl;
-            }
-
-    //
-    // Event:: When modal is closed
-    // @return { void } 
-    // 
-    const onModalClosed = () => {
-        router.push('/')
+        // -- close modal
+        setConnectModalOpened(false);
     }
 
 
