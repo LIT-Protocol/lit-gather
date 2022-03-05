@@ -11,7 +11,7 @@ const Intro = () => {
 
     // -- app context
     const appContext = useAppContext();
-    const { auth } = appContext.methods; 
+    const { auth, joinSpace } = appContext.methods; 
 
     // -- router
     const router = useRouter();
@@ -41,6 +41,7 @@ const Intro = () => {
                     thumbnail: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3',
                     title: 'Lit Protocol',
                     createdAt: '6 days ago',
+                    space: null,
                 });
                 console.warn("❗ No featured data found. Using default.");
                 return;
@@ -52,6 +53,7 @@ const Intro = () => {
                 thumbnail: featuredSpace.thumbnailUrl,
                 title: featuredSpace.spaceId.split('/')[1],
                 createdAt: moment(featuredSpace.createdAt).fromNow(),
+                space: featuredSpace,
             })
         }
 
@@ -99,7 +101,13 @@ const Intro = () => {
                         ! featured 
                         ? '' 
                         : <FeaturedCard 
-                            callback={() => {}} 
+                            callback={() => auth(() => {
+                                if( ! featured.space ){
+                                    router.push('/explore');
+                                    return;
+                                }
+                                joinSpace(featured.space);
+                            })} 
                             thumbnail={featured.thumbnail} 
                             title={featured.title} 
                             createdAt={featured.createdAt}  

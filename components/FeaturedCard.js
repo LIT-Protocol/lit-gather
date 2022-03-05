@@ -1,5 +1,5 @@
 const FeaturedCard = ({callback, thumbnail, title, createdAt}) => {
-    return (<div onClick={() => callback} className="">
+    return (<div onClick={() => callback()} className="">
         <div className="h-[27.3rem] w-full overflow-hidden rounded-lg cursor-pointer hover:opacity-75 transition ease-in">
             <img className="object-cover w-full h-full" src={thumbnail} />    
         </div>
