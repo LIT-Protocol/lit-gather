@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
-import { useState} from 'react';
+import { useEffect, useState} from 'react';
 import { useAppContext } from "../../state/AppProvider";
-// import { storedAuth } from "../../utils/storage";
+import { fetchLockedSpaces } from "../../utils/fetch";
+import FeaturedCard from "../FeaturedCard";
 import MaxWidth from "../Layout/MaxWidth";
 import Btn from "../Ui/Btn";
-import getConfig from 'next/config'
-const { publicRuntimeConfig } = getConfig()
+import moment from 'moment';
 
 const Intro = () => {
 
@@ -17,11 +17,7 @@ const Intro = () => {
     const router = useRouter();
 
     // -- state
-    const [featured, setFeatured] = useState({
-        thumbnail: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3',
-        title: 'Lit Protocol',
-        createdAt: '6 days ago',
-    });
+    const [featured, setFeatured] = useState(null);
 
     //
     // Go to /create page
@@ -33,6 +29,34 @@ const Intro = () => {
             router.push('/create')
         })
     }
+
+    // -- mounted
+    useEffect(() => {
+        const getFeaturedSpaces = async () => {
+            const data = await fetchLockedSpaces();
+
+            // -- validate if there is data
+            if(data.spaces.length <= 0){
+                setFeatured({
+                    thumbnail: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3',
+                    title: 'Lit Protocol',
+                    createdAt: '6 days ago',
+                });
+                console.warn("❗ No featured data found. Using default.");
+                return;
+            }
+
+            const featuredSpace = data.spaces[Math.floor(Math.random() * data.spaces.length)];
+
+            setFeatured({
+                thumbnail: featuredSpace.thumbnailUrl,
+                title: featuredSpace.spaceId.split('/')[1],
+                createdAt: moment(featuredSpace.createdAt).fromNow(),
+            })
+        }
+
+        getFeaturedSpaces();
+    }, [])
 
     return (
         <MaxWidth>
@@ -70,20 +94,37 @@ const Intro = () => {
                 </div>
 
                 {/* === Right Side === */}
-                <div className="w-full mt-20 pt-1">
-                    <div onClick={() => router.push('/explore')} className="">
-                        <div className="h-[27.3rem] w-full overflow-hidden rounded-lg cursor-pointer hover:opacity-75 transition ease-in">
-                            <img className="object-cover" src={featured.thumbnail}/>    
-                        </div>
-                        <div className="flex justify-between mt-2 text-white text-sm">
-                            <div className="text-lit-100">{ featured.title }</div>
-                            <div className="text-grey-text">{ featured.createdAt }</div>
-                        </div>
-                    </div>
+                <div className="w-full mt-20 pt-1 text-white">
+                    {
+                        ! featured 
+                        ? '' 
+                        : <FeaturedCard 
+                            callback={() => {}} 
+                            thumbnail={featured.thumbnail} 
+                            title={featured.title} 
+                            createdAt={featured.createdAt}  
+                        />
+                    }
+                    
                 </div>
             </div>
         </MaxWidth>
     );
 }
-
+  
 export default Intro;
+
+// ========== Next.js Hooks ==========
+//
+// Prefetch data for this component
+//
+export async function getServerSideProps() {
+
+    const data = await fetchLockedSpaces();
+
+    const featuredSpace = data?.spaces[Math.floor(Math.random() * data?.spaces.legth)];
+
+    console.log("featuredSpace:", featuredSpace);
+    // Pass data to the page via props
+    return { props: { featuredSpace } }
+}
