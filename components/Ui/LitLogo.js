@@ -13,8 +13,8 @@ export default function LitLogo() {
             <h1 className="text-xl text-white m-auto">
             <Link href="/">
               <div className='text-base mt-1'>
-                <span>Lit Protocol</span>
-                <span className='ml-1 text-grey-text font-extralight'>Gather Spaces</span>
+                <span className='ml-[2px]'>Lit Protocol</span>
+                <span className='ml-2 text-grey-text font-extralight'>Gather Spaces</span>
               </div>
             </Link>
             </h1>
