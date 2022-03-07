@@ -72,7 +72,7 @@ const Intro = () => {
                     </h1>
 
                     <div className="text-purple-text text-2xl mt-5">
-                        Creators, NFT, DAO representative use Lit Protocol to grant and restrict access to their Gather spaces.
+                        Creators, DAOs and NFT projects use Lit Protocol to grant and restrict access to their Gather spaces.
                     </div>
 
                     <div className="mt-10 flex">

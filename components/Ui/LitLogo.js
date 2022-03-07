@@ -12,7 +12,10 @@ export default function LitLogo() {
         <div className='flex justify-center pl-2'>
             <h1 className="text-xl text-white m-auto">
             <Link href="/">
-              Lit-Gather Space
+              <div className='text-base mt-1'>
+                <span>Lit Protocol</span>
+                <span className='ml-1 text-grey-text font-extralight'>Gather Spaces</span>
+              </div>
             </Link>
             </h1>
         </div>
