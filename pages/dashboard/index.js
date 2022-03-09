@@ -6,6 +6,7 @@ import { useAppContext } from "../../state/AppProvider";
 import { storedNetwork } from "../../utils/storage";
 import SpaceCard from "../../components/SpaceCard";
 import { TrashIcon } from "@heroicons/react/solid";
+import DropMenu from "../../components/Ui/DropMenu";
 
 const Dashboard = () => {
 
@@ -58,17 +59,36 @@ const Dashboard = () => {
         });
     }
 
+    //
+    // event:: copy link
+    // @param { String } space id on the table (NOT spaceId)
+    // @return { String } url
+    //
+    const onCopyLink = (id) => {
+        const url = window.location.protocol + '//' + window.location.host + '/space/' + id;
+        navigator.clipboard.writeText(url).then(() => {
+        alert(`Copied! ${url}`);
+
+
+        }, (err) => {
+            console.error('Async: Could not copy text: ', err);
+        });
+    }
+
     return (
         <DashboardLayout>
 
             {/* ===== Title ===== */}
             <h1 className="leading-tight text-5xl text-white">
-                Managed Spaces
+                Your Spaces
+
+                
+
             </h1>
 
             <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
                 <span>
-                ** Please not that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>
+                ** Please note that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>
                 </span>
             </h5>
 
@@ -86,11 +106,26 @@ const Dashboard = () => {
                                     <SpaceCard
                                         space={space}
                                         restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                        buttonAction={() => joinSpace(space)}
+                                        buttonAction={() => {}}
+                                        // joinSpace(space)
+                                        hover={false}
                                     />
+                                    {/* onDelete(space) */}
                                     <div className="absolute top-0 p-2 w-full flex justify-right">
-                                        <div onClick={() => onDelete(space)} className="cursor-pointer bg-lit-red ml-auto flex justify-center rounded-full text-sm hover:bg-red">
-                                            <span className="w-6 p-1"><TrashIcon/></span>
+                                        <div onClick={() => {}} className="cursor-pointer border border-lit-400 bg-lit-900 ml-auto flex justify-center rounded text-sm hover:bg-lit-500 p-1">
+                                            {/* <span className="w-6 p-1"><TrashIcon/></span> */}
+                                            <DropMenu
+                                                links={[
+                                                    {
+                                                        text: 'Copy Link',
+                                                        onClick: (e) => onCopyLink(space.id)
+                                                    },
+                                                    {
+                                                        text: 'Delete',
+                                                        onClick: (e) => onDelete(space)
+                                                    },
+                                                ]}
+                                            />
                                         </div>
                                     </div>
                                 </div>            

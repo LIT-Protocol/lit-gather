@@ -101,7 +101,6 @@ export const compileResourceId = (spaceId, area) => {
             name: area.name,
             topLeft: area.topLeft,
             bottomRight: area.bottomRight,
-            wallThickness: area.wallThickness || 0,
         }),
     }
 

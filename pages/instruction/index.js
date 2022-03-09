@@ -36,13 +36,12 @@ const Instruction = () => {
         },
         {
             id: 3,
-            title: 'How to collect the x,y coordinates and wall thickness for the bounding box of her private space',
+            title: 'How to collect the x,y coordinates for the bounding box of her private space',
             steps: [
                 'Go to "My Spaces"',
                 'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"',
                 'Use your mouse cursor to hover to the top-left cornor of your private space, then record the coordinates shown on the bottom right',
-                'Repeat the same step above but for the bottom-right cornor of your private space',
-                'Get the wall thickness for the bounding box',
+                'Repeat the same step above but for the bottom-right cornor of your private space'
             ],
             images: [
                 '/instruction/3a.png',

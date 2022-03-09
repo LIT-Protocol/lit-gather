@@ -12,9 +12,9 @@ export default function LitLogo() {
         <div className='flex justify-center pl-2'>
             <h1 className="text-xl text-white m-auto">
             <Link href="/">
-              <div className='text-base mt-1'>
-                <span className='ml-[2px]'>Lit Protocol</span>
-                <span className='ml-2 text-grey-text font-extralight'>Gather Spaces</span>
+              <div className='mt-[0.5px] cursor-pointer'>
+                <span className='md:text-base text-sm ml-[2px]'>Lit Protocol</span>
+                <span className='md:text-base text-sm ml-2 text-grey-text font-extralight'>Gather Spaces</span>
               </div>
             </Link>
             </h1>

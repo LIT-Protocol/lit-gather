@@ -36,7 +36,7 @@ const Intro = () => {
             const data = await fetchLockedSpaces();
 
             // -- validate if there is data
-            if(data.spaces.length <= 0){
+            if(data?.spaces?.length <= 0 || ! data?.spaces){
                 setFeatured({
                     thumbnail: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/lmQf14kt9sxHskoQ/h7DzTm7EfGZBt8dUe8e2W3',
                     title: 'Lit Protocol',

@@ -53,6 +53,24 @@ export const fetchLockedSpaces = async () => {
 }
 
 //
+// (GET) Get single space
+// @return { Object } 
+// @prop { Object.space } 
+//
+export const fetchSpace = async (id) => {
+    console.warn("↓↓↓↓↓ fetch.js/fetchSpace ↓↓↓↓↓");
+    
+    // -- prepare
+    const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/space?id=' + id;
+    
+    const res = await fetch(API);
+    
+    const data = await res.json();
+    
+    return data;
+}
+
+//
 // (POST) Get all of your spaces
 // @param { Object } data
 // @return { Object } 

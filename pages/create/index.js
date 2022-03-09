@@ -4,13 +4,38 @@ import LitJsSdk from 'lit-js-sdk'
 import DashboardLayout from '../../components/Layout/Dashboard';
 import { useRouter } from 'next/router';
 import { useAppContext } from '../../state/AppProvider';
-import { CheckIcon, CogIcon, PlusIcon } from '@heroicons/react/solid';
+import { CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedNetwork } from '../../utils/storage';
 import { storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
 import SEOHeader from '../../components/SEO/SEOHeader';
 import Loading from '../../components/Ui/Loading';
 import ImageUploader from '../../components/ImageUploader';
+import { alpha, styled } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+import { grey, deepPurple } from '@mui/material/colors';
+
+const GreenSwitch = styled(Switch)(({ theme }) => ({
+    '& .MuiSwitch-switchBase': {
+        color: grey[900],
+        '&:hover': {
+          backgroundColor: alpha(grey[900], theme.palette.action.hoverOpacity),
+        },
+      },
+      '& .MuiSwitch-switchBase + .MuiSwitch-track': {
+        backgroundColor: grey[400],
+      },
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      color: deepPurple[600],
+      '&:hover': {
+        backgroundColor: alpha(deepPurple[600], theme.palette.action.hoverOpacity),
+      },
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+      backgroundColor: deepPurple[600],
+    },
+  }));
+
 
 const CreateSpace = () => {
 
@@ -30,12 +55,12 @@ const CreateSpace = () => {
     const [granted, setGranted] = useState(false)
     const [initialCoordinates, setInitialCoordinates] = useState("31,32");
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
+    const [isPrivate, setIsPrivate] = useState(false)
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
     const [topLeft, setTopLeft] = useState(null)
     const [bottomRight, setBottomRight] = useState(null)
-    const [wallThickness, setWallThickness] = useState(0)
     const [accessControls, setAccessControls] = useState(null)
     const [thumbnail, setThumbnail] = useState(null);
 
@@ -110,7 +135,6 @@ const CreateSpace = () => {
             name, 
             topLeft: topLeft.replaceAll(' ', ''),
             bottomRight: bottomRight.replaceAll(' ', ''),
-            wallThickness: parseInt(wallThickness) || 0, 
             accessControls: accs,
             humanised
         })
@@ -154,6 +178,7 @@ const CreateSpace = () => {
             spaceId: decodeURIComponent(spaceId),
             initialCoordinates,
             restrictedSpaces,
+            isPrivate,
             thumbnailUrl: thumbnail || 'https://picsum.photos/seed/picsum/400/200',
         }
     }
@@ -217,24 +242,25 @@ const CreateSpace = () => {
 
     return (
         loaded ? <>
-            <SEOHeader subtitle="Add access control conditions"/>
+            <SEOHeader subtitle="Add access control"/>
             <DashboardLayout>
                 <div className="w-full">
                     
                     <h1 className="leading-tight text-5xl text-white">
-                    Add Access Control Conditions
+                    Add Access Control
                     </h1>
 
                     {/* ===== Form Area ===== */}
                     <div className='mt-4'>
                         <div className='text-purple-text text-sm'>
-                            <span className='text-red'>*</span> Required fields
+                            <span className='text-red'>*</span>
+                            <span className='ml-1 text-grey-text tracking-widest'>REQUIRED FIELDS</span>
                         </div>
 
                         {/* Step 1 */}
                         <div className='text-base text-white mt-2'>
                             1. Gather Space ID <span className='text-red'>*</span>
-                            <a target="_blank" href="./instruction#1" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                            <a target="_blank" href="./instruction#1" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
                             <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
@@ -244,15 +270,15 @@ const CreateSpace = () => {
                         <div className="form-check mt-8">
                             <label className="text-white form-check-label inline-block">
                                 2. Grant <span className='text-purple-text'>gatheradmin@litprotocol.com</span> admin access <span className='text-red'>*</span>
-                                <a target="_blank" href="./instruction#2" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                                <a target="_blank" href="./instruction#2" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                             </label><br/>
                             <input onChange={(e) => setGranted(e.target.checked)} className="form-check-input h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="checkbox" value="" /> I&apos;ve granted Lit Protocol admin access to my gather space
                         </div>
 
                         {/* Step 3 */}
                         <div className='text-base text-white mt-8'>
-                            3. Spawn Coordinates 
-                            <a target="_blank" href="./instruction#3" className="ml-2 text-purple-text underline underline-offset-4">(Click here for instruction)</a>
+                            <span>3. Spawn Coordinates</span><span className='ml-2 text-grey-text'>-- choose a location outside of the restricted space</span>
+                            <a target="_blank" href="./instruction#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
                             <input onChange={(e) => setInitialCoordinates(e.target.value)} value={initialCoordinates} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
@@ -287,14 +313,8 @@ const CreateSpace = () => {
                                         <input onChange={(e) => setBottomRight(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='51,36'/>    
                                     </div>
                                 </div>
-                                <div className='grid grid-cols-2 mt-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Wall Thickness:</span></div>
-                                    <div className=''>
-                                        <input onChange={(e) => setWallThickness(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='2'/>    
-                                    </div>
-                                </div>
                                 <div className='flex mt-2'>
-                                    <div className='flex justify-start w-full'><span className='my-auto pr-2'>Access Control Conditions:</span></div>
+                                    <div className='flex justify-start w-full'><span className='my-auto pr-2'>Access Control:</span></div>
 
                                     <div className='ml-auto flex'>
                                         
@@ -322,11 +342,11 @@ const CreateSpace = () => {
                                 {/* Table Headers */}
                                 <div className='flex'>
                                     <div className='w-full'>
-                                        <div className='grid grid-cols-4 text-xs text-center'>
+                                        <div className='grid grid-cols-3 text-xs text-center'>
                                             <div className='bg-lit-900 rounded-tl flex justify-center'><span className='m-auto'>Name</span></div>
                                             <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Top-Left</span></div>
                                             <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Bottom-right</span></div>
-                                            <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Wall Thickness</span></div>
+                                            {/* <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Wall Thickness</span></div> */}
                                         </div>    
                                     </div>
                                     <div className='text-white text-center text-xs w-24 bg-black'>Action</div>
@@ -338,11 +358,10 @@ const CreateSpace = () => {
                                         return (
                                             <div key={i} className='flex border border-lit-400 mt-2'>
                                                 <div className='w-full '>
-                                                    <div className='grid grid-cols-4 text-sm text-center border-b border-lit-400'>
+                                                    <div className='grid grid-cols-3 text-sm text-center border-b border-lit-400'>
                                                         <div className=''>{ space.name }</div>
                                                         <div className=''>{ space.topLeft }</div>
                                                         <div className=''>{ space.bottomRight }</div>
-                                                        <div className=''>{ space.wallThickness }</div>
                                                     </div>
                                                     <div className='bg-lit-400 text-xs text-center'>
                                                         { space.humanised }
@@ -365,7 +384,15 @@ const CreateSpace = () => {
                     </div>
                     {/* ===== ...Form Area ===== */}
                     <div className='text-base text-white mt-7'>
-                        5. Upload a thumbnail for your space (Please wait until the image appears)
+                        <span>
+                        5. Make your space private (from the &#34;Explore&#34; tab on our site)
+                        </span>
+                        {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
+                        <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
+                    </div>
+
+                    <div className='text-base text-white mt-7'>
+                        6. Upload a thumbnail for your space (Please wait until the image appears)
                     </div>
                     <ImageUploader
                         onUploaded={(imagePath) => setThumbnail(imagePath)}
@@ -392,8 +419,8 @@ export default CreateSpace;
 //
 CreateSpace.getLayout = function getLayout(page) {
     return (
-      <MainLayout>
+        <MainLayout>
         { page }
-      </MainLayout>
+        </MainLayout>
     )
-  }
+}
