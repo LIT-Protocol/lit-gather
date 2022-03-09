@@ -8,7 +8,7 @@ const MainLayout = ({ children }) => {
         <>
             <AppProvider>
                 <LayoutHeader/>
-                <main>
+                <main className="pb-24">
                     {children}
                 </main>
 

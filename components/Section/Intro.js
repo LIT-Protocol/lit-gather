@@ -65,7 +65,7 @@ const Intro = () => {
             <div className="grid md:grid-cols-2 md:gap-28 grid-cols-1">
 
                 {/* === Left Side === */}
-                <div className="w-full mt-12 md:mt-24 pt-2">
+                <div className="w-full mt-12 md:mt-20 pt-2">
                     <h1 className="leading-tight text-5xl text-white">
                         Discover, create, and join
                         token-gated Gather spaces
@@ -96,7 +96,7 @@ const Intro = () => {
                 </div>
 
                 {/* === Right Side === */}
-                <div className="w-full mt-20 pt-1 text-white">
+                <div className="w-full mt-16 pt-1 text-white">
                     {
                         ! featured 
                         ? '' 
