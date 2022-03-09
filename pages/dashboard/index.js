@@ -64,12 +64,16 @@ const Dashboard = () => {
     // @param { String } space id on the table (NOT spaceId)
     // @return { String } url
     //
-    const onCopyLink = (id) => {
+    const onCopyLink = (e, id) => {
         const url = window.location.protocol + '//' + window.location.host + '/space/' + id;
         navigator.clipboard.writeText(url).then(() => {
-        alert(`Copied! ${url}`);
 
+        e.target.innerText = 'Copied link!';
 
+        setTimeout(() => {
+            e.target.innerText = 'Copy Link';
+        }, 2000)
+        
         }, (err) => {
             console.error('Async: Could not copy text: ', err);
         });
@@ -118,7 +122,7 @@ const Dashboard = () => {
                                                 links={[
                                                     {
                                                         text: 'Copy Link',
-                                                        onClick: (e) => onCopyLink(space.id)
+                                                        onClick: (e) => onCopyLink(e, space.id)
                                                     },
                                                     {
                                                         text: 'Delete',

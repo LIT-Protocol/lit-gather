@@ -52,11 +52,12 @@ body {
 .Modal-Connect-Wallet{
   max-width: 654px;
   width: 100%;
-  max-height: calc(100% - 150px);
-  height: 100%;
+  /* max-height: calc(100% - 150px); */
+  /* height: 100%; */
   margin: auto;
   padding: 20px 24px;
   z-index: 2;
+  background: #051421;
 }
 
 /* network */

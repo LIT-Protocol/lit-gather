@@ -14,6 +14,7 @@ import { getWalletAccessControls, getWalletResourceId } from '../../utils/lit'
 import MainLayout from '../../components/Layout/MainLayout'
 import { useAppContext } from '../../state/AppProvider'
 import getConfig from 'next/config'
+import { InfoBox } from '../../components/InfoBox'
 const { publicRuntimeConfig } = getConfig()
 
 Modal.setAppElement('#__next')
@@ -280,9 +281,13 @@ const ConnectModal = () => {
                 isOpen={connectModalOpened} // The modal should always be shown on page load, it is the 'page'
                 onRequestClose={() => setConnectModalOpened(false)}
                 contentLabel="Connect Wallet"
-                className="Modal-Connect-Wallet bg-base-main rounded-3xl"
+                className="Modal-Connect-Wallet bg-base-main rounded-3xl text-center"
             >
-                <h1 className="text-white text-h1">Connect Wallet</h1>
+                <h1 className="text-white text-h1 mt-2">Connected Wallet</h1>
+
+                <div className='mt-12'>
+                    <InfoBox/>
+                </div>
 
                 <div className="overflow-auto h-[90%]">
 
@@ -313,13 +318,15 @@ const ConnectModal = () => {
                         </>) : (
                         <>
                             {/* === Connected Wallet Info === */}
-                            <div>
-                                <h1 className="mt-4 text-white">Connected Wallet:</h1>
+                            <div className='mt-4'>
+                                {/* <h1 className="mt-4 text-white">Connected Wallet:</h1> */}
                                 <InfoRow 
-                                    text={`${connectedNetwork} : ${ connectedWalletAddress }`}
+                                    text={`${ connectedWalletAddress }`}
                                     action={{
                                         callback: onClickDisconnect,
-                                        icon: <LogoutIcon/>,
+                                        svg: <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                      </svg>,
                                         text: 'Disconnect',
                                     }}
                                 />

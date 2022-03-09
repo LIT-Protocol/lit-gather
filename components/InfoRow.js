@@ -1,7 +1,7 @@
 const InfoRow = ({text, action = null}) => {
     return (
         <>
-            <div className="mt-2 bg-main rounded-2xl p-2 flex justify-between text-white flex justify-center">
+            <div className="max-w-fit m-auto px-8 mt-2 bg-main rounded-2xl p-2 flex justify-between text-white flex justify-center">
                 <span className="m-auto capitalize">{text}</span>
             </div>
             {
@@ -9,11 +9,11 @@ const InfoRow = ({text, action = null}) => {
                 ?
                 ''
                 :
-                <div onClick={() => action?.callback()} className="flex justify-end cursor-pointer ml-auto w-24">
-                    <div className="h-5 w-5 my-auto pt-1 text-lit-400">
-                    { action?.icon }
+                <div onClick={() => action?.callback()} className="m-auto max-w-fit px-4 py-1 mt-16 flex justify-center cursor-pointer ml-auto border border-[#BFA1FF] hover:border-lit-500 rounded-full text-[#BFA1FF] hover:text-lit-500 transition ease-in mb-6">
+                    <div className="my-auto">{ action?.icon ?? action?.svg }</div>
+                    <div className="my-auto text-sm flex justify-center">
+                        <span className="m-auto">{ action.text }</span>    
                     </div>
-                    <div className="my-auto text-sm text-lit-400 mt-1">{ action.text }</div>
                 </div>
             }
         </>
