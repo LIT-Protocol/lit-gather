@@ -49,6 +49,8 @@ const SpacePage = () => {
         <>
             <SEOHeader
                 subtitle={space?.spaceId?.split('/')[1]?.replace('-', ' ')}
+                description={`You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!`}
+                image={space?.thumbnailUrl}
             />
             <div className='text-white'>
                 {
