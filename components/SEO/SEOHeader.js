@@ -4,7 +4,7 @@ export default function SEOHeader({
     subtitle, 
     description='Token-gate your gather space!',
     link='https://gather.litgateway.com/',
-    image='/thumbnail.png'
+    image='https://gather.litgateway.com/thumbnail.png'
 }){
 
     const title = `Lit Protocol Gather Spaces${subtitle == null ? '' : ` |  ${subtitle}`}`;
