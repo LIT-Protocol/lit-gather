@@ -5,6 +5,7 @@ import SpaceCard from "../../components/SpaceCard";
 import LoadingIcon from "../../components/Icon/LoadingIcon";
 import { useAppContext } from "../../state/AppProvider";
 import { fetchSpace } from "../../utils/fetch";
+import SEOHeader from "../../components/SEO/SEOHeader";
 
 const SpacePage = () => {
 
@@ -46,7 +47,9 @@ const SpacePage = () => {
     
     return (
         <>
-            
+            <SEOHeader
+                subtitle={space?.spaceId?.split('/')[1]?.replace('-', ' ')}
+            />
             <div className='text-white'>
                 {
                     ! space 
@@ -54,7 +57,7 @@ const SpacePage = () => {
                     : 
                     <>
                     <h1 className="leading-tight text-5xl text-white text-center mt-12">
-                    Join {space.spaceId.split('/')[1].replace('-', ' ')}!
+                    You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!
                     </h1>
                     <div className="w-96 m-auto mt-12">
                         <SpaceCard
