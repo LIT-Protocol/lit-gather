@@ -3,8 +3,8 @@ import Head from 'next/head'
 export default function SEOHeader({
     subtitle, 
     description='Token-gate your gather space!',
-    link='https://gather.litgateway.com/thumbnail.jpeg',
-    image=''
+    link='https://gather.litgateway.com/',
+    image='https://gather.litgateway.com/thumbnail.jpeg'
 }){
 
     const title = `Lit Protocol Gather Spaces${subtitle == null ? '' : ` |  ${subtitle}`}`;
