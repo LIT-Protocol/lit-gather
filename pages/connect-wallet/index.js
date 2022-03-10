@@ -6,7 +6,7 @@ import { LogoutIcon } from '@heroicons/react/solid'
 import { storedAuth, storedNetwork, setStoredNetwork, removeStoredAuth, removeWeb3Modal, storedGatherPlayerId, setStoredGatherPlayerId, removeStoredGatherPlayerId, removeStoredNetwork, storedResourceId, setStoredResourceId, removeStoredResourceId } from '../../utils/storage'
 import { getGatherRedirectUrl } from '../../utils/gather'
 import { fetchWalletInfo } from '../../utils/fetch'
-import SEOHeader from '../../components/SEO/SEOHeader'
+// import SEOHeader from '../../components/SEO/SEOHeader'
 import IconButton from '../../components/IconButton'
 import { H2Step } from '../../components/Ui/H2Step'
 import InfoRow from '../../components/InfoRow'
@@ -275,7 +275,7 @@ const ConnectModal = () => {
 
     return (
         <>
-            <SEOHeader subtitle="Connect Wallet" />
+            {/* <SEOHeader subtitle="Connect Wallet" /> */}
             {/* <LayoutHeader/> */}
             <Modal
                 isOpen={connectModalOpened} // The modal should always be shown on page load, it is the 'page'
