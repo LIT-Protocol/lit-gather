@@ -79,9 +79,10 @@ export function AppProvider({ children }){
     //
     // event::  Join space button
     // @parma { Object } space
+    // @param { bool } isInGame (only true if joining inside a game)
     // @return { void } 
     //
-    const joinSpace = async (space) => {
+    const joinSpace = async (space, isInGame = false) => {
         console.warn("↓↓↓↓↓ onClickJoin ↓↓↓↓↓ ");
         setLoaded(false);
         setMsg(`Joining ${space.spaceId}...`)
@@ -124,6 +125,7 @@ export function AppProvider({ children }){
         const queryAuthSig = { authSig: JSON.stringify(authSig) }
         const queryGatherUrl = { gatherUrl: (window.location.origin + window.location.pathname) }
         const querySpace = { spaceId }
+        const queryIsInGame = { isInGame: JSON.parse(isInGame)}
 
         // -- prepare redirect query
         const redirectUrl = getGatherRedirectUrl({
@@ -133,6 +135,7 @@ export function AppProvider({ children }){
                 queryAuthSig,
                 queryGatherUrl,
                 querySpace,
+                queryIsInGame
             ],
         });
 

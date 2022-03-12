@@ -241,3 +241,7 @@ body {
 #nprogress .bar {
   background: #FF3743 !important;
 }
+
+.content-area{
+  height: calc(100% - 168px);
+}

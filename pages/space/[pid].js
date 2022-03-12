@@ -15,7 +15,9 @@ const SpacePage = () => {
 
     const router = useRouter()
     const { pid } = router.query;
-
+    const isInGame = router.query.ingame || false;
+    const inGameJoined = router.query.done || false;
+    
     const [space, setSpace] = useState(null);
 
     useEffect(() => {
@@ -57,17 +59,32 @@ const SpacePage = () => {
                     ? <LoadingIcon/> 
                     : 
                     <>
-                    <h1 className="leading-tight text-5xl text-white text-center mt-12">
-                    You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!
-                    </h1>
-                    <div className="w-96 m-auto mt-12">
-                        <SpaceCard
-                            key={space.spaceId}
-                            space={space}
-                            restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                            buttonAction={() => auth(() => joinSpace(space))}
-                        />
-                    </div>
+                    {
+                        !inGameJoined
+                        ?
+                        <>
+                            <h1 className="leading-tight text-5xl text-white text-center mt-12">
+                            You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!
+                            </h1>
+
+                            <div className="w-96 m-auto mt-12">
+                                <SpaceCard
+                                    key={space.spaceId}
+                                    space={space}
+                                    restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                    buttonAction={() => auth(() => joinSpace(space, JSON.parse(isInGame)))}
+                                />
+                            </div>
+                        </>
+                        :
+                        <>
+                        <div className="flex justify-center h-screen fixed content-area">
+                            <div className="leading-tight text-5xl text-white text-center m-auto">
+                            You can close the window now, please re-join the space to access to restricted areas.
+                            </div>
+                        </div>
+                        </>
+                    }
                     </>
                 }
                 
