@@ -66,13 +66,16 @@ const Dashboard = () => {
     //
     const onCopyLink = (e, id) => {
         const url = window.location.protocol + '//' + window.location.host + '/space/' + id;
+
+        var temp = e.target.innerText;
+
         navigator.clipboard.writeText(url).then(() => {
 
-        e.target.innerText = 'Copied link!';
+            e.target.innerText = 'Copied!';
 
-        setTimeout(() => {
-            e.target.innerText = 'Copy Link';
-        }, 2000)
+            setTimeout(() => {
+                e.target.innerText = temp;
+            }, 2000)
         
         }, (err) => {
             console.error('Async: Could not copy text: ', err);
@@ -121,12 +124,23 @@ const Dashboard = () => {
                                             <DropMenu
                                                 links={[
                                                     {
-                                                        text: 'Copy Link',
+                                                        text: 'Join',
+                                                        onClick: (e) => joinSpace(space),
+                                                        border: true,
+                                                    },
+                                                    {
+                                                        text: 'Copy invite link',
                                                         onClick: (e) => onCopyLink(e, space.id)
                                                     },
                                                     {
+                                                        text: 'Copy in-game link',
+                                                        onClick: (e) => onCopyLink(e, space.id + '?ingame=true'),
+                                                        border: true,
+                                                    },
+                                                    {
                                                         text: 'Delete',
-                                                        onClick: (e) => onDelete(space)
+                                                        onClick: (e) => onDelete(space),
+                                                        color: 'text-red',
                                                     },
                                                 ]}
                                             />

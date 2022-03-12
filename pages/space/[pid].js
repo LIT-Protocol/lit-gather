@@ -64,7 +64,11 @@ const SpacePage = () => {
                         ?
                         <>
                             <h1 className="leading-tight text-5xl text-white text-center mt-12">
-                            You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!
+                            {
+                                isInGame
+                                ? <>Click below to unlock restricted areas!</>
+                                : <>You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!</>
+                            }
                             </h1>
 
                             <div className="w-96 m-auto mt-12">
