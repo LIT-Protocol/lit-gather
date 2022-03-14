@@ -63,11 +63,11 @@ const SpacePage = () => {
                         !inGameJoined
                         ?
                         <>
-                            <h1 className="leading-tight text-5xl text-white text-center mt-12">
+                            <h1 className="leading-tight text-5xl text-white text-center mt-16">
                             {
                                 isInGame
                                 ? <>Click below to unlock restricted areas!</>
-                                : <>You're invited to join {space.spaceId.split('/')[1].replace('-', ' ')}!</>
+                                : <div className="mb-20">You've been invited to a Gather space:</div>
                             }
                             </h1>
 

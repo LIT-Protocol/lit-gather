@@ -260,7 +260,7 @@ const CreateSpace = () => {
                         {/* Step 1 */}
                         <div className='text-base text-white mt-2'>
                             1. Gather Space ID <span className='text-red'>*</span>
-                            <a target="_blank" href="./instruction#1" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
+                            <a target="_blank" href="./instructions#1" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
                             <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
@@ -270,7 +270,7 @@ const CreateSpace = () => {
                         <div className="form-check mt-8">
                             <label className="text-white form-check-label inline-block">
                                 2. Grant <span className='text-purple-text'>gatheradmin@litprotocol.com</span> admin access <span className='text-red'>*</span>
-                                <a target="_blank" href="./instruction#2" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
+                                <a target="_blank" href="./instructions#2" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                             </label><br/>
                             <input onChange={(e) => setGranted(e.target.checked)} className="form-check-input h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="checkbox" value="" /> I&apos;ve granted Lit Protocol admin access to my gather space
                         </div>
@@ -278,7 +278,7 @@ const CreateSpace = () => {
                         {/* Step 3 */}
                         <div className='text-base text-white mt-8'>
                             <span>3. Spawn Coordinates</span><span className='ml-2 text-grey-text'>-- choose a location outside of the restricted space</span>
-                            <a target="_blank" href="./instruction#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
+                            <a target="_blank" href="./instructions#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
                             <input onChange={(e) => setInitialCoordinates(e.target.value)} value={initialCoordinates} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
