@@ -14,7 +14,6 @@
     "@heroicons/react": "^1.0.5",
     "@mui/material": "^5.5.0",
     "@mui/styled-engine-sc": "^5.4.2",
-    "@websaam/ui": "^0.0.14",
     "autoprefixer": "^10.4.2",
     "ipfs-http-client": "^56.0.1",
     "lit-js-sdk": "^1.1.138",
