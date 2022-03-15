@@ -11,7 +11,7 @@ const SpacePage = () => {
 
     // -- app context
     const appContext = useAppContext();
-    const { joinSpace, auth } = appContext.methods;
+    const { joinSpace, auth, onDisconnect } = appContext.methods;
 
     const router = useRouter()
     const { pid } = router.query;
@@ -24,6 +24,10 @@ const SpacePage = () => {
 
         if( ! pid ){
             return;
+        }
+
+        if( isInGame ){
+            onDisconnect();
         }
         
         // 

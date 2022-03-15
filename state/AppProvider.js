@@ -1,7 +1,7 @@
 import { createContext } from "react"
 import { useContext, useState, useEffect } from "react"
 import LitJsSdk from 'lit-js-sdk'
-import { removeStoredAuth, removeStoredNetwork, setStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
+import { removeStoredAuth, removeStoredGatherPlayerId, removeStoredNetwork, removeStoredResourceId, removeWeb3Modal, setStoredNetwork, storedAuth, storedGatherPlayerId, storedNetwork } from "../utils/storage";
 import ConnectModal from "../pages/connect-wallet";
 import { asyncForEach, disableNativeAlert, enableNativeAlert } from "../utils/helper";
 import { compileResourceId } from "../utils/lit";
@@ -150,6 +150,30 @@ export function AppProvider({ children }){
             setMsg('')
             window.location = redirectUrl;
         }, 2000);
+    }
+
+    //
+    // Event:: when disconnect button is clicked
+    // @return { void }
+    //
+    const onDisconnect = () => {
+        console.warn("↓↓↓↓↓ onDisconnect ↓↓↓↓↓");
+
+        // -- reset states
+        setConnectedGatherId(null)
+        setConnectedNetwork(null)
+        setConnectedWalletAddress(null)
+        setWalletIsConnected(false)
+
+        // -- reset storage
+        removeStoredAuth();
+        removeStoredGatherPlayerId();
+        removeStoredNetwork();
+        removeWeb3Modal();
+        removeStoredResourceId();
+
+        // -- close modal
+        setConnectModalOpened(false);
     }
 
     //
@@ -377,6 +401,7 @@ export function AppProvider({ children }){
             setAction,
             joinSpace,
             onClickConnectWallet,
+            onDisconnect,
 
             // -- libraries
             openShareModal,
