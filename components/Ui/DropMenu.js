@@ -3,13 +3,32 @@ import { useState } from 'react';
 
 const DropMenu = ({links}) => {
 
-    const [toggle, setToggle] = useState(false);    
+    const [toggle, setToggle] = useState(false);
+
+    // -- close modal when clicked outside
+    document.addEventListener('click', (e) => {
+        if(! e.target.matches('.dropmenu')){
+            setToggle(false);
+        }
+    });
+
+
+    //
+    // Event:: when button is clicked
+    // @param { Element } clicked element
+    // @return { void } 
+    //
+    const onToggle = (e) => {
+        console.warn("--- onToggle ---");
+        console.log(e.target);
+        setToggle(!toggle);
+    }
 
     return (
         <div class="relative inline-block text-left">
-            <div onClick={() => setToggle(!toggle)} className="text-lit-100">
-                <div className='m-auto flex w-6'>
-                    <CogIcon className="w-6"/>
+            <div onClick={(e) => onToggle(e)} className="dropmenu text-lit-100 p-1">
+                <div className='m-auto flex w-6 pointer-events-none'>
+                    <CogIcon className="w-6 pointer-events-none"/>
                 </div>
             </div>
 
