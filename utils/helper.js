@@ -6,7 +6,7 @@
 export const shortenWalletAddress = (addr) => {
 
     if( ! addr ){
-        console.error("shortenWalletAddress() -> addr cannot be empty.");
+        console.warn("shortenWalletAddress() -> addr cannot be empty.");
         return null;
     }
 

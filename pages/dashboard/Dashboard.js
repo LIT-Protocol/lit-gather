@@ -24,7 +24,7 @@ const Dashboard = () => {
             const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()});
             const res = await fetchMySpaces({authSig}); 
             setSpaces(res.spaces);
-            console.log("res.spaces:", res.spaces)
+            // console.log("res.spaces:", res.spaces)
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
