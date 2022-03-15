@@ -49,7 +49,28 @@ const Instruction = () => {
                     '/instruction/3a.png',
                     '/instruction/3b.png',
                 ]
-            }
+            },
+            {
+                id: 4,
+                title: 'Unlocking restricted areas in-game',
+                steps: [
+                    `On this website, go to "Dashboard" > "My Spaces"`,
+                    'Click on the cogwheel icon at the top-right of your chosen space, and click "Copy in-game link"',
+                    'Go to app.gather.town/app website and go to "My Spaces"',
+                    'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"',
+                    'Go to "More Objects" > "Upload New (bottom-left)" > "Upload image"',
+                    'Click "Embedded website" and paste your in-game link in the "Website(URL)" field',
+                    'Click "Select" and place your image anywhere outside the restricted areas',
+                    'Users will now be able to request access in-game by interacting this object',
+                ],
+                images: [
+                    '/instruction/4a.png',
+                    '/instruction/4b.png',
+                    '/instruction/4c.png',
+                    '/instruction/4d.png',
+                    '/instruction/4e.png',
+                ]
+            },
         ]
     });
 
