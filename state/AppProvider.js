@@ -178,9 +178,10 @@ export function AppProvider({ children }){
 
     //
     // Handler:: when wallet is NOT connected
+    // @param { Object } callback
     // @return { void }
     //
-    const handleWhenWalletNotConnected = async () => {
+    const handleWhenWalletNotConnected = async (callback = null) => {
         console.warn("↓↓↓↓↓ handleWhenWalletNotConnected ↓↓↓↓↓");
 
         // -- prepare
@@ -189,8 +190,8 @@ export function AppProvider({ children }){
         
         // -- validate
         if( ! authSig ){
-        console.error("❗ Failed to connect wallet");
-        return;
+            console.error("❗ Failed to connect wallet");
+            return;
         }
 
         console.log("👉 authSig:", authSig);
@@ -199,6 +200,12 @@ export function AppProvider({ children }){
         setConnectedWalletAddress(authSig.address);
         setConnectedNetwork(chain);
         setStoredNetwork(chain);
+
+        if ( callback ){
+            console.warn("Performing callback: ", callback);
+            callback.exec();
+        }
+        
     }
 
     //
@@ -211,16 +218,17 @@ export function AppProvider({ children }){
 
     // 
     // Event:: When `Connect Wallet` button is clicked
+    // @param { Object } callback
     // @return { void }
     //
-    const onClickConnectWallet = async () => {
+    const onClickConnectWallet = async (callback = null) => {
         console.warn("↓↓↓↓↓ onClickConnectWallet ↓↓↓↓↓");
 
         // -- validate: if wallet is connected
         console.log("👉 connectedWalletAddress:", connectedWalletAddress);
         if( ! connectedWalletAddress ){
-        await handleWhenWalletNotConnected();
-        return;
+            await handleWhenWalletNotConnected(callback);
+            return;
         }
 
         handleWalletIsConnected();
@@ -245,7 +253,10 @@ export function AppProvider({ children }){
 
         // -- validate
         if( ! storedAuth() || ! storedNetwork() ){
-            onClickConnectWallet();
+            onClickConnectWallet({
+                origin: 'auth()',
+                exec: callback
+            });
             return;
         }
 
