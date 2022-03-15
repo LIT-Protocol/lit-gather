@@ -12,9 +12,6 @@ const Explore = ({data}) => {
     const { auth, joinSpace } = appContext.methods;
     
     return (
-        <div className="text-white">"This page is currently down for maintenance"</div>
-    )
-    return (
         <>
             <SEOHeader subtitle="Explore Spaces" />
             <MaxWidth>
