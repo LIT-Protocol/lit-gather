@@ -51,7 +51,7 @@ const CreateSpace = () => {
     
     // -- state
     const [value, setValue] = useState(0); // integer state
-    const [spaceId, setSpaceId] = useState(null)
+    const [spaceId, setSpaceId] = useState('')
     const [granted, setGranted] = useState(false)
     const [initialCoordinates, setInitialCoordinates] = useState("31,32");
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
@@ -191,7 +191,7 @@ const CreateSpace = () => {
     const onSubmit = async () => {
 
         // -- validate
-        if( ! spaceId ){
+        if( ! spaceId || spaceId == ''){
             alert("❗ Gather Space ID cannot be empty")
             return
         }
