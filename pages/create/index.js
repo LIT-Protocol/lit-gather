@@ -196,6 +196,12 @@ const CreateSpace = () => {
             return
         }
 
+        // -- validate if slash '/' is included in the space id
+        if( ! spaceId.includes('/') ){
+            alert("❗ Gather Space ID format is wrong. Did you include a '/' in your space id?");
+            return;
+        }
+
         if( ! granted ){
             alert("❗ You must grant gatheradmin@litprotocol.com admin access")
             return

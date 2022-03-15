@@ -7,7 +7,15 @@
 const SpaceCard = ({space, restrictedAreas, buttonAction, hover=true}) => {
 
     const idToTitle = (spaceId) =>{
-        return spaceId.split('/')[1].replace('-', ' ');
+        let title;
+        try{
+            title = spaceId.split('/')[1].replace('-', ' ');
+        }catch(e){
+            console.error("Unable to convert id to title");
+            return;
+        }
+
+        return title;
     }
 
     return (
