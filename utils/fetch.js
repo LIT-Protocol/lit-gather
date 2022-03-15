@@ -44,10 +44,12 @@ export const fetchLockedSpaces = async () => {
     
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/locked-spaces';
+    console.log("👉 Called API:", API);
     
     const res = await fetch(API);
     
     const data = await res.json();
+    console.log("👉 data:", data);
     
     return data;
 }
