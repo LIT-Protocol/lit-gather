@@ -25,7 +25,7 @@ const DropMenu = ({links}) => {
     }
 
     return (
-        <div class="relative inline-block text-left">
+        <div className="relative inline-block text-left">
             <div onClick={(e) => onToggle(e)} className="dropmenu text-lit-100 p-1">
                 <div className='m-auto flex w-6 pointer-events-none'>
                     <CogIcon className="w-6 pointer-events-none"/>
@@ -36,7 +36,7 @@ const DropMenu = ({links}) => {
                 ! toggle
                 ? '' 
                 : 
-                <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                     
                         {
                             links.map((link) => {
@@ -48,15 +48,15 @@ const DropMenu = ({links}) => {
                                 const border = link.border ? `border-b border-grey-100` : '';
 
                                 return (
-                                    <div class={`py-1 ${border}`} role="none">
-                                    <a key={link.text} onClick={(e) => link?.onClick(e)} class={style} role="menuitem" tabindex="-1" id="menu-item-0">{ link.text }</a>
+                                    <div className={`py-1 ${border}`} role="none">
+                                    <a key={link.text} onClick={(e) => link?.onClick(e)} className={style} role="menuitem" tabindex="-1" id="menu-item-0">{ link.text }</a>
                                     </div>
                                 )
                             })
                         }
                     
-                    {/* <div class="py-1" role="none">
-                        <a onClick={() => {console.log("testing")}} class="text-gray-700 block px-4 py-2 text-sm hover:bg-lit-100 cursor-pointer" role="menuitem" tabindex="-1" id="menu-item-0">Edit</a>
+                    {/* <div className="py-1" role="none">
+                        <a onClick={() => {console.log("testing")}} className="text-gray-700 block px-4 py-2 text-sm hover:bg-lit-100 cursor-pointer" role="menuitem" tabindex="-1" id="menu-item-0">Edit</a>
                     </div> */}
                 </div>
             }
