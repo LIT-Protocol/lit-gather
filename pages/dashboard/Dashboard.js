@@ -108,7 +108,7 @@ const Dashboard = () => {
                         spaces.map((space) => {
                             
                             return (
-                                <div key={space.id} className="flex relative max-w-sm">
+                                <div key={space.id} className="flex relative max-w-xs">
                                     <SpaceCard
                                         space={space}
                                         restrictedAreas={JSON.parse(space.restrictedSpaces)}
