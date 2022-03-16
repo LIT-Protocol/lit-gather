@@ -53,12 +53,14 @@ const CreateSpace = () => {
     const [value, setValue] = useState(0); // integer state
     const [spaceId, setSpaceId] = useState('')
     const [granted, setGranted] = useState(false)
+    const [initialMap, setInitialMap] = useState("tavern-main");
     const [initialCoordinates, setInitialCoordinates] = useState("31,32");
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
     const [isPrivate, setIsPrivate] = useState(false)
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
+    const [map, setMap] = useState(null)
     const [topLeft, setTopLeft] = useState(null)
     const [bottomRight, setBottomRight] = useState(null)
     const [accessControls, setAccessControls] = useState(null)
@@ -98,6 +100,10 @@ const CreateSpace = () => {
             alert("❗ Name cannot be empty");
             return;
         }
+        if( ! map ){
+            alert("❗ map cannot be empty");
+            return;
+        }
         if( ! topLeft ){
             alert("❗ Top-Left cannot be empty");
             return;
@@ -133,6 +139,7 @@ const CreateSpace = () => {
 
         _restrictedSpaces.push({
             name, 
+            map,
             topLeft: topLeft.replaceAll(' ', ''),
             bottomRight: bottomRight.replaceAll(' ', ''),
             accessControls: accs,
@@ -176,6 +183,7 @@ const CreateSpace = () => {
         return {
             authSig,
             spaceId: decodeURIComponent(spaceId),
+            initialMap,
             initialCoordinates,
             restrictedSpaces,
             isPrivate,
@@ -283,17 +291,26 @@ const CreateSpace = () => {
 
                         {/* Step 3 */}
                         <div className='text-base text-white mt-8'>
-                            <span>3. Spawn Coordinates</span><span className='ml-2 text-grey-text'>-- choose a location outside of the restricted space</span>
+                            <span>3. Spawn Map</span><span className='ml-2 text-grey-text'>-- select a default map to be spawned into</span> <span className='text-red'>*</span>
                             <a target="_blank" href="./instructions#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
+                        </div>
+                        <div className='mt-2'>
+                            <input onChange={(e) => setInitialMap(e.target.value)} value={initialMap} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
+                        </div>
+
+                        {/* Step 4 */}
+                        <div className='text-base text-white mt-8'>
+                            <span>4. Spawn Coordinates</span><span className='ml-2 text-grey-text'>-- choose a location outside of the restricted space</span> <span className='text-red'>*</span>
+                            <a target="_blank" href="./instructions#4" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
                             <input onChange={(e) => setInitialCoordinates(e.target.value)} value={initialCoordinates} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
                         </div>
 
 
-                        {/* Step 3 */}
+                        {/* Step 5 */}
                         <div className='text-base text-white mt-7'>
-                                4. Restricted Coordinates
+                                5. Restricted Coordinates
                         </div>
                         <div className='mt-2'>
 
@@ -305,6 +322,12 @@ const CreateSpace = () => {
                                     <div className='flex justify-start'><span className='my-auto pr-2'>Name:</span></div>
                                     <div className=''>
                                         <input onChange={(e) => setName(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='eg. balcony'/>    
+                                    </div>
+                                </div>
+                                <div className='grid grid-cols-2 mt-2'>
+                                    <div className='flex justify-start'><span className='my-auto pr-2'>Map:</span></div>
+                                    <div className=''>
+                                        <input onChange={(e) => setMap(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='eg. tavern-upper'/>    
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2 mt-2'>
@@ -348,11 +371,11 @@ const CreateSpace = () => {
                                 {/* Table Headers */}
                                 <div className='flex'>
                                     <div className='w-full'>
-                                        <div className='grid grid-cols-3 text-xs text-center'>
+                                        <div className='grid grid-cols-4 text-xs text-center'>
                                             <div className='bg-lit-900 rounded-tl flex justify-center'><span className='m-auto'>Name</span></div>
+                                            <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Map</span></div>
                                             <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Top-Left</span></div>
                                             <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Bottom-right</span></div>
-                                            {/* <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Wall Thickness</span></div> */}
                                         </div>    
                                     </div>
                                     <div className='text-white text-center text-xs w-24 bg-black'>Action</div>
@@ -364,8 +387,9 @@ const CreateSpace = () => {
                                         return (
                                             <div key={i} className='flex border border-lit-400 mt-2'>
                                                 <div className='w-full '>
-                                                    <div className='grid grid-cols-3 text-sm text-center border-b border-lit-400'>
+                                                    <div className='grid grid-cols-4 text-sm text-center border-b border-lit-400'>
                                                         <div className=''>{ space.name }</div>
+                                                        <div className=''>{ space.map }</div>
                                                         <div className=''>{ space.topLeft }</div>
                                                         <div className=''>{ space.bottomRight }</div>
                                                     </div>
@@ -391,14 +415,14 @@ const CreateSpace = () => {
                     {/* ===== ...Form Area ===== */}
                     <div className='text-base text-white mt-7'>
                         <span>
-                        5. Make your space private (from the &#34;Explore&#34; tab on our site)
+                        6. Make your space private (from the &#34;Explore&#34; tab on our site)
                         </span>
                         {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
                         <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
                     </div>
 
                     <div className='text-base text-white mt-7'>
-                        6. Upload a thumbnail for your space (Please wait until the image appears)
+                        7. Upload a thumbnail for your space (Please wait until the image appears)
                     </div>
                     <ImageUploader
                         onUploaded={(imagePath) => setThumbnail(imagePath)}

@@ -38,6 +38,19 @@ const Instruction = () => {
             },
             {
                 id: 3,
+                title: 'Select a default map to be spawned into',
+                steps: [
+                    'Go to "My Spaces"',
+                    'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"',
+                    'On the right side-panel, copy the name of the chosen default room, eg. "tavern-main"',
+                ],
+                images: [
+                    '/instruction/3a.png',
+                    '/instruction/3b.png',
+                ]
+            },
+            {
+                id: 3,
                 title: 'Determine (X ,Y) coordinates',
                 steps: [
                     'Go to "My Spaces"',
@@ -46,8 +59,8 @@ const Instruction = () => {
                     'Repeat the same step above but for the bottom-right cornor of your private space'
                 ],
                 images: [
-                    '/instruction/3a.png',
-                    '/instruction/3b.png',
+                    '/instruction/4a.png',
+                    '/instruction/4b.png',
                 ]
             },
             {
@@ -64,11 +77,11 @@ const Instruction = () => {
                     'Users will now be able to request access in-game by interacting this object',
                 ],
                 images: [
-                    '/instruction/4a.png',
-                    '/instruction/4b.png',
-                    '/instruction/4c.png',
-                    '/instruction/4d.png',
-                    '/instruction/4e.png',
+                    '/instruction/5a.png',
+                    '/instruction/5b.png',
+                    '/instruction/5c.png',
+                    '/instruction/5d.png',
+                    '/instruction/5e.png',
                 ]
             },
         ]

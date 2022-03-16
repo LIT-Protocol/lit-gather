@@ -95,9 +95,6 @@ const Dashboard = () => {
             {/* ===== Title ===== */}
             <h1 className="leading-tight text-5xl text-white">
                 Your Spaces
-
-                
-
             </h1>
 
             <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
