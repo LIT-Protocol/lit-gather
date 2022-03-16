@@ -61,11 +61,10 @@ const Dashboard = () => {
 
     //
     // event:: copy link
-    // @param { String } space id on the table (NOT spaceId)
+    // @param { String } url
     // @return { String } url
     //
-    const onCopyLink = (e, id) => {
-        const url = window.location.protocol + '//' + window.location.host + '/space/' + id;
+    const onCopyLink = (e, url) => {
 
         var temp = e.target.innerText;
 
@@ -130,11 +129,15 @@ const Dashboard = () => {
                                                     },
                                                     {
                                                         text: 'Copy invite link',
-                                                        onClick: (e) => onCopyLink(e, space.id)
+                                                        onClick: (e) => onCopyLink(e, window.location.protocol + '//' + window.location.host + '/space/' + space.id)
                                                     },
                                                     {
                                                         text: 'Copy in-game link',
-                                                        onClick: (e) => onCopyLink(e, space.id + '?ingame=true'),
+                                                        onClick: (e) => onCopyLink(e, window.location.protocol + '//' + window.location.host + '/space/' + space.id + '?ingame=true'),
+                                                    },
+                                                    {
+                                                        text: 'Copy gather.town link',
+                                                        onClick: (e) => onCopyLink(e, 'https://app.gather.town/app/' + space.spaceId),
                                                         border: true,
                                                     },
                                                     {
