@@ -36,10 +36,10 @@ const DropMenu = ({links}) => {
                 ! toggle
                 ? '' 
                 : 
-                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
                     
                         {
-                            links.map((link) => {
+                            links.map((link, i) => {
 
                                 const color = link.color ?? 'text-gray-700';
 
@@ -48,8 +48,8 @@ const DropMenu = ({links}) => {
                                 const border = link.border ? `border-b border-grey-100` : '';
 
                                 return (
-                                    <div className={`py-1 ${border}`} role="none">
-                                    <a key={link.text} onClick={(e) => link?.onClick(e)} className={style} role="menuitem" tabindex="-1" id="menu-item-0">{ link.text }</a>
+                                    <div key={i} className={`py-1 ${border}`} role="none">
+                                    <a key={link.text} onClick={(e) => link?.onClick(e)} className={`${style} dropmenu`} role="menuitem" tabIndex="-1" id="menu-item-0">{ link.text }</a>
                                     </div>
                                 )
                             })

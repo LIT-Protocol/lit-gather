@@ -60,6 +60,14 @@ const Dashboard = () => {
     }
 
     //
+    // event:: onEdit space card
+    //
+    const onEdit = (space) => {
+        console.warn("↓↓↓↓↓ onEdit: ↓↓↓↓↓");
+        console.log(space);
+    }
+
+    //
     // event:: copy link
     // @param { String } url
     // @return { String } url
@@ -140,6 +148,12 @@ const Dashboard = () => {
                                                         onClick: (e) => onCopyLink(e, 'https://app.gather.town/app/' + space.spaceId),
                                                         border: true,
                                                     },
+                                                    // {
+                                                    //     text: 'Edit',
+                                                    //     onClick: (e) => onEdit(space),
+                                                    //     color: 'text-lit-400',
+                                                    //     border: true,
+                                                    // },
                                                     {
                                                         text: 'Delete',
                                                         onClick: (e) => onDelete(space),
