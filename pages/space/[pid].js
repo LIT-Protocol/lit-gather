@@ -71,7 +71,7 @@ const SpacePage = () => {
                             {
                                 isInGame
                                 ? <>Click below to unlock restricted areas!</>
-                                : <div className="mb-20">You've been invited to a Gather space:</div>
+                                : <div className="mb-20">You&apos;ve been invited to a Gather space:</div>
                             }
                             </h1>
 
