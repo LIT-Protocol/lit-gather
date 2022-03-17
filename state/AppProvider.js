@@ -7,8 +7,6 @@ import { asyncForEach, disableNativeAlert, enableNativeAlert } from "../utils/he
 import { compileResourceId } from "../utils/lit";
 import { storeUserPermittedResources } from "../utils/fetch";
 import { getGatherRedirectUrl } from "../utils/gather";
-import Script from 'next/script'
-import GoogleAnalytics from '../components/SEO/GoogleAnalytics';
 
 import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
@@ -438,8 +436,6 @@ export function AppProvider({ children }){
 
     return (
         <AppContext.Provider value={sharedState}>
-
-            <GoogleAnalytics/>
 
             {/* --- Global Loading --- */}
             <div className={`fixed top-0 w-full bg-color-gather-gradient py-1 flex justify-center transition pointer-events-none`} style={{zIndex: 99, opacity: loaded ? 0 : 1}}>
