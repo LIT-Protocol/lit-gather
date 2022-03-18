@@ -38,7 +38,7 @@ const Instruction = () => {
             },
             {
                 id: 3,
-                title: 'Select a default map to be spawned into',
+                title: 'Select a default spawn map',
                 steps: [
                     'Go to "My Spaces"',
                     'Click the 3 vertically-aligned dots next to your space thumbnail, and click on "Edit Map"',

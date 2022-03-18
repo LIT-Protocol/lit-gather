@@ -291,7 +291,7 @@ const CreateSpace = () => {
 
                         {/* Step 3 */}
                         <div className='text-base text-white mt-8'>
-                            <span>3. Spawn Map</span><span className='ml-2 text-grey-text'>-- select a default map to be spawned into</span> <span className='text-red'>*</span>
+                            <span>3. Spawn Map</span><span className='ml-2 text-grey-text'>-- select a default spawn map</span> <span className='text-red'>*</span>
                             <a target="_blank" href="./instructions#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
                         </div>
                         <div className='mt-2'>
