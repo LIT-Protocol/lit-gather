@@ -64,7 +64,7 @@ const Instruction = () => {
                 ]
             },
             {
-                id: 4,
+                id: 5,
                 title: 'Unlocking restricted areas in-game',
                 steps: [
                     `On this website, go to "Dashboard" > "My Spaces"`,
