@@ -50,6 +50,14 @@ const Dashboard = () => {
         if( ! sure ){
             return;
         }
+
+        // -- prompt user
+        const sure2 = confirm("don’t forget to revoke permissions from gatheradmin@litprotocol.com on the gather dashboard!") == true;
+        
+        // -- validate
+        if( ! sure2 ){
+            return;
+        }
         
         auth(async () => {
             const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()});
