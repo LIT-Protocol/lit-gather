@@ -50,7 +50,7 @@ const Instruction = () => {
                 ]
             },
             {
-                id: 3,
+                id: 4,
                 title: 'Determine (X ,Y) coordinates',
                 steps: [
                     'Go to "My Spaces"',
