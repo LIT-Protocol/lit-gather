@@ -109,8 +109,15 @@ export default SpacePage;
 // Use Layout
 //
 SpacePage.getLayout = function getLayout(page){
+
+    const router = useRouter()
+    const isInGame = router.query.ingame || false;
+    const isDone = router.query.done || false;
+    // const hideFooter = isInGame || isDone;
+    const hideFooter = false;
+    
     return (
-        <MainLayout>
+        <MainLayout hideFooter={hideFooter}>
             {page}
         </MainLayout>
     )
