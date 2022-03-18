@@ -14,8 +14,9 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter()
 
   useEffect(() => {
-    
+
     const handleRouteChange = (url) => {
+      console.log("Handle Router Change:", url);
       ga.pageview(url)
     }
 
