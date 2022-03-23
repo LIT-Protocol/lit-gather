@@ -7,9 +7,9 @@ const { publicRuntimeConfig } = getConfig()
 // @return { Object } result
 //
 export const storeLockedSpaces = async (compiledData) => {
-    
+
     console.warn("↓↓↓↓↓ fetch.js/storeLockedSpaces ↓↓↓↓↓");
-    
+
     // -- validate
     if( ! compiledData ){
         console.error('storeLockedSpaces() -> compiledData cannot be empty.')
@@ -36,48 +36,49 @@ export const storeLockedSpaces = async (compiledData) => {
 
 //
 // (GET) Get all locked spaces
-// @return { Object } 
-// @prop { Object.space } 
+// @return { Object }
+// @prop { Object.space }
 //
 export const fetchLockedSpaces = async () => {
     console.warn("↓↓↓↓↓ fetch.js/fetchLockedSpaces ↓↓↓↓↓");
-    
+
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/locked-spaces';
-    
+
     const res = await fetch(API);
-    
+    console.log('check res', res)
+
     const data = await res.json();
-    
+
     return data;
 }
 
 //
 // (GET) Get single space
-// @return { Object } 
-// @prop { Object.space } 
+// @return { Object }
+// @prop { Object.space }
 //
 export const fetchSpace = async (id) => {
     console.warn("↓↓↓↓↓ fetch.js/fetchSpace ↓↓↓↓↓");
-    
+
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/space?id=' + id;
-    
+
     const res = await fetch(API);
-    
+
     const data = await res.json();
-    
+
     return data;
 }
 
 //
 // (POST) Get all of your spaces
 // @param { Object } data
-// @return { Object } 
+// @return { Object }
 //
 export const fetchMySpaces = async (args = {}) => {
     console.warn("↓↓↓↓↓ fetch.js/fetchMySpaces ↓↓↓↓↓");
-    
+
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/my-spaces';
 
@@ -93,17 +94,17 @@ export const fetchMySpaces = async (args = {}) => {
     const data = await res.json();
 
     return data;
-    
+
 }
 
 //
 // (POST) Delete my space
 // @param { Object } data
-// @return { Object } 
+// @return { Object }
 //
 export const deleteMySpace = async (args = {}) => {
     console.warn("↓↓↓↓↓ fetch.js/deleteMySpace ↓↓↓↓↓");
-    
+
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/delete-space';
 
@@ -119,10 +120,10 @@ export const deleteMySpace = async (args = {}) => {
     const data = await res.json();
 
     return data;
-    
+
 }
 
-// 
+//
 // (POST) Stored user's gather permitted resources
 // @param { Object } permittedResources
 // @prop { Object } authSig
@@ -131,7 +132,7 @@ export const deleteMySpace = async (args = {}) => {
 //
 export const storeUserPermittedResources = async (permittedResources) => {
     console.warn("↓↓↓↓↓ fetch.js/storeUserPermittedResources ↓↓↓↓↓");
-    
+
     // -- prepare
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/user-permitted-resources';
 
@@ -177,7 +178,7 @@ export const fetchWalletInfo = async (walletAddress, jwt) => {
     const API = publicRuntimeConfig.BACKEND_API + '/oauth/gather/connected';
     const param_1 = '/' + walletAddress;
     const url = API + param_1;
-    
+
     console.log("fetchWalletInfo()->URL:", JSON.stringify(url))
 
     // -- fetch
@@ -191,6 +192,6 @@ export const fetchWalletInfo = async (walletAddress, jwt) => {
         })
     });
     const data = await res.json();
-    
+
     return data
 }
