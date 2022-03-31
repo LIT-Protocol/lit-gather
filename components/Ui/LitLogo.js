@@ -2,7 +2,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function LitLogo() {
+export default function LitLogo({subtitleColor}) {
+
+  const _subtitleColor = subtitleColor || 'text-grey-text';
 
   return (
     <div className="flex justify-center">
@@ -14,7 +16,7 @@ export default function LitLogo() {
             <Link href="/">
               <div className='mt-[0.5px] cursor-pointer'>
                 <span className='md:text-base text-sm ml-[2px]'>Lit Protocol</span>
-                <span className='md:text-base text-sm ml-2 text-grey-text font-extralight'>Gather Spaces</span>
+                <span className={`md:text-base text-sm ml-2 font-extralight ${_subtitleColor}`}>Gather Spaces</span>
               </div>
             </Link>
             </h1>

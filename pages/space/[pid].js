@@ -6,6 +6,9 @@ import LoadingIcon from "../../components/Icon/LoadingIcon";
 import { useAppContext } from "../../state/AppProvider";
 import { fetchSpace } from "../../utils/fetch";
 import SEOHeader from "../../components/SEO/SEOHeader";
+import FrameLayout from "../../components/Layout/FrameLayout";
+import BtnConnectWallet from "../../components/BtnConnectWallet";
+import { CheckIcon } from "@heroicons/react/solid";
 
 const SpacePage = () => {
 
@@ -16,7 +19,7 @@ const SpacePage = () => {
     const router = useRouter()
     const { pid } = router.query;
     const isInGame = router.query.ingame || false;
-    const inGameJoined = router.query.done || false;
+    const inGameJoinedSuccessfully = router.query.done || false;
     
     const [space, setSpace] = useState(null);
 
@@ -50,6 +53,10 @@ const SpacePage = () => {
         }
 
     }, [pid])
+
+    // -- conditions
+    const isWebsite = !inGameJoinedSuccessfully && !isInGame;
+    const spaceLoaded = space;
     
     return (
         <>
@@ -57,45 +64,89 @@ const SpacePage = () => {
                 subtitle={space?.spaceId?.split('/')[1]?.replace('-', ' ')}
                 description={`You're invited to join a space!`}
             />
+ 
             <div className='text-white'>
-                {
-                    ! space 
-                    ? <LoadingIcon/> 
-                    : 
-                    <>
-                    {
-                        !inGameJoined
-                        ?
-                        <>
-                            <h1 className="leading-tight text-5xl text-white text-center mt-16">
-                            {
-                                isInGame
-                                ? <>Click below to unlock restricted areas!</>
-                                : <div className="mb-20">You&apos;ve been invited to a Gather space:</div>
-                            }
-                            </h1>
 
-                            <div className="w-96 m-auto mt-12">
-                                <SpaceCard
-                                    key={space.spaceId}
-                                    space={space}
-                                    restrictedAreas={JSON.parse(space.restrictedSpaces)}
-                                    buttonAction={() => auth(() => joinSpace(space, JSON.parse(isInGame)))}
-                                />
-                            </div>
-                        </>
-                        :
-                        <>
-                        <div className="flex justify-center h-screen fixed content-area">
-                            <div className="leading-tight text-5xl text-white text-center m-auto">
-                            You can close the window now, please re-join the space to access to restricted areas.
-                            </div>
-                        </div>
-                        </>
-                    }
-                    </>
+                {/* ==== If this page is loaded from the website ===== */}
+                {
+                    !isWebsite ? '' :
+                        !spaceLoaded ? <div className="w-full pt-12 flex justify-center"><LoadingIcon/></div> :
+                            <>
+                                <h1 className="leading-tight text-5xl text-white text-center mt-16">
+                                    <div className="mb-20">You&apos;ve been invited to a Gather space:</div>
+                                </h1>
+
+                                <div className="w-96 m-auto mt-12">
+                                    <SpaceCard
+                                        key={space.spaceId}
+                                        space={space}
+                                        restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                        buttonAction={() => auth(() => joinSpace(space, JSON.parse(isInGame)))}
+                                    />
+                                </div>
+                            </>
                 }
-                
+
+                {/* ==== If this page is loaded as an object frame inside the game ===== */}
+                {
+                    !isInGame ? '' :
+                        !spaceLoaded ? <div className="w-full pt-12 flex justify-center"><LoadingIcon/></div> :
+                            <>
+                                <h1 className="leading-tight text-base text-white text-center mt-16">
+                                    <div className="">
+                                        Connect wallet to enter access-controlled<br/>
+                                        areas in this Gather space
+                                    </div>
+                                </h1>
+
+                                <div className="w-40 m-auto mt-6">
+                                    <BtnConnectWallet 
+                                        bgColor={'bg-[#8847A7]'}
+                                        hoverColor={'bg-[#8847A7]'}
+                                        onClick={() => auth(() => joinSpace(space, JSON.parse(isInGame)))}
+                                    />    
+                                </div>
+
+                                <div className="w-96 m-auto mt-10">
+                                    <SpaceCard
+                                        key={space.spaceId}
+                                        space={space}
+                                        restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                        buttonAction={() => {}}
+                                        style="minimalised"
+                                    />
+                                </div>
+
+                            </>
+                }    
+
+                {/* ==== It game is joined successfully ===== */}
+                {
+                    !inGameJoinedSuccessfully ? '' :
+                        !spaceLoaded ? <div className="w-full pt-12 flex justify-center"><LoadingIcon/></div> :
+                            <>
+                                <h1 className="leading-tight text-base text-white text-center mt-16">
+                                    <div className="">
+                                        Youre connected!<br/>
+                                        <span className="text-[#B8B1C5]">close this window in the upper right corner</span>
+                                    </div>
+                                </h1>
+
+                                <div className="w-7 m-auto mt-7">
+                                    <CheckIcon/>
+                                </div>
+
+                                <div className="w-96 m-auto mt-10">
+                                    <SpaceCard
+                                        key={space.spaceId}
+                                        space={space}
+                                        restrictedAreas={JSON.parse(space.restrictedSpaces)}
+                                        buttonAction={() => {}}
+                                        style="minimalised"
+                                    />
+                                </div>
+                            </>
+                }
 
             </div>
         </>
@@ -113,12 +164,18 @@ SpacePage.getLayout = function getLayout(page){
     const router = useRouter()
     const isInGame = router.query.ingame || false;
     const isDone = router.query.done || false;
-    // const hideFooter = isInGame || isDone;
-    const hideFooter = false;
+    const useFrame = isInGame || isDone;
+    // const useFrame = false;
     
-    return (
-        <MainLayout hideFooter={hideFooter}>
+    return !useFrame 
+    ? <>
+        <MainLayout>
             {page}
         </MainLayout>
-    )
+    </> 
+    : <>
+        <FrameLayout>
+            { page }
+        </FrameLayout>
+    </>
 }
