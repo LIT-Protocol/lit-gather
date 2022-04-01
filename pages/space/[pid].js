@@ -127,8 +127,8 @@ const SpacePage = () => {
                             <>
                                 <h1 className="leading-tight text-base text-white text-center mt-16">
                                     <div className="">
-                                        Youre connected!<br/>
-                                        <span className="text-[#B8B1C5]">close this window in the upper right corner</span>
+                                        You&apos;re connected!<br/>
+                                        <span className="text-[#B8B1C5]">Close this window in the upper right corner</span>
                                     </div>
                                 </h1>
 
