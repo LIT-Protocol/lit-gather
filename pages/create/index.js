@@ -129,10 +129,13 @@ const CreateSpace = () => {
         let humanised;
         try{
             humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: JSON.parse(accs)})
+            console.warn("TRY:", humanised);
         }catch(e){
+            console.error("ERROR:", e);
             alert("❗ Invalid access control conditions");
             return;
         }
+
 
         // -- execute
         const _restrictedSpaces = restrictedSpaces;

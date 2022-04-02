@@ -18,7 +18,7 @@
     "express": "^4.17.3",
     "heroku-ssl-redirect": "^0.1.1",
     "ipfs-http-client": "^56.0.1",
-    "lit-js-sdk": "1.1.149",
+    "lit-js-sdk": "^1.1.155",
     "moment": "^2.29.1",
     "next": "12.0.9",
     "nprogress": "^0.2.0",
