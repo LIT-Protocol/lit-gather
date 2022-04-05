@@ -87,6 +87,26 @@ const CreateSpace = () => {
     }
 
     //
+    // Translate access control conditions to humanised version
+    // @param { Array } access control conditions
+    //
+    const getHumanised = async (accs) => {
+        let humanised;
+        let toBeHumanised = JSON.parse(accs).accessControlConditions;
+        console.log("TRY HUMANISING:", toBeHumanised);
+
+        try{
+            humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: toBeHumanised})
+        }catch(e){
+            console.error("ERROR:", e);
+            alert("❗ Invalid access control conditions");
+            return;
+        }
+
+        return humanised;
+    }
+
+    //
     // Add new restricted space
     // @return { void }
     //
@@ -126,16 +146,7 @@ const CreateSpace = () => {
         }
 
         // -- validate and prepare humanised version of access control conditions
-        let humanised;
-        try{
-            humanised = await LitJsSdk.humanizeAccessControlConditions({accessControlConditions: JSON.parse(accs)})
-            console.warn("TRY:", humanised);
-        }catch(e){
-            console.error("ERROR:", e);
-            alert("❗ Invalid access control conditions");
-            return;
-        }
-
+        const humanised = await getHumanised(accs)
 
         // -- execute
         const _restrictedSpaces = restrictedSpaces;
