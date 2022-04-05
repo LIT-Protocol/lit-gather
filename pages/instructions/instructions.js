@@ -7,7 +7,7 @@ const Instruction = () => {
 
     // -- mounted
     const [instructions, setInstructions] = useState({
-        title: 'Instruction',
+        title: 'Instructions',
         data: [
             {
                 id: 1,
@@ -74,7 +74,7 @@ const Instruction = () => {
                     'Go to "More Objects" > "Upload New (bottom-left)" > "Upload image"',
                     'Click "Embedded website" and paste your in-game link in the "Website(URL)" field',
                     'Click "Select" and place your image anywhere outside the restricted areas',
-                    'Users will now be able to request access in-game by interacting this object',
+                    'Users will now be able to request access in-game by interacting with this object',
                 ],
                 images: [
                     '/instruction/5a.png',
