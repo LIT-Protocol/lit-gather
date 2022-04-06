@@ -54,15 +54,16 @@ export function AppProvider({ children }){
     //
     const getJwts = async (chain, authSig, args) => {
 
+        
         const jwts = [];
-
+        
         await asyncForEach(args, async (arg) => {
             let jwt;
             try{
                 jwt = await litNodeClient.getSignedToken({ 
                     chain,
                     authSig, 
-                    accessControlConditions: arg.accessControlConditions, 
+                    accessControlConditions: arg.accessControlConditions.accessControlConditions, 
                     resourceId: arg.resourceId,
                 })
             }catch{
@@ -138,7 +139,6 @@ export function AppProvider({ children }){
         });
 
         console.log("👉 redirectUrl:", redirectUrl)
-
         
         // -- enable native alert once its done
         enableNativeAlert();
