@@ -237,7 +237,8 @@ const CreateSpace = () => {
         compiledData.restrictedSpaces.forEach(async (space) => {
 
             // -- prepare
-            const accessControlConditions = JSON.parse(space.accessControls);
+            const accessControlConditions = JSON.parse(space.accessControls).accessControlConditions;
+
             const chain = accessControlConditions[0].chain;
             const resourceId = compileResourceId(spaceId, space);
 
