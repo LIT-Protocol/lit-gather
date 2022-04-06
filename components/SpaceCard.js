@@ -43,7 +43,7 @@ const SpaceCard = ({space, restrictedAreas, buttonAction, hover=true, style}) =>
                                     const border = (restrictedAreas.length - 1) == i ? '' : 'border-b border-[#483C5B]';
 
                                     return (
-                                        <>
+                                        <div key={i}>
                                             <li key={area.name} className={`mb-2 flex px-2 py-3 ${border}`}>
                                                 <div className="flex justify-center">
                                                     <div className="m-auto w-6">
@@ -55,7 +55,7 @@ const SpaceCard = ({space, restrictedAreas, buttonAction, hover=true, style}) =>
                                                     <div className="w-72"><span className="break-words">{ area.humanised }</span></div>
                                                 </div>
                                             </li>
-                                        </>
+                                        </div>
                                     )
                                 })
                             }
