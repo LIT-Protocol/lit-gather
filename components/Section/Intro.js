@@ -67,12 +67,12 @@ const Intro = () => {
                 {/* === Left Side === */}
                 <div className="w-full mt-12 md:mt-20 pt-2">
                     <h1 className="leading-tight text-5xl text-white">
-                        Discover, create, and join
-                        token-gated Gather spaces
+                        Create token gated
+                        areas in Gather spaces
                     </h1>
 
                     <div className="text-purple-text text-2xl mt-5">
-                        Creators, DAOs and NFT projects use Lit Protocol to grant and restrict access to their Gather spaces.
+                        Builders, DAOs and NFT projects use Lit Protocol to grant and restrict access to token gated areas in their Gather spaces.
                     </div>
 
                     <div className="mt-10 flex">
