@@ -22,10 +22,11 @@ const MainLayout = ({ children, hideFooter = false }) => {
                         <ul className="m-auto flex gap-12">
                             <li><a target="_blank" rel="noreferrer" href="https://twitter.com/litprotocol"><TwitterIcon/></a></li>
                             <li><a target="_blank" rel="noreferrer" href="https://litgateway.com/discord"><DiscordIcon/></a></li>
-                            <li><a target="_blank" rel="noreferrer" href="https://litprotocol.com/">Protocol</a></li>
-                            <li><a target="_blank" rel="noreferrer" href="https://developer.litprotocol.com/docs/intro">Developer Docs</a></li>
-                            <li><Link href="/instructions">Instructions</Link></li>
-                            <li><a target="_blank" rel="noreferrer" href="https://airtable.com/shr2NWJbH1Y6Y3kOU">Contacts</a></li>
+                            <li><a target="_blank" rel="noreferrer" href="https://litprotocol.com/">Lit Protocol</a></li>
+                            {/* <li><a target="_blank" rel="noreferrer" href="https://developer.litprotocol.com/docs/intro">Developer Docs</a></li>
+                            <li><Link href="/instructions">Instructions</Link></li> */}
+                            <li><a target="_blank" rel="noreferrer" href="https://airtable.com/shr2NWJbH1Y6Y3kOU">Contact</a></li>
+                            <li><a target="_blank" rel="noreferrer" href="https://discord.com/channels/896185694857343026/951253127028437002">Support</a></li>
                         </ul>
                     </div>
 
