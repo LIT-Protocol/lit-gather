@@ -76,19 +76,19 @@ const Intro = () => {
                     </div>
 
                     <div className="mt-10 flex">
-                        <div className="w-32">
+                        <div className="w-48">
                             <Btn
-                                text="Explore"
-                                href="/explore"
+                                text="Add token gating"
                                 css="flex justify-center"
+                                onClick={() => onCreateClick()}
                             />
                         </div>
                         <div className="ml-4">
                             <Btn
-                                text="Add access control"
-                                css="flex justify-center"
+                                text="Explore examples"
+                                href="/explore"
                                 template='inverted'
-                                onClick={() => onCreateClick()}
+                                css="flex justify-center"
                             />
                         </div>
                     </div>
