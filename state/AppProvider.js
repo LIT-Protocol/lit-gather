@@ -456,7 +456,7 @@ export function AppProvider({ children }){
 
             {/* ----- Required JS libraries ----- */}
             {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/> */}
-            <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js@latest/dist/index.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js@0.1.7/dist/index.js"></script>
 
         </AppContext.Provider>
     )
