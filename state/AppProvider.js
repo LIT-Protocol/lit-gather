@@ -455,8 +455,8 @@ export function AppProvider({ children }){
             {/* ----- ...CONTENT AREA ----- */}
 
             {/* ----- Required JS libraries ----- */}
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/>
-            <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js/dist/index.js"></script>
+            {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/> */}
+            <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js@latest/dist/index.js"></script>
 
         </AppContext.Provider>
     )
@@ -466,3 +466,17 @@ export function AppProvider({ children }){
 export function useAppContext(){
     return useContext(AppContext)
 }
+
+// .lsm-top-modal {
+//     position: fixed;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     width: 37.5rem;
+//     height: 46rem;
+// }
+// .lsm-top-modal {
+//     height: 100vh;
+//     overflow-y: hidden;
+//     z-index: 11;
+// }
