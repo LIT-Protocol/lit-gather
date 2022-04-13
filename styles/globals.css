@@ -20,7 +20,6 @@ body {
 #lit-gather-header{
   z-index: 1;
 }
-
 /* --- Custom Scrollbar */
 /* width */
 .lit-scroll ::-webkit-scrollbar {
@@ -49,6 +48,7 @@ body {
 /* --- Modal --- */
 .ReactModal__Overlay {
   background: #434343 !important;
+  background-color: rgba(0,0,0,0.75) !important;
   display: flex;
   justify-content: center;
 }
