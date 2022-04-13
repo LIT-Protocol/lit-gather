@@ -83,9 +83,9 @@ const Intro = () => {
                                 onClick={() => onCreateClick()}
                             />
                         </div>
-                        <div className="ml-4">
+                        <div className="ml-4 w-48">
                             <Btn
-                                text="Explore examples"
+                                text="Explore"
                                 href="/explore"
                                 template='inverted'
                                 css="flex justify-center"

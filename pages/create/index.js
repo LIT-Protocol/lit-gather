@@ -305,7 +305,7 @@ const CreateSpace = () => {
     
                                     <div className='text-base text-white mt-7'>
                                         <span>
-                                        Display this space on our example page
+                                        Display this space on our explore page
                                         </span>
                                         {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
                                         <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
