@@ -276,9 +276,10 @@ export function AppProvider({ children }){
     //
     // Open the Access Control Conditions Modal
     // @param { HTMLElement } 
+    // @param { Function } callback
     // @return { void }
     //
-    function openShareModal(e) {
+    function openShareModal(e, callback) {
         console.log("open share modal");
         ACCM.ReactContentRenderer.render(
             ACCM.ShareModal,
@@ -292,6 +293,7 @@ export function AppProvider({ children }){
                 );
                 e.value = JSON.stringify(accessControlConditions);
                 closeModal();
+                callback?.call(accessControlConditions);
                 // now, use the accessControlConditions to provision access using one of the methods below:
                 // https://github.com/LIT-Protocol/lit-js-sdk#dynamic-content---provisoning-access-to-a-resource
                 // or https://github.com/LIT-Protocol/lit-js-sdk#static-content---storing-any-static-content-and-manually-storing-the-metadata
@@ -455,7 +457,6 @@ export function AppProvider({ children }){
             {/* ----- ...CONTENT AREA ----- */}
 
             {/* ----- Required JS libraries ----- */}
-            {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lit-access-control-conditions-modal-vanilla-js/dist/main.css"/> */}
             <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js@0.1.7/dist/index.js"></script>
 
         </AppContext.Provider>

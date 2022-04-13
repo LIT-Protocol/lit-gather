@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useAppContext } from '../../state/AppProvider';
 import { CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedNetwork } from '../../utils/storage';
-import { storeLockedSpaces } from '../../utils/fetch';
+import { fetchMySpaces, storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
 import SEOHeader from '../../components/SEO/SEOHeader';
 import Loading from '../../components/Ui/Loading';
@@ -14,6 +14,9 @@ import ImageUploader from '../../components/ImageUploader';
 import { alpha, styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { grey, deepPurple } from '@mui/material/colors';
+import ProgressContent from '../../components/Section/ProgressContent';
+import ProgressImage from '../../components/Ui/ProgressImage';
+
 
 const GreenSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-switchBase': {
@@ -52,17 +55,21 @@ const CreateSpace = () => {
     // -- state
     const [value, setValue] = useState(0); // integer state
     const [spaceId, setSpaceId] = useState('')
-    const [granted, setGranted] = useState(false)
-    const [initialMap, setInitialMap] = useState("tavern-main");
+    const [initialMap, setInitialMap] = useState('');
     const [initialCoordinates, setInitialCoordinates] = useState("31,32");
+    const [initXCoor, setInitXCoor] = useState()
+    const [initYCoor, setInitYCoor] = useState()
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
     const [isPrivate, setIsPrivate] = useState(false)
+    const [currentSpace, setCurrentSpace] = useState(null);
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
-    const [map, setMap] = useState(null)
-    const [topLeft, setTopLeft] = useState(null)
-    const [bottomRight, setBottomRight] = useState(null)
+    const [map, setMap] = useState('')
+    const [topLeftX, setTopLeftX] = useState(null)
+    const [topLeftY, setTopLeftY] = useState(null)
+    const [bottomRightX, setBottomRightX] = useState(null)
+    const [bottomRightY, setBottomRightY] = useState(null)
     const [accessControls, setAccessControls] = useState(null)
     const [thumbnail, setThumbnail] = useState(null);
 
@@ -71,7 +78,7 @@ const CreateSpace = () => {
 
     // -- use effect
     useEffect(() => {
-
+        
         if( ! isAuthed() ){
             router.push('/')
             return;
@@ -124,20 +131,20 @@ const CreateSpace = () => {
             alert("❗ map cannot be empty");
             return;
         }
-        if( ! topLeft ){
-            alert("❗ Top-Left cannot be empty");
+        if( ! topLeftX ){
+            alert("❗ Top-LeftX cannot be empty");
             return;
         }
-        if( ! bottomRight ){
-            alert("❗ Bottom-Right cannot be empty");
+        if( ! topLeftY ){
+            alert("❗ Top-LeftY cannot be empty");
             return;
         }
-        if ( ! topLeft.includes(',') ){
-            alert("❗ Invalid format for Top-Left");
+        if( ! bottomRightX ){
+            alert("❗ Bottom-RightX cannot be empty");
             return;
         }
-        if ( ! bottomRight.includes(',') ){
-            alert("❗ Invalid format for Bottom-Right");
+        if( ! bottomRightY ){
+            alert("❗ Bottom-RightY cannot be empty");
             return;
         }
         if( ! accs ){
@@ -151,11 +158,13 @@ const CreateSpace = () => {
         // -- execute
         const _restrictedSpaces = restrictedSpaces;
 
+        console.log("topLeftX + ',' + topLeftY:", topLeftX + ',' + topLeftY);
+
         _restrictedSpaces.push({
             name, 
             map,
-            topLeft: topLeft.replaceAll(' ', ''),
-            bottomRight: bottomRight.replaceAll(' ', ''),
+            topLeft: topLeftX + ',' + topLeftY,
+            bottomRight: bottomRightX + ',' + bottomRightY,
             accessControls: accs,
             humanised
         })
@@ -182,7 +191,10 @@ const CreateSpace = () => {
     // @return { void }
     // 
     const onOpenShareModal = async () => {
-        openShareModal(document.getElementById('form-accs'));
+        openShareModal(document.getElementById('form-accs'), (accessControlConditions) => {
+            console.warn("onOpenShareModal!");
+            onClickAddRestrictedArea()
+        });
     }
 
     //
@@ -198,10 +210,10 @@ const CreateSpace = () => {
             authSig,
             spaceId: decodeURIComponent(spaceId),
             initialMap,
-            initialCoordinates,
+            initialCoordinates: initXCoor + ',' + initYCoor,
             restrictedSpaces,
             isPrivate,
-            thumbnailUrl: thumbnail || 'https://picsum.photos/seed/picsum/400/200',
+            thumbnailUrl: thumbnail || 'https://ipfs.io/ipfs/QmQbRchcTsjcds8iz8BXwSAUvsvX3wN5XhteLMGgqM4TCa',
         }
     }
 
@@ -222,11 +234,6 @@ const CreateSpace = () => {
         if( ! spaceId.includes('/') ){
             alert("❗ Gather Space ID format is wrong. Did you include a '/' in your space id?");
             return;
-        }
-
-        if( ! granted ){
-            alert("❗ You must grant gatheradmin@litprotocol.com admin access")
-            return
         }
 
         // -- prepare
@@ -261,11 +268,14 @@ const CreateSpace = () => {
             return;
         }
 
+        console.warn("Stored: ", stored);
+
+        setCurrentSpace(stored.data);
         if(stored?.success){
             console.log("✅ Store: ", stored);
-            alert(`✅ ${stored?.success}`);
-            router.push('/dashboard');
         }
+        
+        return;
 
     }
 
@@ -275,181 +285,339 @@ const CreateSpace = () => {
             <DashboardLayout>
                 <div className="w-full">
                     
-                    <h1 className="leading-tight text-5xl text-white">
-                    Add Access Control
-                    </h1>
+                    {/* ===== Progress Content ===== */}
+                    <ProgressContent steps={[
 
-                    {/* ===== Form Area ===== */}
-                    <div className='mt-4'>
-                        <div className='text-purple-text text-sm'>
-                            <span className='text-red'>*</span>
-                            <span className='ml-1 text-grey-text tracking-widest'>REQUIRED FIELDS</span>
-                        </div>
+                        // ========== Step 1 ==========
+                        {
+                            content: 
+                            <>
+                                <ProgressImage src="/steps/1.png"/>
+    
+                                {/* ----- Form Area ----- */}
+                                <div className="w-full ml-12">
+                                    <div className='text-base text-white mt-2'>
+                                        Gather Space ID 
+                                    </div>
+                                    <div className='mt-2'>
+                                        <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
+                                    </div>
+    
+                                    <div className='text-base text-white mt-7'>
+                                        <span>
+                                        Display this space on our example page
+                                        </span>
+                                        {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
+                                        <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
+                                    </div>
+    
+                                    <div className='text-base text-white mt-6'>
+                                       Add a thumbnail image (Please wait until the image appears)
+                                    </div>
+                                    <ImageUploader
+                                        onUploaded={(imagePath) => setThumbnail(imagePath)}
+                                        onCancelled={() => setThumbnail(null)}
+                                    />
+    
+    
+                                </div>
+                            </>,
+                            onNext: (next) => {
+                                // -- validate
+                                if( ! spaceId || spaceId == ''){
+                                    alert("❗ Gather Space ID cannot be empty")
+                                    return
+                                }
 
-                        {/* Step 1 */}
-                        <div className='text-base text-white mt-2'>
-                            1. Gather Space ID <span className='text-red'>*</span>
-                            <a target="_blank" href="./instructions#1" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
-                        </div>
-                        <div className='mt-2'>
-                            <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
-                        </div>
+                                // -- validate if slash '/' is included in the space id
+                                if( ! spaceId.includes('/') ){
+                                    alert("❗ Gather Space ID format is wrong. Did you include a '/' in your space id?");
+                                    return;
+                                }
+                                next?.callback()
+                            }
+                        },
 
-                        {/* Step 2 */}
-                        <div className="form-check mt-8">
-                            <label className="text-white form-check-label inline-block">
-                                2. Grant <span className='text-purple-text'>gatheradmin@litprotocol.com</span> admin access <span className='text-red'>*</span>
-                                <a target="_blank" href="./instructions#2" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
-                            </label><br/>
-                            <input onChange={(e) => setGranted(e.target.checked)} className="form-check-input h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="checkbox" value="" /> I&apos;ve granted Lit Protocol admin access to my gather space
-                        </div>
+                        // ========== Step 2 ==========
+                        {
+                            content:
+                            <>
+                                <ProgressImage 
+                                    src="/steps/2b.png"
+                                />
+    
+                                {/* ----- Form Area ----- */}
+                                <div className="w-full ml-12">
+                                    <div className='text-base text-white mt-2'>
+                                        Go to Manage Space
+                                    </div>
+    
+                                    <div className='text-base text-white mt-12'>
+                                        Add this email as an admin account
+                                    </div>
+                                    <div className='mt-2'>
+                                        <pre className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main text-sm">
+                                            <code>
+                                            gatheradmin@litprotocol.com
+                                            </code>
+                                        </pre>
+                                    </div>
+    
+                                </div>
+                            </>,
+                        },
 
-                        {/* Step 3 */}
-                        <div className='text-base text-white mt-8'>
-                            <span>3. Spawn Map</span><span className='ml-2 text-grey-text'>-- select a default spawn map</span> <span className='text-red'>*</span>
-                            <a target="_blank" href="./instructions#3" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
-                        </div>
-                        <div className='mt-2'>
-                            <input onChange={(e) => setInitialMap(e.target.value)} value={initialMap} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
-                        </div>
-
-                        {/* Step 4 */}
-                        <div className='text-base text-white mt-8'>
-                            <span>4. Spawn Coordinates</span><span className='ml-2 text-grey-text'>-- choose a location outside of the restricted space</span> <span className='text-red'>*</span>
-                            <a target="_blank" href="./instructions#4" className="ml-2 text-purple-text underline underline-offset-2">Instructions</a>
-                        </div>
-                        <div className='mt-2'>
-                            <input onChange={(e) => setInitialCoordinates(e.target.value)} value={initialCoordinates} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="form-id" type="text" placeholder="31,32" />
-                        </div>
-
-
-                        {/* Step 5 */}
-                        <div className='text-base text-white mt-7'>
-                                5. Restricted Coordinates
-                        </div>
-                        <div className='mt-2'>
-
-                        <div className='flex'>
-
-                            {/* Input Form */}
-                            <div className='w-96 mr-2 flex-none rounded-lg border border-lit-900 p-2'>
-                                <div className='grid grid-cols-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Name:</span></div>
-                                    <div className=''>
-                                        <input onChange={(e) => setName(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='eg. balcony'/>    
+                        // ========== Step 3 ==========
+                        {
+                            content:
+                            <>
+                                <ProgressImage 
+                                    src="/steps/3b.png"
+                                />
+    
+                                {/* ----- Form Area ----- */}
+                                <div className="w-full ml-12">
+                                    <div className='text-base text-white mt-2'>
+                                        Go to Edit Map
+                                    </div>
+                                    
+                                    <div className='text-base text-white mt-12'>
+                                        Choose a room for visitors to spawn at
+                                    </div>
+                                    <div className='mt-2'>
+    
+                                        <input onChange={(e) => setInitialMap(e.target.value)} value={initialMap} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="Default Map" />
+                                    </div>
+    
+                                    <div className='text-base text-white mt-7'>
+                                        Coordinates for visitors to spawn at
+                                    </div>
+                                    <div className='text-base text-grey-text italic mt-1'>
+                                        Select a location outside of the token gated area
+                                    </div>
+                                    <div className='mt-2 flex gap-12'>
+    
+                                        <div className="flex">
+                                            <div className="my-auto">X:</div>
+                                            <input onChange={(e) => setInitXCoor(e.target.value)} value={initXCoor} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
+                                        <div className="flex justify-center">
+                                            <div className="my-auto">Y:</div>
+                                            <input onChange={(e) => setInitYCoor(e.target.value)} value={initYCoor} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
                                     </div>
                                 </div>
-                                <div className='grid grid-cols-2 mt-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Map:</span></div>
-                                    <div className=''>
-                                        <input onChange={(e) => setMap(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='eg. tavern-upper'/>    
-                                    </div>
-                                </div>
-                                <div className='grid grid-cols-2 mt-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Top-Left:</span></div>
-                                    <div className=''>
-                                        <input onChange={(e) => setTopLeft(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='44,34'/>    
-                                    </div>
-                                </div>
-                                <div className='grid grid-cols-2 mt-2'>
-                                    <div className='flex justify-start'><span className='my-auto pr-2'>Bottom-Right:</span></div>
-                                    <div className=''>
-                                        <input onChange={(e) => setBottomRight(e.target.value)} type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' placeholder='51,36'/>    
-                                    </div>
-                                </div>
-                                <div className='flex mt-2'>
-                                    <div className='flex justify-start w-full'><span className='my-auto pr-2'>Access Control:</span></div>
+                            </>,
+                            onNext: (next) => {
+                                if( ! initialMap ){
+                                    alert("❗ room cannot be empty");
+                                    return;
+                                }
+                                if( ! initXCoor ){
+                                    alert("❗ X cannot be empty");
+                                    return;
+                                }
+                                if( ! initYCoor ){
+                                    alert("❗ Y cannot be empty");
+                                    return;
+                                }
+                                next?.callback()
+                            }
+                        },
 
-                                    <div className='ml-auto flex'>
-                                        
-                                        <input id="form-accs" onChange={(e) => setAccessControls(e.target.value)} type="text" className='hidden shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
-                                        <button onClick={() => onOpenShareModal()} className="text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75">
-                                            <div className='m-auto flex w-48'>
-                                                <CogIcon className="w-8 ml-3"/>
-                                                <span className="m-auto text-sm mr-4 text-left pl-2">{accessControls} Define Access Control Conditions</span>
-                                            </div>
+                        // ========== Step 4 ==========
+                        {
+                            content:
+                            <>
+                                <ProgressImage src="/steps/4a.png"/>
+    
+                                {/* ----- Form Area ----- */}
+                                <div className="w-full max-h-[540px] h-full overflow-y-scroll ml-12 pr-12">
+                                    <div className='text-base text-grey-text italic mt-1'>
+                                        Add as many gated areas as you would like:
+                                    </div>
+    
+                                    <div className='text-base text-white mt-4'>
+                                        Name of room the gated area is being added to
+                                    </div>
+                                    <div className='mt-2'>
+    
+                                        <input onChange={(e) => setMap(e.target.value)} value={map} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="room-name" /> 
+
+                                    </div>
+    
+                                    {/* -- row -- */}
+                                    <div className='text-base text-white mt-7'>
+                                        Top-Left coordinates of gated area
+                                    </div>
+    
+                                    <div className='mt-2 flex gap-12'>
+                                    
+                                        <div className="flex">
+                                            <div className="my-auto">X:</div>
+                                            <input onChange={(e) => setTopLeftX(e.target.value)} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
+                                        <div className="flex justify-center">
+                                            <div className="my-auto">Y:</div>
+                                            <input onChange={(e) => setTopLeftY(e.target.value)} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
+                                    </div>
+    
+                                    {/* -- row -- */}
+                                    <div className='text-base text-white mt-7'>
+                                        Bottom-Right coordinates of gated area
+                                    </div>
+    
+                                    <div className='mt-2 flex gap-12'>
+                                    
+                                        <div className="flex">
+                                            <div className="my-auto">X:</div>
+                                            <input onChange={(e) => setBottomRightX(e.target.value)} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
+                                        <div className="flex justify-center">
+                                            <div className="my-auto">Y:</div>
+                                            <input onChange={(e) => setBottomRightY(e.target.value)} className="ml-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white placeholder:italic leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main w-24" type="text" placeholder="##" />
+                                        </div>
+    
+                                    </div>
+    
+                                    {/* -- row -- */}
+                                    <div className='text-base text-white mt-7'>
+                                        Give this area a name
+                                    </div>
+                                    <div className='mt-2'>
+    
+                                        <input onChange={(e) => setName(e.target.value)} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="VIP Poker Table" />
+                                    </div>
+                                    
+                                    {/* -- row -- */}
+                                    <div className='mt-7'>
+                                        <input id="form-accs" onChange={(e) => setAccessControls(e.target.value)} type="text" className='hidden' />
+                                        <button onClick={() =>  onOpenShareModal()} className="bg-[#462A84] rounded-md px-5 py-1">
+                                        DEFINE TOKEN GATING CONDITIONS
                                         </button>
                                     </div>
-                                </div>
-                                <div className='flex justify-end mt-2'>
-                                    <button onClick={() => onClickAddRestrictedArea()} className="text-white text-sm h-12 flex justify-center rounded-xl mt-2 ml-4 cursor-pointer transition transition-lit bg-lit-400 hover:bg-lit-400/.75">
-                                        <div className='m-auto flex'>
-                                            <PlusIcon className="w-6 ml-2"/>
-                                            <span className="m-auto ml-2 text-sm mr-4">Add Restricted Area</span>
+    
+                                    {/* -- row -- */}
+                                    {
+                                        restrictedSpaces?.length <= 0 ? '' : 
+                                        <div className='text-base text-white mt-7'>
+                                            Defined areas:
                                         </div>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            {/* Results */}
-                            <div className='w-full'>
-                                {/* Table Headers */}
-                                <div className='flex'>
-                                    <div className='w-full'>
-                                        <div className='grid grid-cols-4 text-xs text-center'>
-                                            <div className='bg-lit-900 rounded-tl flex justify-center'><span className='m-auto'>Name</span></div>
-                                            <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Map</span></div>
-                                            <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Top-Left</span></div>
-                                            <div className='bg-lit-900 flex justify-center'><span className='m-auto'>Bottom-right</span></div>
-                                        </div>    
+                                    }
+                                    
+                                    <div className='mt-2'>
+
+                                        {/* -- Defined areas -- */}
+                                        {
+                                            restrictedSpaces.map((space, i) => {
+                                                return (
+                                                    <div key={i}>
+
+                                                        {
+                                                            i <= 0 ? '' : 
+                                                            <div className="bg-[#212121] w-full px-4">
+                                                                <div className="bg-[#3C3C3D] w-full h-[1px]"></div>
+                                                            </div>
+                                                        }
+                                                        <div className="bg-[#212121] w-full min-h-[120px] p-4">
+
+
+                                                        <div className="relative">
+                                                            <button onClick={() => onClickDeleteRow(i)} className="absolute top-0 right-0 text-xs hover:text-red text-grey-text">
+                                                                Remove
+                                                            </button>
+
+                                                            <div className='flex'>
+                                                                <h1>{ space.name }</h1>
+                                                                <h5 className="italic ml-2">(in room "{ space.map }")</h5>
+                                                            </div>
+                                                            <div className='flex text-[#C2C2C5]'>
+                                                                <h1>Top-Left: ({ space.topLeft })</h1>
+                                                            </div>
+                                                            <div className='flex text-[#C2C2C5]'>
+                                                                <h1>Bottom-Right: ({ space.bottomRight })</h1>
+                                                            </div>
+                                                            <div className='flex'>
+                                                                { space.humanised }
+                                                            </div>
+                                                        </div>
+
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                        
                                     </div>
-                                    <div className='text-white text-center text-xs w-24 bg-black'>Action</div>
+     
                                 </div>
+                            </>,
+                            next: 'Create Areas',
+                            onNext: async (next) => {
+                                await onSubmit();
+                                next?.callback();
+                            }
+                        },
 
-                                {/* Table Rows */}
-                                {
-                                    restrictedSpaces.map((space, i) => {
-                                        return (
-                                            <div key={i} className='flex border border-lit-400 mt-2'>
-                                                <div className='w-full '>
-                                                    <div className='grid grid-cols-4 text-sm text-center border-b border-lit-400'>
-                                                        <div className=''>{ space.name }</div>
-                                                        <div className=''>{ space.map }</div>
-                                                        <div className=''>{ space.topLeft }</div>
-                                                        <div className=''>{ space.bottomRight }</div>
-                                                    </div>
-                                                    <div className='bg-lit-400 text-xs text-center'>
-                                                        { space.humanised }
-                                                    </div>
-                                                </div>
-                                                <div className='w-24 flex justify-center'>
-                                                    <div onClick={() => onClickDeleteRow(i) } className='w-full h-full flex justify-center text-white cursor-pointer m-auto bg-red px-2 py-1'><span className='m-auto'>Delete</span></div>
-                                                </div>
+                        // ========== Step 5 ==========
+                        {
+                            content:
+                            <>
+                                <ProgressImage src="/steps/5a.png"/>
+    
+                                {/* ----- Form Area ----- */}
+                                <div className="w-full h-full overflow-y-scroll ml-12 pr-12">
+                                    <div className='text-base text-white mt-4'>
+                                        Place an object in your space that allows visitors to access the gated areas: 
+                                    </div>
+                                    <div className='text-base text-white mt-9'>
+                                        Go to My Spaces
+                                    </div>
+                                    <div className='text-base text-white mt-4'>
+                                        Choose Edit Map
+                                    </div>
+                                    <div className='text-base text-white mt-4'>
+                                        In the Map Editor, select More Objects
+                                    </div>
+                                    <div className='text-base text-white mt-4'>
+                                        Pick an object that visitors will interact with to connect with and gain access.
+                                    </div>
+                                    <div className='text-base text-white mt-4'>
+                                        Select Embedded website
+                                    </div>
+                                    <div className='text-base text-white mt-4'>
+                                        In Website (URL) add this in-game link
+                                    </div>
+                                    {
+                                        ! currentSpace ? 'Space not stored yet.' : 
+                                            <div className="mt-4 shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main text-sm">
+                                                <code>
+                                                {
+                                                    window.location.protocol + '//' + window.location.host + '/space/' + currentSpace.id + '?ingame=true'
+                                                }
+                                                </code>
                                             </div>
-                                        )
-                                    })
-                                }  
-                            </div>
-                        </div>
 
-                            
+                                    }
+                                    
 
-                        </div>
-
-                    </div>
-                    {/* ===== ...Form Area ===== */}
-                    <div className='text-base text-white mt-7'>
-                        <span>
-                        6. Make your space private (from the &#34;Explore&#34; tab on our site)
-                        </span>
-                        {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
-                        <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
-                    </div>
-
-                    <div className='text-base text-white mt-7'>
-                        7. Upload a thumbnail for your space (Please wait until the image appears)
-                    </div>
-                    <ImageUploader
-                        onUploaded={(imagePath) => setThumbnail(imagePath)}
-                        onCancelled={() => setThumbnail(null)}
-                    />
-
-                    <div className='mt-8'>
-                        <div onClick={() => onSubmit() } className='w-full bg-lit-400 px-2 py-2 rounded-full flex justify-center cursor-pointer hover:bg-lit-500 transition duration-300 ease-lit'>
-                            <span className='m-auto'>Submit</span>
-                        </div>
-                    </div>
+                                </div>
+                            </>,
+                            back: 'Restart',
+                            next: 'Finished',
+                            onBack: (back) => back?.reset?.call(),
+                            hideNextIcon: true,
+                            onNext: async (next) => router.push('/dashboard'),
+                        }
+                    ]} />
                 </div>
+
             </DashboardLayout>
         </> : <Loading/>
     );

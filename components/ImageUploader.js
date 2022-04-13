@@ -84,17 +84,24 @@ export const ImageUploader = ({onUploaded, onCancelled}) => {
     
     const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop})
 
+    // useEffect(() => {
+    //     setInterval(() => {
+    //         let thumbnail = document.getElementById('iu-thumbnail');
+    //         console.log(thumbnail);
+    //     }, 1000);
+    // }, [])
+
     return (
-        <div className="rounded-lg shadow-xl bg-gray-50 relative">
-            <div className="m-4 pt-2 pb-2">
-                <label className="inline-block mb-2 text-gray-500">File Upload</label>
+        <div className="mt-4 rounded-lg shadow-xlrelative">
+            <div className="relative">
+                {/* <label className="inline-block mb-2 text-gray-500">File Upload</label> */}
                 <div {...getRootProps()}>
                 <input {...getInputProps()} />
                     {
                         image == null
                         ? <>
-                            <div className="flex items-center justify-center w-full pb-2 ">
-                                <div className="cursor-pointer flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                            <div className="">
+                                <div className="cursor-pointer flex flex-col w-full rounded-lg bg-[#1B1B1B] h-32 border-2 border-[#AAAAAA] border-dashed hover:border-gray-300">
                                     <div className="flex flex-col items-center justify-center pt-7">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-400 group-hover:text-gray-600"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,12 +116,12 @@ export const ImageUploader = ({onUploaded, onCancelled}) => {
                             </div>
                         </>
                         : <>
-                            <div onClick={() => cancel()} className='absolute right-0 p-2 cursor-pointer top-0'>
+                            <div onClick={() => cancel()} className='absolute right-0 cursor-pointer top-0'>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#FF3743">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <div className='text-center rounded-lg overflow-hidden w-48 mx-auto mb-2'>
+                            <div id="iu-thumbnail" className='text-center rounded-lg overflow-hidden w-48 mx-auto mb-2'>
                                 <img className="object-cover" src={image} />
                             </div>
                         </> 

@@ -12,7 +12,7 @@ export default function LayoutHeader({subtitle}){
     const { walletIsConnected } = appContext.state;
     
     return (
-        <header className="sticky top-0 w-full bg-lit-dark relative mx-auto flex justify-between items-center h-16 py-9 px-6 z-9">
+        <header id="lit-gather-header" className="sticky top-0 w-full bg-lit-dark relative mx-auto flex justify-between items-center h-16 py-9 px-6 z-9">
             <div className="relative">
                 <LitLogo/>
             </div>
