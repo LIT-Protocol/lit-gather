@@ -434,7 +434,7 @@ const CreateSpace = () => {
                                 <ProgressImage src="/steps/4a.png"/>
     
                                 {/* ----- Form Area ----- */}
-                                <div className="w-full max-h-[540px] h-full overflow-y-scroll ml-12 pr-12">
+                                <div className="w-full h-full ml-12 pr-12">
                                     <div className='text-base text-grey-text italic mt-1'>
                                         Add as many gated areas as you would like:
                                     </div>
