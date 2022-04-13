@@ -52,12 +52,12 @@ const ProgressContent = ({children, steps = [
 
                 <ButtonRect 
                     onClick={(e) => steps?.[currentStep]?.onBack ? steps?.[currentStep]?.onBack({
-                        callback: () => setCurrentStep(currentStep -= 1),
+                        callback: () => setCurrentStep(currentStep <=0 ? 0 : currentStep -= 1),
                         reset: () => setCurrentStep(0),
-                    }) : setCurrentStep(currentStep -= 1)} 
+                    }) : setCurrentStep(currentStep <=0 ? 0 : currentStep -= 1)} 
                     icon={<ArrowNarrowLeftIcon/>} 
                     text={steps?.[currentStep]?.back ?? 'Back'}
-                    hidden={steps?.[currentStep]?.hideBackButton} 
+                    hidden={steps?.[currentStep]?.hideBackButton || currentStep == 0} 
                 />
 
                 <ButtonRect 

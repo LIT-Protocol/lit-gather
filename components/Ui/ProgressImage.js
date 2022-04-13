@@ -1,7 +1,7 @@
 const ProgressImage = ({src, src2}) => {
     return (
         ! src2 ? 
-        <div className="p-6 w-full min-h-[256px] bg-lit-dark rounded-lg">
+        <div className="p-6 w-full min-h-[256px] h-full bg-lit-dark rounded-lg">
             <div className="rounded-lg overflow-hidden border border-lit-400 border-2">
                 <img src={src} />
             </div>
