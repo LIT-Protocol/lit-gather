@@ -86,11 +86,10 @@ const TokenGate = () => {
                 let _spaceId = _space.spaceId.replaceAll(' ', '%20')
 
                 setSpace(_space)
-                console.log(_space);
 
                 // -- set states
                 setSpaceId(_spaceId);
-                setIsPrivate(_space.isPrivate);
+                setIsPrivate(_space.private);
                 setThumbnail(_space.thumbnailUrl);
                 setInitialMap(_space.initialMap);
                 setInitXCoor(_space.initialCoordinates.split(',')[0])
@@ -116,7 +115,7 @@ const TokenGate = () => {
         setLoaded(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, [id, space]);
 
     // -- force update specifically for adding new row
     function forceRender(){
@@ -334,12 +333,14 @@ const TokenGate = () => {
                                     <div className='mt-2'>
                                         <input disabled={editMode} onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
                                     </div>
-    
+
                                     <div className='text-base text-white mt-7'>
+                                        
                                         <span>
                                         Display this space on our explore page
                                         </span>
-                                        <LitSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
+                                        
+                                        <LitSwitch checked={!isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
                                     </div>
     
                                     <div className='text-base text-white mt-6'>
