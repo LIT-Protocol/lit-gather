@@ -52,6 +52,9 @@ body {
   display: flex;
   justify-content: center;
 }
+.lsm-review-conditions-group div:first-child {
+  display: none;
+}
 .z-header{
   z-index: 1;
 }

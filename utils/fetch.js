@@ -4,9 +4,10 @@ const { publicRuntimeConfig } = getConfig()
 //
 // (POST) Store locked spaces to the database
 // @param { Object } compiledData
+// @param { String } action
 // @return { Object } result
 //
-export const storeLockedSpaces = async (compiledData) => {
+export const storeLockedSpaces = async (compiledData, action) => {
 
     console.warn("↓↓↓↓↓ fetch.js/storeLockedSpaces ↓↓↓↓↓");
 
@@ -25,7 +26,7 @@ export const storeLockedSpaces = async (compiledData) => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(compiledData)
+        body: JSON.stringify({compiledData, action})
     });
 
     const data = await res.json();

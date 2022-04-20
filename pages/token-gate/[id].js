@@ -4,43 +4,17 @@ import LitJsSdk from 'lit-js-sdk'
 import DashboardLayout from '../../components/Layout/Dashboard';
 import { useRouter } from 'next/router';
 import { useAppContext } from '../../state/AppProvider';
-import { CogIcon, PlusIcon } from '@heroicons/react/solid';
 import { storedNetwork } from '../../utils/storage';
-import { fetchMySpaces, storeLockedSpaces } from '../../utils/fetch';
+import { fetchMySpaces, fetchSpace, storeLockedSpaces } from '../../utils/fetch';
 import { compileResourceId } from '../../utils/lit';
 import SEOHeader from '../../components/SEO/SEOHeader';
 import Loading from '../../components/Ui/Loading';
 import ImageUploader from '../../components/ImageUploader';
-import { alpha, styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import { grey, deepPurple } from '@mui/material/colors';
 import ProgressContent from '../../components/Section/ProgressContent';
 import ProgressImage from '../../components/Ui/ProgressImage';
+import LitSwitch from '../../components/Ui/LitSwitch';
 
-
-const GreenSwitch = styled(Switch)(({ theme }) => ({
-    '& .MuiSwitch-switchBase': {
-        color: grey[900],
-        '&:hover': {
-          backgroundColor: alpha(grey[900], theme.palette.action.hoverOpacity),
-        },
-      },
-      '& .MuiSwitch-switchBase + .MuiSwitch-track': {
-        backgroundColor: grey[400],
-      },
-    '& .MuiSwitch-switchBase.Mui-checked': {
-      color: deepPurple[600],
-      '&:hover': {
-        backgroundColor: alpha(deepPurple[600], theme.palette.action.hoverOpacity),
-      },
-    },
-    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-      backgroundColor: deepPurple[600],
-    },
-  }));
-
-
-const CreateSpace = () => {
+const TokenGate = () => {
 
     // -- prepare app context methods
     const appContext = useAppContext()
@@ -49,19 +23,22 @@ const CreateSpace = () => {
     // -- prepare
     const litNodeClient = new LitJsSdk.LitNodeClient()
     litNodeClient.connect()
-
-    const router = useRouter();
     
     // -- state
     const [value, setValue] = useState(0); // integer state
     const [spaceId, setSpaceId] = useState('')
     const [initialMap, setInitialMap] = useState('');
-    const [initialCoordinates, setInitialCoordinates] = useState("31,32");
     const [initXCoor, setInitXCoor] = useState()
     const [initYCoor, setInitYCoor] = useState()
     const [restrictedSpaces, setRestrictedSpaces] = useState([])
     const [isPrivate, setIsPrivate] = useState(false)
     const [currentSpace, setCurrentSpace] = useState(null);
+
+    // -- exclusive to edit mode
+    const router = useRouter();
+    const { id } = router.query;
+    const [editMode, setEditMode] = useState(false);
+    const [space, setSpace] = useState('');
 
     // -- restricted coordinates form
     const [name, setName] = useState(null)
@@ -84,9 +61,62 @@ const CreateSpace = () => {
             return;
         }
 
+        console.warn("ID: ", id);
+
+        // ===== Edit Mode =====
+        // -- Edit mode: has { id } param 
+        if( id ){
+            console.warn("-- Edit Mode --");
+
+            // 
+            // Filter the space out of all spaces
+            //
+            const getSpace = async () => {
+                
+                const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: storedNetwork()});
+                const res = await fetchMySpaces({authSig});
+                const _space = (res.spaces.filter((space) => space.id == id))[0];
+
+                if(! _space ){
+                    alert("❗You are not authorised to access this space.");
+                    router.push('/dashboard');
+                    return;
+                }
+
+                let _spaceId = _space.spaceId.replaceAll(' ', '%20')
+
+                setSpace(_space)
+                console.log(_space);
+
+                // -- set states
+                setSpaceId(_spaceId);
+                setIsPrivate(_space.isPrivate);
+                setThumbnail(_space.thumbnailUrl);
+                setInitialMap(_space.initialMap);
+                setInitXCoor(_space.initialCoordinates.split(',')[0])
+                setInitYCoor(_space.initialCoordinates.split(',')[1])
+                setRestrictedSpaces(JSON.parse(_space.restrictedSpaces));
+
+                return _space;
+                
+            }
+
+            if( ! space ){
+                getSpace();
+            }
+
+            setEditMode(true);
+            setLoaded(true);
+        
+            return;
+        }
+
+        // ===== Default Mode =====
+        setEditMode(false);
         setLoaded(true);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [id]);
 
     // -- force update specifically for adding new row
     function forceRender(){
@@ -260,7 +290,7 @@ const CreateSpace = () => {
         })
 
         // -- store
-        const stored = await storeLockedSpaces(compiledData);
+        const stored = await storeLockedSpaces(compiledData, !editMode ? 'add' : 'update');
         
         if(stored?.error){
             console.error("❗ Error:", stored.error)
@@ -280,11 +310,13 @@ const CreateSpace = () => {
     }
 
     return (
-        loaded ? <>
+        !loaded
+        ? <Loading/> : 
+        <>
             <SEOHeader subtitle="Add access control"/>
             <DashboardLayout>
                 <div className="w-full">
-                    
+                    {/* Edit Mode: { editMode ? 'Yes' : 'No'} */}
                     {/* ===== Progress Content ===== */}
                     <ProgressContent steps={[
 
@@ -300,23 +332,24 @@ const CreateSpace = () => {
                                         Gather Space ID 
                                     </div>
                                     <div className='mt-2'>
-                                        <input onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
+                                        <input disabled={editMode} onChange={(e) => setSpaceId(e.target.value)} value={spaceId} className="shadow appearance-none border border-grey-main rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-black placeholder:text-grey-main" type="text" placeholder="tXVe5OYt6nHS9Ey5/lit-protocol" />
                                     </div>
     
                                     <div className='text-base text-white mt-7'>
                                         <span>
                                         Display this space on our explore page
                                         </span>
-                                        {/* <Switch size="small" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} name="gilad" /> */}
-                                        <GreenSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
+                                        <LitSwitch checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)}  />
                                     </div>
     
                                     <div className='text-base text-white mt-6'>
                                        Add a thumbnail image (Please wait until the image appears)
                                     </div>
+
                                     <ImageUploader
                                         onUploaded={(imagePath) => setThumbnail(imagePath)}
                                         onCancelled={() => setThumbnail(null)}
+                                        defaultImage={space.thumbnailUrl}
                                     />
     
     
@@ -558,7 +591,7 @@ const CreateSpace = () => {
      
                                 </div>
                             </>,
-                            next: 'Create Areas',
+                            next: editMode ? 'Update Space' : 'Create Areas' ,
                             onNext: async (next) => {
                                 await onSubmit();
                                 next?.callback();
@@ -617,20 +650,20 @@ const CreateSpace = () => {
                         }
                     ]} />
                 </div>
-
             </DashboardLayout>
-        </> : <Loading/>
+        </>
     );
 }
 
-export default CreateSpace;
+export default TokenGate;
 
 // ========== Next.js Hooks ==========
 
 //
 // Use Layout
 //
-CreateSpace.getLayout = function getLayout(page) {
+TokenGate.getLayout = function getLayout(page) {
+
     return (
         <MainLayout>
         { page }

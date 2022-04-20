@@ -162,7 +162,7 @@ const ConnectModal = () => {
 
                 // -- push to page based on action
                 if(next == 'create'){
-                    router.push('/create')
+                    router.push('/token-gate')
                 }
             }, 2000);
         }

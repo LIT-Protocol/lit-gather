@@ -20,13 +20,13 @@ const Intro = () => {
     const [featured, setFeatured] = useState(null);
 
     //
-    // Go to /create page
+    // Go to /token-gate page
     // @return { void }
     //
     const onCreateClick = () => {
         auth(() => {
             console.warn("↓↓↓↓↓ onCreateClick ↓↓↓↓↓");
-            router.push('/create')
+            router.push('/token-gate')
         })
     }
 

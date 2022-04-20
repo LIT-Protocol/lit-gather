@@ -3,9 +3,13 @@ import { create } from 'ipfs-http-client';
 import { useEffect, useState, useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
 
-export const ImageUploader = ({onUploaded, onCancelled}) => {
+export const ImageUploader = ({onUploaded, onCancelled, defaultImage = null}) => {
 
     const [image, setImage] = useState(null);
+
+    useEffect(() => {
+        setImage(defaultImage)
+    }, [defaultImage])
 
     //
     // Upload the IPFS

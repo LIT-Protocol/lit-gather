@@ -7,8 +7,11 @@ import { storedNetwork } from "../../utils/storage";
 import SpaceCard from "../../components/SpaceCard";
 import { TrashIcon } from "@heroicons/react/solid";
 import DropMenu from "../../components/Ui/DropMenu";
+import { Router, useRouter } from "next/router";
 
 const Dashboard = () => {
+
+    const router = useRouter()
 
     // -- app context
     const appContext = useAppContext();
@@ -72,7 +75,7 @@ const Dashboard = () => {
     //
     const onEdit = (space) => {
         console.warn("↓↓↓↓↓ onEdit: ↓↓↓↓↓");
-        console.log(space);
+        router.push('/token-gate/' + space.id);
     }
 
     //
@@ -105,9 +108,14 @@ const Dashboard = () => {
                 Your Spaces
             </h1>
 
-            <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
+            {/* <h5 className="text-[#FF3743] border border-[#FF3743] p-2 rounded-lg mt-2">
                 <span>
                 ** Please note that you can only <span className="text-red border-b border-red">delete</span> at the moment, you will need to re-create your space if you want to <span className="text-red border-b border-red">edit</span>
+                </span>
+            </h5> */}
+            <h5 className="text-[#9E77F3] border border-[#9E77F3] p-2 rounded-lg mt-2">
+                <span>
+                ** [20 Apr, 2022] Update : We have now added the ability to <span className="text-[#9E77F3] border-b border-[#9E77F3]">Edit</span>
                 </span>
             </h5>
 
@@ -153,12 +161,12 @@ const Dashboard = () => {
                                                         onClick: (e) => onCopyLink(e, 'https://app.gather.town/app/' + space.spaceId),
                                                         border: true,
                                                     },
-                                                    // {
-                                                    //     text: 'Edit',
-                                                    //     onClick: (e) => onEdit(space),
-                                                    //     color: 'text-lit-400',
-                                                    //     border: true,
-                                                    // },
+                                                    {
+                                                        text: 'Edit',
+                                                        onClick: (e) => onEdit(space),
+                                                        color: 'text-lit-400',
+                                                        border: true,
+                                                    },
                                                     {
                                                         text: 'Delete',
                                                         onClick: (e) => onDelete(space),

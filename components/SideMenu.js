@@ -12,7 +12,7 @@ const SideMenu = () => {
         if(location.pathname == '/dashboard'){
             setSelected(0);
         }
-        if(location.pathname == '/create'){
+        if(location.pathname == '/token-gate'){
             setSelected(1);
         }
     }, [])
@@ -24,7 +24,7 @@ const SideMenu = () => {
         }
 
         if(i == 1){
-            router.push('/create')
+            router.push('/token-gate')
         }
     }
 
