@@ -191,7 +191,7 @@ const TokenGate = () => {
 
         _restrictedSpaces.push({
             name, 
-            map,
+            map: map.trimEnd(),
             topLeft: topLeftX + ',' + topLeftY,
             bottomRight: bottomRightX + ',' + bottomRightY,
             accessControls: accs,
