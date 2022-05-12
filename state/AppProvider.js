@@ -466,7 +466,7 @@ export function AppProvider({ children }) {
       {/* ----- ...CONTENT AREA ----- */}
 
       {/* ----- Required JS libraries ----- */}
-      <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js/dist/index.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/lit-share-modal-v2-vanilla-js@latest/dist/index.js"></script>
     </AppContext.Provider>
   );
 }
